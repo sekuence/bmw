@@ -30,14 +30,10 @@ izquierdo y navega por las páginas del menú lateral.
 | Métrica | Regla aplicada sobre la hoja `BBDD` |
 |---|---|
 | Ventas Retail | `Motivo venta` = "Retail" |
-| BPS / MN | `BPS / NEXT` = "Sí" **y** (opcional, activado por defecto) matriculado ≥ 180 días y ≥ 6.000 km, dentro de las ventas Retail |
+| BPS / MN | `BPS FISCALGES` = "Sí", dentro de las ventas Retail |
 | Retail origen Remarketing | `Origen` contiene "Remarketing", dentro de Retail |
 | BEV | `COMB` = "BEV", dentro de Retail |
 | Wholesale UC / YUC | Ventas no-Retail, separadas por `YUC/UC` |
-
-El filtro de antigüedad BPS (180 días / 6.000 km) sale literalmente de
-la pestaña "Instrucciones" del Excel original y se puede desactivar
-desde la barra lateral si el criterio cambia.
 
 **Concesionario y agrupación temporal:** se usa `Código INT` (código de
 concesionario) y `Fecha venta mes` (nombre del mes en español) tal

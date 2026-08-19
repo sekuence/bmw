@@ -2,8 +2,8 @@
 
 La hoja de origen ("BBDD") es la fuente de la verdad: cada fila es un
 vehículo de ocasión vendido. A partir de esas columnas derivamos los
-flags de negocio (retail, BPS/NEXT elegible, remarketing, BEV) que
-después se agregan por concesionario/mes/marca en metrics.py.
+flags de negocio (retail, BPS/MN, remarketing, BEV) que después se
+agregan por concesionario/mes/marca en metrics.py.
 """
 import unicodedata
 
@@ -21,9 +21,7 @@ REQUIRED_COLUMNS = {
     "marca": "Marca",
     "fecha venta mes": "Fecha venta mes",
     "motivo venta": "Motivo venta",
-    "bps / next": "BPS / NEXT",
-    "dias matriculado": "Días matriculado",
-    "km": "Km",
+    "bps fiscalges": "BPS FISCALGES",
     "origen": "Origen",
     "comb": "COMB",
     "yuc/uc": "YUC/UC",
@@ -76,7 +74,7 @@ def read_bbdd(file_obj) -> pd.DataFrame:
     return raw
 
 
-def clean_ventas(raw: pd.DataFrame, aplicar_filtro_bps: bool = True) -> pd.DataFrame:
+def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
     """Limpia la BBDD y añade columnas derivadas de negocio.
 
     Devuelve una fila por vehículo con:
@@ -100,14 +98,9 @@ def clean_ventas(raw: pd.DataFrame, aplicar_filtro_bps: bool = True) -> pd.DataF
     df["es_retail"] = motivo.eq("RETAIL")
     df["es_wholesale"] = ~df["es_retail"]
 
-    bps_flag = df["BPS / NEXT"].astype(str).str.strip().str.upper().isin(["SI", "SÍ", "YES", "TRUE"])
-    if aplicar_filtro_bps:
-        dias = pd.to_numeric(df["Días matriculado"], errors="coerce").fillna(0)
-        km = pd.to_numeric(df["Km"], errors="coerce").fillna(0)
-        elegible = (dias >= config.BPS_MIN_DIAS_MATRICULADO) & (km >= config.BPS_MIN_KM)
-        df["es_bps"] = bps_flag & elegible & df["es_retail"]
-    else:
-        df["es_bps"] = bps_flag & df["es_retail"]
+    # BPS/MN se determina exclusivamente con la columna BPS FISCALGES.
+    bps_flag = df["BPS FISCALGES"].astype(str).str.strip().str.upper().isin(["SI", "SÍ", "YES", "TRUE"])
+    df["es_bps"] = bps_flag & df["es_retail"]
 
     origen = df["Origen"].astype(str).str.strip().str.upper()
     df["es_remarketing"] = origen.str.contains("REMARKETING") & df["es_retail"]

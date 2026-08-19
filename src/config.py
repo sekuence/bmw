@@ -30,12 +30,6 @@ TRIMESTRES = {
 
 MARCAS = ["BMW", "MINI"]
 
-# Reglas de elegibilidad BPS / MINI NEXT (pestaña "Instrucciones" del Excel
-# original): un vehículo marcado BPS/NEXT sólo cuenta si además lleva
-# matriculado >= 180 días y tiene >= 6.000 km. Se puede desactivar desde la UI.
-BPS_MIN_DIAS_MATRICULADO = 180
-BPS_MIN_KM = 6000
-
 # Nombre de la hoja de origen dentro del archivo de ventas.
 HOJA_VENTAS = "BBDD"
 

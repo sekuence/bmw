@@ -35,21 +35,12 @@ st.caption(
 
 with st.sidebar:
     st.header("1. Cargar archivo de ventas")
-    aplicar_filtro_bps = st.checkbox(
-        "Aplicar filtro de antigüedad BPS/NEXT (≥180 días y ≥6.000 km)",
-        value=True,
-        help=(
-            "Regla tomada de la pestaña 'Instrucciones' del Excel original: un vehículo "
-            "marcado BPS/NEXT sólo cuenta si además lleva matriculado 180 días o más y "
-            "tiene 6.000 km o más. Desactívalo si tu criterio ha cambiado."
-        ),
-    )
     archivo = st.file_uploader("Archivo de ventas (.xlsx)", type=["xlsx"])
 
     if archivo is not None:
         try:
             raw = ingest.read_bbdd(archivo)
-            ventas_limpias = ingest.clean_ventas(raw, aplicar_filtro_bps=aplicar_filtro_bps)
+            ventas_limpias = ingest.clean_ventas(raw)
         except ingest.VentasFileError as exc:
             st.error(str(exc))
         else:
