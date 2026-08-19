@@ -94,6 +94,27 @@ mes hace falta arreglar algo puntual. Si dejas la casilla en blanco se
 sigue usando el valor calculado; si escribes un número, ese número
 manda para ese concesionario/mes.
 
+## Colores de marca y bonificación
+
+Toda la app distingue **BMW (azul) de MINI (naranja)** con la misma
+paleta en cabeceras, pestañas y etiquetas -Dashboard, Ranking,
+Seguimiento y Objetivos-, igual que en el Excel original.
+
+El **Dashboard por concesionario** incluye además, por marca:
+
+- Semáforo (verde/rojo) de los dos mínimos exigidos: **penetración
+  BPS/MN ≥ 80%** y **Mystery Shopping ≥ 90%**.
+- **Bonificación estimada**: importe base según la matriz de
+  cumplimiento objetivo Retail x % Retail origen Remarketing,
+  multiplicado por el multiplicador de % BEV -con aviso si no se
+  cumple alguno de los dos mínimos-.
+- Un desplegable **"📖 Ver guía de bonificación"** con las 4 tablas de
+  referencia (mínimos, matriz de bonificación, multiplicador BEV y
+  Mystery Shopping) tal cual las del Excel original.
+
+Estas tablas están centralizadas en `src/bonus.py` -ajústalas ahí si
+cambian los importes o los tramos-.
+
 ## Ver el detalle vehículo a vehículo (como el Excel)
 
 - **"Detalle de vehículos"**: la BBDD completa, con todas sus columnas
@@ -133,6 +154,9 @@ src/
   export.py     Generación del Excel descargable
   dealers.py    Maestro de concesionarios (extraído del Excel original)
   config.py     Constantes de negocio (meses, periodos, métricas)
+  bonus.py      Matriz de bonificación, mínimos y multiplicador BEV
+  guia.py       HTML de las tablas-guía de bonificación
+  theme.py      Colores de marca (azul BMW / naranja MINI) para toda la app
 data/
   dealers.csv   Maestro de ~53 concesionarios BMW/MINI (código, nombre, grupo propietario)
   app.db        (se crea solo) objetivos y datos manuales

@@ -4,7 +4,7 @@ Objetivos, Ranking, Exportar)."""
 import pandas as pd
 import streamlit as st
 
-from src import config, dealers as dealers_mod, ingest, metrics
+from src import config, dealers as dealers_mod, ingest, metrics, theme
 
 st.set_page_config(page_title="Seguimiento UC Retail & Wholesale", page_icon="📊", layout="wide")
 
@@ -75,16 +75,22 @@ else:
 
     st.divider()
     st.subheader("Resumen por marca")
-    st.dataframe(
-        ventas.groupby("marca").agg(
-            retail=("es_retail", "sum"),
-            bps=("es_bps", "sum"),
-            remarketing=("es_remarketing", "sum"),
-            bev=("es_bev", "sum"),
-            wholesale=("es_wholesale", "sum"),
-        ),
-        width="stretch",
+    resumen_marca = ventas.groupby("marca").agg(
+        retail=("es_retail", "sum"),
+        bps=("es_bps", "sum"),
+        remarketing=("es_remarketing", "sum"),
+        bev=("es_bev", "sum"),
+        wholesale=("es_wholesale", "sum"),
     )
+    cols_marca = st.columns(len(resumen_marca))
+    for col, (marca, fila) in zip(cols_marca, resumen_marca.iterrows()):
+        with col:
+            theme.encabezado(marca)
+            st.metric("Retail", int(fila["retail"]))
+            st.metric("BPS/MN", int(fila["bps"]))
+            st.metric("Remarketing", int(fila["remarketing"]))
+            st.metric("BEV", int(fila["bev"]))
+            st.metric("Wholesale", int(fila["wholesale"]))
 
     st.divider()
     st.page_link("pages/1_Dashboard_Concesionario.py", label="➡️ Ir al Dashboard por concesionario", icon="📈")

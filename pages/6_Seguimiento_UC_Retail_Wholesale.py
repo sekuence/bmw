@@ -5,7 +5,7 @@ mes -igual que en el Excel- en vez de repetir el mes en cada celda."""
 import pandas as pd
 import streamlit as st
 
-from src import config, metrics, storage
+from src import config, metrics, storage, theme
 
 st.set_page_config(page_title="Seguimiento UC Retail & Wholesale", page_icon="🗂️", layout="wide")
 
@@ -152,6 +152,7 @@ for tab, marca, tipo in [
     (tabs[3], "MINI", "retail_bps"), (tabs[4], "MINI", "bev"), (tabs[5], "MINI", "wholesale"),
 ]:
     with tab:
+        theme.encabezado(marca)
         agrupar = st.checkbox("Agrupar por Grupo Propietario", key=f"agrupar_{marca}_{tipo}")
         if tipo == "wholesale":
             st.caption("Pendiente de los datos que vas a pasar aparte para Wholesale -de momento se calcula UC/YUC desde la BBDD.")

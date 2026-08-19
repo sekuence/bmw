@@ -12,7 +12,7 @@ import math
 
 import pandas as pd
 
-from . import config, metrics, storage
+from . import bonus, config, metrics, storage
 
 BANDAS_REMARKETING = {
     "BMW": [0.18, 0.22, 0.27, 0.32],
@@ -102,20 +102,25 @@ def kpi_bloque(resumen, codigo_dealer: int, marca: str, periodo: str, mes_refere
 
     ventas_bps_necesarias = (4 * retail) if bps == 0 else max(0, _roundup(4 * (retail - 1.25 * bps)))
 
+    pct_cumplimiento_retail = (retail / objetivo_retail) if objetivo_retail else None
+    pct_bps = (bps / retail) if retail else None
+    pct_remarketing = (remarketing / retail) if retail else None
+    pct_bev = (bev / retail) if retail else None
+
     return {
         "meses_incluidos": meses,
         "objetivo_retail": objetivo_retail,
         "realizado_retail": retail,
-        "pct_cumplimiento_retail": (retail / objetivo_retail) if objetivo_retail else None,
+        "pct_cumplimiento_retail": pct_cumplimiento_retail,
         "bps": bps,
-        "pct_bps": (bps / retail) if retail else None,
+        "pct_bps": pct_bps,
         "ventas_bps_necesarias_para_25pct": ventas_bps_necesarias,
         "remarketing": remarketing,
-        "pct_remarketing": (remarketing / retail) if retail else None,
+        "pct_remarketing": pct_remarketing,
         "bandas_remarketing_necesarias": _bandas_remarketing_necesarias(marca, objetivo_retail, remarketing),
         "objetivo_bev": objetivo_bev,
         "bev": bev,
-        "pct_bev": (bev / retail) if retail else None,
+        "pct_bev": pct_bev,
         "bandas_bev_necesarias": _bandas_bev_necesarias(marca, objetivo_retail, bev),
         "wholesale_uc": realizado["wholesale_uc"],
         "wholesale_yuc": realizado["wholesale_yuc"],
@@ -123,6 +128,9 @@ def kpi_bloque(resumen, codigo_dealer: int, marca: str, periodo: str, mes_refere
         "mercado_menos_6_anos": mercado,
         "pct_penetracion_mercado": (retail / mercado) if mercado else None,
         "mystery_shopping": mystery,
+        "cumple_penetracion_bps": bonus.cumple_penetracion_bps(pct_bps),
+        "cumple_mystery_shopping": bonus.cumple_mystery_shopping(mystery),
+        "bonificacion": bonus.calcular(marca, pct_cumplimiento_retail, pct_remarketing, pct_bev),
     }
 
 

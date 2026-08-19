@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 
-from src import config, importer, storage
+from src import config, importer, storage, theme
 
 st.set_page_config(page_title="Objetivos y datos manuales", page_icon="🎯", layout="wide")
 
@@ -103,6 +103,7 @@ with tab_importar:
 
 with tab_retail:
     marca = st.radio("Marca", ["BMW", "MINI"], horizontal=True, key="marca_retail")
+    st.markdown(theme.badge(marca), unsafe_allow_html=True)
     col = "vende_bmw" if marca == "BMW" else "vende_mini"
     _tabla_editable(
         "objetivos", marca, config.MESES, "mes", dealers[dealers[col] == "Si"],
@@ -111,6 +112,7 @@ with tab_retail:
 
 with tab_bev:
     marca = st.radio("Marca", ["BMW", "MINI"], horizontal=True, key="marca_bev")
+    st.markdown(theme.badge(marca), unsafe_allow_html=True)
     col = "vende_bmw" if marca == "BMW" else "vende_mini"
     _tabla_editable(
         "objetivos", marca, config.MESES, "mes", dealers[dealers[col] == "Si"],
@@ -119,6 +121,7 @@ with tab_bev:
 
 with tab_mercado:
     marca = st.radio("Marca", ["BMW", "MINI"], horizontal=True, key="marca_mercado")
+    st.markdown(theme.badge(marca), unsafe_allow_html=True)
     col = "vende_bmw" if marca == "BMW" else "vende_mini"
     _tabla_editable(
         "mercado_menos_6_anos", marca, config.MESES, "mes", dealers[dealers[col] == "Si"],
@@ -127,6 +130,7 @@ with tab_mercado:
 
 with tab_mys:
     marca = st.radio("Marca", ["BMW", "MINI"], horizontal=True, key="marca_mys")
+    st.markdown(theme.badge(marca), unsafe_allow_html=True)
     col = "vende_bmw" if marca == "BMW" else "vende_mini"
     _tabla_editable(
         "mystery_shopping", marca, ["S1", "S2"], "semestre", dealers[dealers[col] == "Si"],
@@ -143,6 +147,7 @@ with tab_ajustes:
     c1, c2 = st.columns(2)
     with c1:
         marca = st.radio("Marca", ["BMW", "MINI"], horizontal=True, key="marca_ajustes")
+        st.markdown(theme.badge(marca), unsafe_allow_html=True)
     with c2:
         metrica_label = st.selectbox("Métrica a corregir", list(config.METRICAS_AJUSTABLES.values()), key="metrica_ajustes")
     metrica = next(k for k, v in config.METRICAS_AJUSTABLES.items() if v == metrica_label)

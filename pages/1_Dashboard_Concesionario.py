@@ -1,6 +1,6 @@
 import streamlit as st
 
-from src import config, dashboard, detail
+from src import config, dashboard, detail, guia, theme
 
 st.set_page_config(page_title="Dashboard por concesionario", page_icon="📈", layout="wide")
 
@@ -57,11 +57,17 @@ cols = st.columns(len(marcas_disponibles)) if marcas_disponibles else []
 
 for col, marca in zip(cols, marcas_disponibles):
     with col:
-        st.subheader(marca)
+        theme.encabezado(marca)
         k = dashboard.kpi_bloque(resumen, codigo_dealer, marca, periodo, mes_referencia)
         meses = k["meses_incluidos"]
 
         st.caption("Meses incluidos: " + ", ".join(meses))
+
+        if "BYMYCAR" in concesionario.upper():
+            st.info(
+                "ℹ️ Las ventas de BYMYCAR con canal \"…DIRECTO\" se contabilizan aparte, en "
+                "**BMW DIRECTO** (selecciónalo en el desplegable de Concesión para verlas)."
+            )
 
         m1, m2 = st.columns(2)
         m1.metric("Objetivo Retail", f"{k['objetivo_retail']:.0f}")
@@ -76,6 +82,7 @@ for col, marca in zip(cols, marcas_disponibles):
         b1, b2 = st.columns(2)
         b1.metric("Ventas BPS/MN", f"{k['bps']:.0f}")
         b2.metric("% BPS/MN sobre retail", f"{k['pct_bps']*100:.1f}%" if k["pct_bps"] is not None else "—")
+        st.markdown(theme.semaforo(k["cumple_penetracion_bps"]) + " (mínimo 80%)", unsafe_allow_html=True)
         if k["ventas_bps_necesarias_para_25pct"] > 0:
             st.caption(f"Necesarias ≈ {k['ventas_bps_necesarias_para_25pct']} uds. BPS/MN más para acercarse al objetivo interno de penetración.")
         _boton_detalle(marca, "bps", meses, "BPS / MN")
@@ -119,8 +126,23 @@ for col, marca in zip(cols, marcas_disponibles):
         st.markdown("**Mystery Shopping**")
         if k["mystery_shopping"] is not None:
             st.metric("Puntuación", f"{k['mystery_shopping']:.1f}")
+            st.markdown(theme.semaforo(k["cumple_mystery_shopping"]) + " (mínimo 90%)", unsafe_allow_html=True)
         else:
             st.caption("Sin dato de mystery shopping para este semestre -añádelo en 'Objetivos y datos manuales'.")
+
+        st.markdown("**💰 Bonificación estimada**")
+        bono = k["bonificacion"]
+        if bono["total"] is not None:
+            bo1, bo2, bo3 = st.columns(3)
+            bo1.metric("Base (matriz)", f"{bono['base']:.0f} €")
+            bo2.metric("Multiplicador BEV", f"x{bono['multiplicador']:.2f}")
+            bo3.metric("Total estimado", f"{bono['total']:.0f} €")
+            if k["cumple_penetracion_bps"] is False or k["cumple_mystery_shopping"] is False:
+                st.warning("⚠️ No cumple algún mínimo (penetración BPS/MN y/o Mystery Shopping) -puede que este importe no aplique.")
+        else:
+            st.caption("Sin objetivo o sin ventas suficientes para ubicarlo en la matriz de bonificación.")
+        with st.expander("📖 Ver guía de bonificación"):
+            st.markdown(guia.render(marca), unsafe_allow_html=True)
 
         st.divider()
         st.markdown("**Evolución mensual**")

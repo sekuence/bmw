@@ -1,6 +1,6 @@
 import streamlit as st
 
-from src import config, detail, metrics
+from src import config, detail, metrics, theme
 
 st.set_page_config(page_title="Ranking de concesionarios", page_icon="🏆", layout="wide")
 
@@ -30,6 +30,8 @@ with c3:
         mes_referencia = st.selectbox("Hasta el mes de", config.MESES, index=6)
     elif periodo == "ACUMULADO MES 2S":
         mes_referencia = st.selectbox("Hasta el mes de", config.MESES_S2, index=0)
+
+theme.encabezado(marca)
 
 tabla = metrics.ranking_periodo(resumen, dealers, marca, periodo, mes_referencia)
 
