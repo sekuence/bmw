@@ -10,7 +10,9 @@ los resultados cuadren con lo que la empresa ya conoce).
 """
 import math
 
-from . import metrics, storage
+import pandas as pd
+
+from . import config, metrics, storage
 
 BANDAS_REMARKETING = {
     "BMW": [0.18, 0.22, 0.27, 0.32],
@@ -117,7 +119,33 @@ def kpi_bloque(resumen, codigo_dealer: int, marca: str, periodo: str, mes_refere
         "bandas_bev_necesarias": _bandas_bev_necesarias(marca, objetivo_retail, bev),
         "wholesale_uc": realizado["wholesale_uc"],
         "wholesale_yuc": realizado["wholesale_yuc"],
+        "ventas_totales": realizado["ventas_totales"],
         "mercado_menos_6_anos": mercado,
         "pct_penetracion_mercado": (retail / mercado) if mercado else None,
         "mystery_shopping": mystery,
     }
+
+
+def evolucion_mensual(resumen: pd.DataFrame, codigo_dealer: int, marca: str) -> pd.DataFrame:
+    """Serie mes a mes (Objetivo vs Realizado, BPS/MN, Remarketing, BEV)
+    para el gráfico del Dashboard. Sólo incluye los meses que ya tienen
+    ventas cargadas para ese concesionario+marca."""
+    sub = resumen[(resumen["codigo_dealer"] == codigo_dealer) & (resumen["marca"] == marca)]
+    meses_con_datos = sorted(sub["mes"].unique(), key=config.MESES.index)
+
+    columnas = ["mes", "Objetivo Retail", "Realizado Retail", "BPS/MN", "Remarketing", "BEV"]
+    if not meses_con_datos:
+        return pd.DataFrame(columns=columnas).set_index("mes")
+
+    filas = []
+    for mes in meses_con_datos:
+        k = metrics.kpis_periodo(resumen, codigo_dealer, marca, mes)
+        filas.append({
+            "mes": mes,
+            "Objetivo Retail": _objetivo_de(codigo_dealer, marca, "Retail", [mes]),
+            "Realizado Retail": k["retail"],
+            "BPS/MN": k["bps"],
+            "Remarketing": k["remarketing"],
+            "BEV": k["bev"],
+        })
+    return pd.DataFrame(filas, columns=columnas).set_index("mes")

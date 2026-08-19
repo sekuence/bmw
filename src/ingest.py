@@ -74,12 +74,23 @@ def read_bbdd(file_obj) -> pd.DataFrame:
     return raw
 
 
-def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
-    """Limpia la BBDD y añade columnas derivadas de negocio.
+# Columnas de negocio derivadas (se anteponen a todas las de la BBDD).
+COLUMNAS_DERIVADAS = [
+    "codigo_dealer", "concesionario", "marca", "mes",
+    "es_retail", "es_wholesale", "es_bps", "es_remarketing", "es_bev", "yuc_uc",
+]
 
-    Devuelve una fila por vehículo con:
-      codigo_dealer, concesionario, marca, mes, es_retail, es_bps,
-      es_remarketing, es_bev, es_wholesale, yuc_uc
+
+def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
+    """Limpia la BBDD y añade columnas derivadas de negocio, pero
+    **conserva todas las columnas originales** (Chasis, Matrícula,
+    Modelo, Vendedor, precios, fechas...) para poder consultar el
+    detalle vehículo a vehículo en la app, tal cual como en el Excel.
+
+    Todas las métricas de negocio (retail, BPS/MN, remarketing, BEV) se
+    calculan siempre dentro de `Motivo venta` = "Retail" -salvo
+    "ventas totales", que cuenta todo el inventario vendido
+    independientemente del motivo-.
     """
     df = raw.dropna(subset=["Chasis"]).copy()
 
@@ -98,20 +109,19 @@ def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
     df["es_retail"] = motivo.eq("RETAIL")
     df["es_wholesale"] = ~df["es_retail"]
 
-    # BPS/MN se determina exclusivamente con la columna BPS FISCALGES.
+    # BPS/MN se determina exclusivamente con la columna BPS FISCALGES,
+    # dentro de las ventas Retail.
     bps_flag = df["BPS FISCALGES"].astype(str).str.strip().str.upper().isin(["SI", "SÍ", "YES", "TRUE"])
     df["es_bps"] = bps_flag & df["es_retail"]
 
     origen = df["Origen"].astype(str).str.strip().str.upper()
     df["es_remarketing"] = origen.str.contains("REMARKETING") & df["es_retail"]
 
+    # BEV se determina con la columna COMB, dentro de las ventas Retail.
     comb = df["COMB"].astype(str).str.strip().str.upper()
     df["es_bev"] = comb.eq("BEV") & df["es_retail"]
 
     df["yuc_uc"] = df["YUC/UC"].astype(str).str.strip().str.upper()
 
-    cols = [
-        "codigo_dealer", "concesionario", "marca", "mes",
-        "es_retail", "es_wholesale", "es_bps", "es_remarketing", "es_bev", "yuc_uc",
-    ]
-    return df[cols].reset_index(drop=True)
+    otras_cols = [c for c in raw.columns if c not in COLUMNAS_DERIVADAS]
+    return df[COLUMNAS_DERIVADAS + otras_cols].reset_index(drop=True)

@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 
-from src import config, storage
+from src import config, importer, storage
 
 st.set_page_config(page_title="Objetivos y datos manuales", page_icon="🎯", layout="wide")
 
@@ -74,9 +74,32 @@ def _tabla_editable(
         st.success("Guardado.")
 
 
-tab_retail, tab_bev, tab_mercado, tab_mys, tab_ajustes = st.tabs(
-    ["Objetivos Retail", "Objetivos BEV", "Mercado <6 años", "Mystery Shopping", "Ajustes manuales"]
+tab_importar, tab_retail, tab_bev, tab_mercado, tab_mys, tab_ajustes = st.tabs(
+    ["Importar objetivos", "Objetivos Retail", "Objetivos BEV", "Mercado <6 años", "Mystery Shopping", "Ajustes manuales"]
 )
+
+with tab_importar:
+    st.caption(
+        "Si ya tienes el Excel de seguimiento (`SEGUIMIENTO UC RETAIL & WHOLESALE`) con los "
+        "objetivos (columnas **OBJ** / **Objetivo**) rellenos, súbelo aquí y se copian todos "
+        "de golpe -no hace falta teclearlos concesionario por concesionario. Lee las pestañas "
+        "`UC BMW 2026 BPS`, `UC MINI 2026 MINI NEXT`, `BEV BMW 2026` y `BEV MINI 2026`."
+    )
+    archivo_seguimiento = st.file_uploader("Excel de seguimiento (.xlsx)", type=["xlsx"], key="uploader_seguimiento")
+    if archivo_seguimiento is not None:
+        try:
+            objetivos_importados = importer.importar_objetivos(archivo_seguimiento)
+        except importer.SeguimientoFileError as exc:
+            st.error(str(exc))
+        else:
+            st.success(f"Encontrados {len(objetivos_importados):,} objetivos.".replace(",", "."))
+            st.dataframe(
+                objetivos_importados.groupby(["marca", "metrica"], as_index=False)["valor"].count().rename(columns={"valor": "nº de registros"}),
+                hide_index=True,
+            )
+            if st.button("💾 Guardar todos estos objetivos"):
+                storage.save_dataframe("objetivos", objetivos_importados, key_cols=["codigo_dealer", "marca", "metrica", "mes"])
+                st.success("Objetivos guardados. Ya se están usando en el Dashboard.")
 
 with tab_retail:
     marca = st.radio("Marca", ["BMW", "MINI"], horizontal=True, key="marca_retail")

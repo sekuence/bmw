@@ -44,4 +44,18 @@ METRICAS_AJUSTABLES = {
     "bev": "BEV",
     "wholesale_uc": "Wholesale UC",
     "wholesale_yuc": "Wholesale YUC",
+    "ventas_totales": "Ventas Totales (Retail + Wholesale)",
+}
+
+# Columna de negocio (flag es_*) que identifica los vehículos de cada
+# métrica, para poder filtrar el detalle a nivel de chasis. None =
+# no se filtra por Retail/Wholesale (ventas totales = todo).
+FLAG_DE_METRICA = {
+    "retail": "es_retail",
+    "bps": "es_bps",
+    "remarketing": "es_remarketing",
+    "bev": "es_bev",
+    "wholesale_uc": None,  # además exige yuc_uc == "UC" y es_wholesale
+    "wholesale_yuc": None,  # además exige yuc_uc == "YUC" y es_wholesale
+    "ventas_totales": None,
 }

@@ -57,6 +57,11 @@ guardados en `data/app.db` (SQLite) para los próximos meses — no hay
 que volver a escribirlos cada vez que subes un archivo de ventas
 nuevo.
 
+**Objetivos:** no hace falta teclearlos a mano si ya los tienes en el
+Excel de seguimiento original — la pestaña **"Importar objetivos"**
+lee de un tirón las columnas OBJ/Objetivo de `UC BMW 2026 BPS`,
+`UC MINI 2026 MINI NEXT`, `BEV BMW 2026` y `BEV MINI 2026`.
+
 Esa misma página tiene una pestaña **"Ajustes manuales"** para corregir
 a mano, mes a mes, cualquier valor que la app haya calculado desde la
 BBDD (retail, BPS/MN, remarketing, BEV, wholesale UC/YUC) por si algún
@@ -64,23 +69,41 @@ mes hace falta arreglar algo puntual. Si dejas la casilla en blanco se
 sigue usando el valor calculado; si escribes un número, ese número
 manda para ese concesionario/mes.
 
+## Ver el detalle vehículo a vehículo (como el Excel)
+
+- **"Detalle de vehículos"**: la BBDD completa, con todas sus columnas
+  originales (Chasis, Matrícula, Modelo, Vendedor, precios...),
+  filtrable por concesión/marca/mes/métrica y con buscador.
+- **"Ver detalle" en el Dashboard y el Ranking**: al lado de cada KPI
+  (Retail, BPS/MN, Remarketing, BEV, Wholesale...) hay un botón que abre
+  justo los vehículos que componen ese número -el equivalente a hacer
+  doble click sobre la cifra en Excel.
+- **"Detalle por pestaña"**: un apartado por cada pestaña del Excel
+  original (UC BMW, BPS, BEV, Wholesale, igual para MINI, y MAESTRO),
+  con el desglose mes a mes por concesionario -incluye la opción de
+  agrupar por Grupo Propietario.
+
 ## Estructura del proyecto
 
 ```
 app.py                          Home: carga del archivo de ventas
 pages/
-  1_Dashboard_Concesionario.py  Dashboard por concesionario + periodo (equivalente al "Dealer Dashboard")
-  2_Objetivos_y_Datos_Manuales.py  Editor de objetivos / mystery shopping / mercado
-  3_Ranking.py                  Ranking entre todos los concesionarios de una marca
+  1_Dashboard_Concesionario.py  Dashboard por concesionario + periodo (equivalente al "Dealer Dashboard"), con gráfico
+  2_Objetivos_y_Datos_Manuales.py  Editor de objetivos / mystery shopping / mercado / ajustes / importar
+  3_Ranking.py                  Ranking entre todos los concesionarios de una marca + detalle
   4_Exportar.py                 Genera y descarga el Excel de salida
+  5_Detalle_Vehiculos.py        BBDD completa filtrable, vehículo a vehículo
+  6_Detalle_por_Pestana.py      Desglose mensual por concesionario, una pestaña por cada apartado del Excel original
 src/
-  ingest.py     Lectura y limpieza de la BBDD + reglas de negocio
-  metrics.py    Agregados por concesionario/marca/mes + selección de periodo
-  dashboard.py  KPIs completos (con objetivos, bandas de "ventas necesarias", etc.)
+  ingest.py     Lectura y limpieza de la BBDD + reglas de negocio (conserva todas las columnas originales)
+  metrics.py    Agregados por concesionario/marca/mes + selección de periodo + ajustes manuales
+  dashboard.py  KPIs completos (con objetivos, bandas de "ventas necesarias", evolución mensual, etc.)
+  detail.py     Filtra la BBDD a nivel de vehículo para el "doble click" sobre un KPI
+  importer.py   Importa los objetivos (OBJ) desde el Excel de seguimiento original
   storage.py    Persistencia SQLite de objetivos y datos manuales
   export.py     Generación del Excel descargable
   dealers.py    Maestro de concesionarios (extraído del Excel original)
-  config.py     Constantes de negocio (meses, periodos, umbrales)
+  config.py     Constantes de negocio (meses, periodos, métricas)
 data/
   dealers.csv   Maestro de ~53 concesionarios BMW/MINI (código, nombre, grupo propietario)
   app.db        (se crea solo) objetivos y datos manuales

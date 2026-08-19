@@ -1,6 +1,6 @@
 import streamlit as st
 
-from src import config, metrics
+from src import config, detail, metrics
 
 st.set_page_config(page_title="Ranking de concesionarios", page_icon="🏆", layout="wide")
 
@@ -47,3 +47,20 @@ else:
         },
     )
     st.bar_chart(tabla.set_index("concesionario")["retail"])
+
+    st.divider()
+    st.subheader("🔎 Ver detalle de vehículos")
+    d1, d2 = st.columns(2)
+    with d1:
+        concesionario_detalle = st.selectbox("Concesión", tabla["concesionario"])
+    with d2:
+        metrica_detalle = st.selectbox("Métrica", list(config.METRICAS_AJUSTABLES.values()))
+
+    codigo_detalle = int(tabla.loc[tabla["concesionario"] == concesionario_detalle, "codigo_dealer"].iloc[0])
+    metrica_key = next(k for k, v in config.METRICAS_AJUSTABLES.items() if v == metrica_detalle)
+    meses = metrics.meses_de_periodo(periodo, mes_referencia)
+
+    ventas = st.session_state["ventas"]
+    filas = detail.filtrar(ventas, codigo_dealer=codigo_detalle, marca=marca, meses=meses, metrica=metrica_key)
+    st.caption(f"{len(filas)} vehículos")
+    st.dataframe(filas, width="stretch", hide_index=True, height=350)
