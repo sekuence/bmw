@@ -31,13 +31,34 @@ izquierdo y navega por las páginas del menú lateral.
 |---|---|
 | Ventas Retail | `Motivo venta` = "Retail" |
 | BPS / MN | `BPS FISCALGES` = "Sí", dentro de las ventas Retail |
-| Retail origen Remarketing | `Origen` contiene "Remarketing", dentro de Retail |
+| Retail origen Remarketing | Ver más abajo -depende de si existe la columna `Canal Actual`- |
 | BEV | `COMB` = "BEV", dentro de Retail |
 | Wholesale UC / YUC | Ventas no-Retail, separadas por `YUC/UC` |
 
 **Concesionario y agrupación temporal:** se usa `Código INT` (código de
 concesionario) y `Fecha venta mes` (nombre del mes en español) tal
 cual vienen en la BBDD.
+
+### Regla BYMYCAR / BMW DIRECTO y Remarketing (pendiente de la columna `Canal Actual`)
+
+La BBDD todavía no trae la columna **`Canal Actual`**, pero en cuanto
+la incluyas la app la detecta sola (no hay que tocar nada) y activa:
+
+1. De las ventas de **BYMYCAR**, las que tengan `Canal Actual`
+   terminado en "…DIRECTO" se reasignan al concesionario **BMW DIRECTO**
+   (código `12345`, ya está en el maestro); el resto se queda en BYMYCAR.
+2. **Retail origen Remarketing** pasa a ser: toda venta Retail *excepto*
+   las de canal "…MOBILITY" o "…LANDING".
+
+Mientras tanto (sin esa columna), Remarketing se sigue calculando como
+antes: `Origen` contiene "Remarketing". La página **"Seguimiento UC
+Retail & Wholesale"** te avisa arriba de cuál de las dos reglas está
+activa en cada archivo que subas.
+
+Los patrones ("contiene DIRECTO/MOBILITY/LANDING") son una suposición
+razonable hecha sin haber visto datos reales de esa columna todavía
+-están todos centralizados en `src/config.py` para ajustarlos en un
+segundo en cuanto lleguen los primeros valores reales.
 
 ## Qué se sigue introduciendo a mano (y por qué)
 
@@ -78,10 +99,11 @@ manda para ese concesionario/mes.
   (Retail, BPS/MN, Remarketing, BEV, Wholesale...) hay un botón que abre
   justo los vehículos que componen ese número -el equivalente a hacer
   doble click sobre la cifra en Excel.
-- **"Detalle por pestaña"**: un apartado por cada pestaña del Excel
-  original (UC BMW, BPS, BEV, Wholesale, igual para MINI, y MAESTRO),
-  con el desglose mes a mes por concesionario -incluye la opción de
-  agrupar por Grupo Propietario.
+- **"Seguimiento UC Retail & Wholesale"**: un apartado por cada pestaña
+  del Excel original (UC BMW, BPS, BEV, Wholesale, igual para MINI, y
+  MAESTRO), con el desglose mes a mes por concesionario -las columnas
+  van agrupadas por mes (igual que en el Excel), no repetidas celda a
+  celda- e incluye la opción de agrupar por Grupo Propietario.
 
 ## Estructura del proyecto
 
@@ -93,7 +115,7 @@ pages/
   3_Ranking.py                  Ranking entre todos los concesionarios de una marca + detalle
   4_Exportar.py                 Genera y descarga el Excel de salida
   5_Detalle_Vehiculos.py        BBDD completa filtrable, vehículo a vehículo
-  6_Detalle_por_Pestana.py      Desglose mensual por concesionario, una pestaña por cada apartado del Excel original
+  6_Seguimiento_UC_Retail_Wholesale.py  Réplica del Excel original: una pestaña por apartado, separado por marca
 src/
   ingest.py     Lectura y limpieza de la BBDD + reglas de negocio (conserva todas las columnas originales)
   metrics.py    Agregados por concesionario/marca/mes + selección de periodo + ajustes manuales

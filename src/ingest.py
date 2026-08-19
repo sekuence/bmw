@@ -70,6 +70,11 @@ def read_bbdd(file_obj) -> pd.DataFrame:
         )
 
     rename_map = {resolved[norm]: real for norm, real in REQUIRED_COLUMNS.items()}
+    # "Canal Actual" es opcional -todavía no existe en los archivos de ventas
+    # reales, pero en cuanto aparezca la app la detecta y la usa sola.
+    canal_actual_norm = _normalize(config.COLUMNA_CANAL_ACTUAL)
+    if canal_actual_norm in resolved:
+        rename_map[resolved[canal_actual_norm]] = config.COLUMNA_CANAL_ACTUAL
     raw = raw.rename(columns=rename_map)
     return raw
 
@@ -79,6 +84,17 @@ COLUMNAS_DERIVADAS = [
     "codigo_dealer", "concesionario", "marca", "mes",
     "es_retail", "es_wholesale", "es_bps", "es_remarketing", "es_bev", "yuc_uc",
 ]
+
+
+def _reasignar_bymycar_directo(df: pd.DataFrame, canal_actual: pd.Series) -> None:
+    """Las ventas de BYMYCAR cuyo Canal Actual sea de tipo "_DIRECTO" se
+    reasignan al concesionario ficticio BMW DIRECTO (código 12345); el
+    resto se queda en BYMYCAR tal cual. Modifica `df` in place."""
+    es_bymycar = df["concesionario"].str.upper().str.contains(config.CONCESIONARIO_BYMYCAR, na=False)
+    es_directo = canal_actual.str.contains(config.PATRON_CANAL_DIRECTO, na=False)
+    mask = es_bymycar & es_directo
+    df.loc[mask, "codigo_dealer"] = config.CODIGO_BMW_DIRECTO
+    df.loc[mask, "concesionario"] = config.NOMBRE_BMW_DIRECTO
 
 
 def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
@@ -105,6 +121,11 @@ def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
     df["mes"] = df["Fecha venta mes"].astype(str).str.strip().str.upper()
     df = df[df["mes"].isin(config.MESES)]
 
+    canal_actual = None
+    if config.COLUMNA_CANAL_ACTUAL in df.columns:
+        canal_actual = df[config.COLUMNA_CANAL_ACTUAL].astype(str).str.strip().str.upper()
+        _reasignar_bymycar_directo(df, canal_actual)
+
     motivo = df["Motivo venta"].astype(str).str.strip().str.upper()
     df["es_retail"] = motivo.eq("RETAIL")
     df["es_wholesale"] = ~df["es_retail"]
@@ -114,8 +135,15 @@ def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
     bps_flag = df["BPS FISCALGES"].astype(str).str.strip().str.upper().isin(["SI", "SÍ", "YES", "TRUE"])
     df["es_bps"] = bps_flag & df["es_retail"]
 
-    origen = df["Origen"].astype(str).str.strip().str.upper()
-    df["es_remarketing"] = origen.str.contains("REMARKETING") & df["es_retail"]
+    if canal_actual is not None:
+        # Retail origen Remarketing = todo Retail salvo los canales
+        # "_MOBILITY" / "_LANDING" (ver config.py).
+        excluidos = canal_actual.str.contains("|".join(config.PATRONES_CANAL_EXCLUIDOS_REMARKETING), na=False)
+        df["es_remarketing"] = df["es_retail"] & ~excluidos
+    else:
+        # Alternativa mientras no exista la columna "Canal Actual" en la BBDD.
+        origen = df["Origen"].astype(str).str.strip().str.upper()
+        df["es_remarketing"] = origen.str.contains("REMARKETING") & df["es_retail"]
 
     # BEV se determina con la columna COMB, dentro de las ventas Retail.
     comb = df["COMB"].astype(str).str.strip().str.upper()

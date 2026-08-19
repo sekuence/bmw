@@ -59,3 +59,29 @@ FLAG_DE_METRICA = {
     "wholesale_yuc": None,  # además exige yuc_uc == "YUC" y es_wholesale
     "ventas_totales": None,
 }
+
+# --- Regla BYMYCAR / BMW DIRECTO y "Retail origen Remarketing" -------
+#
+# Pendiente de que la BBDD incorpore la columna "Canal Actual" (todavía
+# no está en los archivos de ventas que hemos visto). Cuando exista, la
+# app la usa automáticamente:
+#
+#   1) De las ventas de BYMYCAR MADRID, las que tengan Canal Actual
+#      terminado en "_DIRECTO" se reasignan al concesionario ficticio
+#      "BMW DIRECTO" (código 12345) -el resto se quedan en BYMYCAR-.
+#   2) "Retail origen Remarketing" pasa a ser: todas las ventas Retail
+#      CUYO Canal Actual no sea de tipo "_MOBILITY" ni "_LANDING" (antes
+#      se usaba `Origen contiene "Remarketing"`, que se mantiene como
+#      alternativa mientras no exista la columna Canal Actual).
+#
+# Los tres patrones de abajo son búsquedas "contiene" (no hace falta
+# que coincidan exactas) porque aún no hemos visto valores reales de
+# esta columna -ajusta estas constantes en cuanto lleguen los primeros
+# datos reales si el texto no encaja.
+COLUMNA_CANAL_ACTUAL = "Canal Actual"
+PATRON_CANAL_DIRECTO = "DIRECTO"
+PATRONES_CANAL_EXCLUIDOS_REMARKETING = ["MOBILITY", "LANDING"]
+
+CONCESIONARIO_BYMYCAR = "BYMYCAR"  # texto a buscar en Concesión (case-insensitive)
+CODIGO_BMW_DIRECTO = 12345
+NOMBRE_BMW_DIRECTO = "BMW DIRECTO"

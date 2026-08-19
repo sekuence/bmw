@@ -92,4 +92,4 @@ else:
     st.page_link("pages/3_Ranking.py", label="➡️ Ver ranking de concesionarios", icon="🏆")
     st.page_link("pages/4_Exportar.py", label="➡️ Exportar a Excel", icon="⬇️")
     st.page_link("pages/5_Detalle_Vehiculos.py", label="➡️ Ver detalle de vehículos (como el Excel)", icon="🚗")
-    st.page_link("pages/6_Detalle_por_Pestana.py", label="➡️ Ver desglose por pestaña", icon="🗂️")
+    st.page_link("pages/6_Seguimiento_UC_Retail_Wholesale.py", label="➡️ Ver Seguimiento UC Retail & Wholesale", icon="🗂️")
