@@ -1,0 +1,123 @@
+"""KPIs completos de un concesionario+marca+periodo: junta lo calculado
+desde la BBDD (metrics.py) con lo introducido a mano (storage.py:
+objetivos, mercado <6 años, mystery shopping).
+
+Replica el bloque principal de la pestaña "Dealer Dashboard" del Excel
+original, incluidas las bandas de "ventas necesarias para alcanzar tal
+% de penetración" (con las mismas fórmulas -y las mismas
+inconsistencias numéricas que ya traía el Excel original-, para que
+los resultados cuadren con lo que la empresa ya conoce).
+"""
+import math
+
+from . import metrics, storage
+
+BANDAS_REMARKETING = {
+    "BMW": [0.18, 0.22, 0.27, 0.32],
+    "MINI": [0.15, 0.20, 0.25, 0.30],
+}
+
+# (umbral, numerador_para_llegar) -- tal cual estaban en el Excel original.
+BANDAS_BEV = {
+    "BMW": [(0.06, 0.05), (0.11, 0.10)],
+    "MINI": [(0.10, 0.05), (0.15, 0.10)],
+}
+
+
+def _roundup(x: float) -> int:
+    return int(math.ceil(round(x, 6)))
+
+
+def _objetivo_de(codigo_dealer: int, marca: str, metrica: str, meses: list[str]) -> float:
+    total = 0.0
+    for m in meses:
+        v = storage.get_valor("objetivos", {"codigo_dealer": codigo_dealer, "marca": marca, "metrica": metrica, "mes": m})
+        total += v or 0
+    return total
+
+
+def _mercado_de(codigo_dealer: int, marca: str, meses: list[str]) -> float | None:
+    total, encontrado = 0.0, False
+    for m in meses:
+        v = storage.get_valor("mercado_menos_6_anos", {"codigo_dealer": codigo_dealer, "marca": marca, "mes": m})
+        if v is not None:
+            total += v
+            encontrado = True
+    return total if encontrado else None
+
+
+def _mystery_shopping_de(codigo_dealer: int, marca: str, meses: list[str]) -> float | None:
+    from .config import MESES_S1
+
+    semestres = {"S1" if m in MESES_S1 else "S2" for m in meses}
+    if len(semestres) != 1:
+        return None  # el mystery shopping es semestral: sólo tiene sentido si el periodo cae en un único semestre
+    semestre = semestres.pop()
+    return storage.get_valor("mystery_shopping", {"codigo_dealer": codigo_dealer, "marca": marca, "semestre": semestre})
+
+
+def _bandas_remarketing_necesarias(marca: str, objetivo_retail: float, remarketing: float) -> list[dict]:
+    out = []
+    ratio = (remarketing / objetivo_retail) if objetivo_retail else None
+    for i, t in enumerate(BANDAS_REMARKETING[marca]):
+        if not objetivo_retail or (ratio is not None and ratio >= t):
+            necesarias = 0
+        elif i == 0:
+            necesarias = max(0, _roundup((t * objetivo_retail - remarketing) / (1 - t)))
+        else:
+            necesarias = max(0, _roundup(t * objetivo_retail - remarketing))
+        out.append({"umbral": t, "necesarias": necesarias})
+    return out
+
+
+def _bandas_bev_necesarias(marca: str, objetivo_retail: float, bev: float) -> list[dict]:
+    out = []
+    ratio = (bev / objetivo_retail) if objetivo_retail else None
+    for umbral, numerador in BANDAS_BEV[marca]:
+        if ratio is not None and ratio >= umbral:
+            necesarias = 0
+        elif not objetivo_retail:
+            necesarias = 0
+        else:
+            necesarias = max(0, _roundup((numerador * objetivo_retail - bev) / (1 - umbral)))
+        out.append({"umbral": umbral, "necesarias": necesarias})
+    return out
+
+
+def kpi_bloque(resumen, codigo_dealer: int, marca: str, periodo: str, mes_referencia: str | None = None) -> dict:
+    meses = metrics.meses_de_periodo(periodo, mes_referencia)
+    realizado = metrics.kpis_periodo(resumen, codigo_dealer, marca, periodo, mes_referencia)
+
+    objetivo_retail = _objetivo_de(codigo_dealer, marca, "Retail", meses)
+    objetivo_bev = _objetivo_de(codigo_dealer, marca, "BEV", meses)
+    mercado = _mercado_de(codigo_dealer, marca, meses)
+    mystery = _mystery_shopping_de(codigo_dealer, marca, meses)
+
+    retail = realizado["retail"]
+    bps = realizado["bps"]
+    remarketing = realizado["remarketing"]
+    bev = realizado["bev"]
+
+    ventas_bps_necesarias = (4 * retail) if bps == 0 else max(0, _roundup(4 * (retail - 1.25 * bps)))
+
+    return {
+        "meses_incluidos": meses,
+        "objetivo_retail": objetivo_retail,
+        "realizado_retail": retail,
+        "pct_cumplimiento_retail": (retail / objetivo_retail) if objetivo_retail else None,
+        "bps": bps,
+        "pct_bps": (bps / retail) if retail else None,
+        "ventas_bps_necesarias_para_25pct": ventas_bps_necesarias,
+        "remarketing": remarketing,
+        "pct_remarketing": (remarketing / retail) if retail else None,
+        "bandas_remarketing_necesarias": _bandas_remarketing_necesarias(marca, objetivo_retail, remarketing),
+        "objetivo_bev": objetivo_bev,
+        "bev": bev,
+        "pct_bev": (bev / retail) if retail else None,
+        "bandas_bev_necesarias": _bandas_bev_necesarias(marca, objetivo_retail, bev),
+        "wholesale_uc": realizado["wholesale_uc"],
+        "wholesale_yuc": realizado["wholesale_yuc"],
+        "mercado_menos_6_anos": mercado,
+        "pct_penetracion_mercado": (retail / mercado) if mercado else None,
+        "mystery_shopping": mystery,
+    }
