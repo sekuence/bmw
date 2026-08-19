@@ -6,9 +6,23 @@ import streamlit as st
 COLOR_BMW = "#0066B1"
 COLOR_MINI = "#F5811F"
 
+# Varios tonos de cada color de marca, para gráficos con más de una
+# serie (p.ej. Objetivo vs Realizado) sin perder la distinción BMW/MINI.
+PALETA_BMW = ["#0066B1", "#5B9BD5", "#A9CCE8"]
+PALETA_MINI = ["#F5811F", "#F7A85C", "#FBCB98"]
+
 
 def color_de(marca: str) -> str:
     return COLOR_BMW if marca == "BMW" else COLOR_MINI
+
+
+def paleta(marca: str, n: int) -> list[str]:
+    """n tonos del color de la marca, para pasar a color= en st.bar_chart
+    / st.line_chart y que BMW y MINI no compartan la misma paleta."""
+    colores = PALETA_BMW if marca == "BMW" else PALETA_MINI
+    if n <= len(colores):
+        return colores[:n]
+    return (colores * ((n // len(colores)) + 1))[:n]
 
 
 def encabezado(marca: str, extra: str = "") -> None:

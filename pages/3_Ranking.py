@@ -48,7 +48,7 @@ else:
             "% bev": st.column_config.NumberColumn(format="%.1f%%"),
         },
     )
-    st.bar_chart(tabla.set_index("concesionario")["retail"])
+    st.bar_chart(tabla.set_index("concesionario")["retail"], color=theme.color_de(marca))
 
     st.divider()
     st.subheader("🔎 Ver detalle de vehículos")
