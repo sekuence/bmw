@@ -78,10 +78,14 @@ guardados en `data/app.db` (SQLite) para los próximos meses — no hay
 que volver a escribirlos cada vez que subes un archivo de ventas
 nuevo.
 
-**Objetivos:** no hace falta teclearlos a mano si ya los tienes en el
-Excel de seguimiento original — la pestaña **"Importar objetivos"**
-lee de un tirón las columnas OBJ/Objetivo de `UC BMW 2026 BPS`,
-`UC MINI 2026 MINI NEXT`, `BEV BMW 2026` y `BEV MINI 2026`.
+**Objetivos:** vienen **precargados de fábrica** (`data/objetivos_default.csv`,
+extraído del Excel de seguimiento que ya nos pasaste) — no hace falta
+importar nada para verlos en el Dashboard. Cuando tengas objetivos
+nuevos de un mes futuro, actualízalos desde la pestaña **"Importar
+objetivos"** (lee de un tirón las columnas OBJ/Objetivo de
+`UC BMW 2026 BPS`, `UC MINI 2026 MINI NEXT`, `BEV BMW 2026` y
+`BEV MINI 2026` de un Excel de seguimiento) o a mano en "Objetivos
+Retail" / "Objetivos BEV".
 
 Esa misma página tiene una pestaña **"Ajustes manuales"** para corregir
 a mano, mes a mes, cualquier valor que la app haya calculado desde la
@@ -103,7 +107,10 @@ manda para ese concesionario/mes.
   del Excel original (UC BMW, BPS, BEV, Wholesale, igual para MINI, y
   MAESTRO), con el desglose mes a mes por concesionario -las columnas
   van agrupadas por mes (igual que en el Excel), no repetidas celda a
-  celda- e incluye la opción de agrupar por Grupo Propietario.
+  celda- e incluye la opción de agrupar por Grupo Propietario. Los
+  concesionarios salen **en el mismo orden y agrupados por distrito**
+  que en el Excel original (columna "Distrito" incluida), no
+  alfabéticamente.
 
 ## Estructura del proyecto
 

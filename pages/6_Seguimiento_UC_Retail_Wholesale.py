@@ -52,11 +52,14 @@ def _objetivo_pivot(marca: str, metrica: str) -> dict:
 
 
 def _dealers_de(marca: str, agrupar: bool) -> pd.DataFrame:
+    """Devuelve los concesionarios de la marca **en el mismo orden en que
+    aparecen en el Excel original** (agrupados por distrito, sin
+    reordenar alfabéticamente)."""
     col = "vende_bmw" if marca == "BMW" else "vende_mini"
     d = dealers[dealers[col] == "Si"]
     if agrupar:
-        return d[["grupo_propietario"]].drop_duplicates().sort_values("grupo_propietario")
-    return d.sort_values("concesionario")
+        return d[["grupo_propietario"]].drop_duplicates()
+    return d
 
 
 def _resumen_grupo(sub_marca: pd.DataFrame, clave, agrupar: bool, dealers_completo: pd.DataFrame) -> pd.DataFrame:
@@ -73,9 +76,20 @@ def _objetivo_grupo(pivot: dict, clave, mes: str, agrupar: bool, dealers_complet
     return sum(pivot.get((c, mes), 0) or 0 for c in codigos)
 
 
+def _distrito_de(d, agrupar: bool, dealers_completo: pd.DataFrame) -> str:
+    if not agrupar:
+        return "" if pd.isna(d["distrito"]) else str(int(d["distrito"]))
+    distritos = dealers_completo.loc[dealers_completo["grupo_propietario"] == d["grupo_propietario"], "distrito"].dropna().unique()
+    if len(distritos) == 1:
+        return str(int(distritos[0]))
+    return "Varios" if len(distritos) > 1 else ""
+
+
 def _construir(marca: str, agrupar: bool, sub_metricas: list[str], calculo, metrica_objetivo: str | None) -> pd.DataFrame:
     """sub_metricas: nombres de las columnas dentro de cada bloque mensual.
-    calculo(g_mes, obj) -> lista de valores en el mismo orden que sub_metricas."""
+    calculo(g_mes, obj) -> lista de valores en el mismo orden que sub_metricas.
+    Mantiene el mismo orden de concesionarios (por distrito) que el Excel
+    original."""
     dealers_completo = dealers[dealers["vende_bmw" if marca == "BMW" else "vende_mini"] == "Si"]
     filas_maestro = _dealers_de(marca, agrupar)
     sub_marca = resumen_ajustado[resumen_ajustado["marca"] == marca]
@@ -83,24 +97,21 @@ def _construir(marca: str, agrupar: bool, sub_metricas: list[str], calculo, metr
 
     etiqueta_id = "Grupo propietario" if agrupar else "Concesionario"
     columnas = pd.MultiIndex.from_tuples(
-        [(MESES_CORTOS[mes], sm) for mes in config.MESES for sm in sub_metricas], names=["Mes", ""]
+        [("", "Distrito"), ("", etiqueta_id)] + [(MESES_CORTOS[mes], sm) for mes in config.MESES for sm in sub_metricas]
     )
 
     filas = []
-    ids = []
     for _, d in filas_maestro.iterrows():
         clave = d["grupo_propietario"] if agrupar else int(d["codigo_dealer"])
-        ids.append(d["grupo_propietario"] if agrupar else d["concesionario"])
+        fila = [_distrito_de(d, agrupar, dealers_completo), d["grupo_propietario"] if agrupar else d["concesionario"]]
         g = _resumen_grupo(sub_marca, clave, agrupar, dealers_completo)
-        fila = []
         for mes in config.MESES:
             g_mes = g[g["mes"] == mes]
             obj = _objetivo_grupo(obj_pivot, clave, mes, agrupar, dealers_completo)
             fila.extend(calculo(g_mes, obj))
         filas.append(fila)
 
-    tabla = pd.DataFrame(filas, columns=columnas, index=pd.Index(ids, name=etiqueta_id))
-    return tabla
+    return pd.DataFrame(filas, columns=columnas)
 
 
 def tabla_retail_bps(marca: str, agrupar: bool) -> pd.DataFrame:
@@ -145,11 +156,11 @@ for tab, marca, tipo in [
         if tipo == "wholesale":
             st.caption("Pendiente de los datos que vas a pasar aparte para Wholesale -de momento se calcula UC/YUC desde la BBDD.")
         if tipo == "retail_bps":
-            st.dataframe(tabla_retail_bps(marca, agrupar), width="stretch", height=500)
+            st.dataframe(tabla_retail_bps(marca, agrupar), width="stretch", height=500, hide_index=True)
         elif tipo == "bev":
-            st.dataframe(tabla_bev(marca, agrupar), width="stretch", height=500)
+            st.dataframe(tabla_bev(marca, agrupar), width="stretch", height=500, hide_index=True)
         else:
-            st.dataframe(tabla_wholesale(marca, agrupar), width="stretch", height=500)
+            st.dataframe(tabla_wholesale(marca, agrupar), width="stretch", height=500, hide_index=True)
 
 with tabs[6]:
     st.caption("Maestro de concesionarios usado por la app (código, nombre, grupo propietario, marcas que vende).")

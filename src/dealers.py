@@ -11,7 +11,7 @@ DEALERS_CSV = Path(__file__).resolve().parent.parent / "data" / "dealers.csv"
 
 
 def load_dealers() -> pd.DataFrame:
-    df = pd.read_csv(DEALERS_CSV, dtype={"codigo_dealer": "Int64"})
+    df = pd.read_csv(DEALERS_CSV, dtype={"codigo_dealer": "Int64", "distrito": "Int64"})
     df["concesionario"] = df["concesionario"].str.strip()
     return df
 

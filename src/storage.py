@@ -3,6 +3,12 @@ archivo de ventas: objetivos (los pone Germán a mano cada mes),
 mystery shopping (llega en un Excel aparte) y tamaño de mercado
 (<6 años, para el % de penetración) que llega en otro Excel aparte.
 
+Los objetivos arrancan precargados con los que ya traía el Excel de
+seguimiento original (`data/objetivos_default.csv`), así que aparecen
+desde el primer momento sin tener que importar nada -en cuanto llegan
+objetivos nuevos de un mes futuro, se actualizan desde la pestaña
+"Importar objetivos" o a mano en "Objetivos y datos manuales".
+
 Se guarda en un único archivo data/app.db. Si el día de mañana esto se
 hostea online, este módulo es el único que habría que cambiar para
 apuntar a una base de datos real (Postgres, etc.) en vez de SQLite.
@@ -13,6 +19,7 @@ from pathlib import Path
 import pandas as pd
 
 DB_PATH = Path(__file__).resolve().parent.parent / "data" / "app.db"
+OBJETIVOS_DEFAULT_CSV = Path(__file__).resolve().parent.parent / "data" / "objetivos_default.csv"
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS objetivos (
@@ -59,7 +66,27 @@ def get_connection() -> sqlite3.Connection:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.executescript(SCHEMA)
+    _sembrar_objetivos_por_defecto(conn)
     return conn
+
+
+def _sembrar_objetivos_por_defecto(conn: sqlite3.Connection) -> None:
+    """La primera vez que se usa la app (tabla objetivos vacía), precarga
+    los objetivos que ya venían en el Excel de seguimiento original -así
+    aparecen en el Dashboard sin tener que pasar antes por "Importar
+    objetivos". Sólo se ejecuta si la tabla está vacía: en cuanto el
+    usuario guarde o importe algo, deja de tocarse."""
+    if not OBJETIVOS_DEFAULT_CSV.exists():
+        return
+    (count,) = conn.execute("SELECT COUNT(*) FROM objetivos").fetchone()
+    if count > 0:
+        return
+    datos = pd.read_csv(OBJETIVOS_DEFAULT_CSV)
+    conn.executemany(
+        "INSERT OR IGNORE INTO objetivos (codigo_dealer, marca, metrica, mes, valor) VALUES (?, ?, ?, ?, ?)",
+        datos[["codigo_dealer", "marca", "metrica", "mes", "valor"]].itertuples(index=False, name=None),
+    )
+    conn.commit()
 
 
 def upsert(table: str, keys: dict, valor: float) -> None:
