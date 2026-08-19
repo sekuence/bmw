@@ -124,4 +124,22 @@ def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
     df["yuc_uc"] = df["YUC/UC"].astype(str).str.strip().str.upper()
 
     otras_cols = [c for c in raw.columns if c not in COLUMNAS_DERIVADAS]
-    return df[COLUMNAS_DERIVADAS + otras_cols].reset_index(drop=True)
+    out = df[COLUMNAS_DERIVADAS + otras_cols].reset_index(drop=True)
+    return _sanear_para_mostrar(out)
+
+
+def _sanear_para_mostrar(df: pd.DataFrame) -> pd.DataFrame:
+    """Deja el DataFrame a prueba de errores al mostrarlo en tablas o
+    guardarlo (Streamlit/pyarrow no toleran columnas con tipos
+    mezclados, algo habitual en Excels reales: celdas con errores de
+    fórmula como #N/A o #NUM! mezcladas con números, fechas como texto
+    en unas filas y como número de serie en otras, nombres de columna
+    duplicados que pandas convierte en número, etc.)."""
+    df = df.copy()
+    df.columns = [str(c) for c in df.columns]  # nombres de columna siempre como texto
+
+    for col in df.columns:
+        if df[col].dtype == object:
+            df[col] = df[col].map(lambda v: v if pd.isna(v) else str(v))
+
+    return df

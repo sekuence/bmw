@@ -1,16 +1,12 @@
 """Punto de entrada de la app. Aquí se sube el archivo de ventas (BBDD)
 y se deja preparado en memoria para el resto de páginas (Dashboard,
 Objetivos, Ranking, Exportar)."""
-from pathlib import Path
-
 import pandas as pd
 import streamlit as st
 
 from src import config, dealers as dealers_mod, ingest, metrics
 
 st.set_page_config(page_title="Seguimiento UC Retail & Wholesale", page_icon="📊", layout="wide")
-
-CACHE_PATH = Path(__file__).resolve().parent / "data" / "ventas_cache.parquet"
 
 
 def _guardar_en_sesion(ventas_limpias: pd.DataFrame):
@@ -22,9 +18,6 @@ def _guardar_en_sesion(ventas_limpias: pd.DataFrame):
     st.session_state["dealers"] = dealers
     st.session_state["resumen"] = resumen
     st.session_state["cargado"] = True
-
-    CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    ventas_limpias.to_parquet(CACHE_PATH, index=False)
 
 
 st.title("📊 Seguimiento UC Retail & Wholesale")
@@ -46,11 +39,6 @@ with st.sidebar:
         else:
             _guardar_en_sesion(ventas_limpias)
             st.success(f"Cargadas {len(ventas_limpias):,} filas de venta.".replace(",", "."))
-    elif CACHE_PATH.exists() and "cargado" not in st.session_state:
-        if st.button("Usar el último archivo cargado en esta app"):
-            ventas_limpias = pd.read_parquet(CACHE_PATH)
-            _guardar_en_sesion(ventas_limpias)
-            st.rerun()
 
 if not st.session_state.get("cargado"):
     st.info("⬅️ Sube el archivo de ventas desde el panel de la izquierda para empezar.")
