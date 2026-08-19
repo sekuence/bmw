@@ -74,8 +74,8 @@ def _tabla_editable(
         st.success("Guardado.")
 
 
-tab_retail, tab_bev, tab_mercado, tab_mys = st.tabs(
-    ["Objetivos Retail", "Objetivos BEV", "Mercado <6 años", "Mystery Shopping"]
+tab_retail, tab_bev, tab_mercado, tab_mys, tab_ajustes = st.tabs(
+    ["Objetivos Retail", "Objetivos BEV", "Mercado <6 años", "Mystery Shopping", "Ajustes manuales"]
 )
 
 with tab_retail:
@@ -108,4 +108,35 @@ with tab_mys:
     _tabla_editable(
         "mystery_shopping", marca, ["S1", "S2"], "semestre", dealers[dealers[col] == "Si"],
         "mystery shopping",
+    )
+
+with tab_ajustes:
+    st.caption(
+        "Aquí puedes **corregir a mano** un valor que la app calculó desde el archivo de "
+        "ventas, para algún mes concreto -por ejemplo si un vehículo estaba mal marcado. "
+        "Deja la casilla en blanco para que se siga usando el valor calculado; si escribes "
+        "un número, ese número sustituye al calculado sólo para ese mes."
+    )
+    c1, c2 = st.columns(2)
+    with c1:
+        marca = st.radio("Marca", ["BMW", "MINI"], horizontal=True, key="marca_ajustes")
+    with c2:
+        metrica_label = st.selectbox("Métrica a corregir", list(config.METRICAS_AJUSTABLES.values()), key="metrica_ajustes")
+    metrica = next(k for k, v in config.METRICAS_AJUSTABLES.items() if v == metrica_label)
+    col = "vende_bmw" if marca == "BMW" else "vende_mini"
+    dealers_marca = dealers[dealers[col] == "Si"]
+
+    resumen = st.session_state.get("resumen")
+    if resumen is not None and not resumen.empty:
+        calculado = resumen[resumen["marca"] == marca].pivot_table(
+            index="codigo_dealer", columns="mes", values=metrica, fill_value=0
+        ).reindex(columns=config.MESES, fill_value=0)
+        calculado = calculado.merge(dealers_marca[["codigo_dealer", "concesionario"]], on="codigo_dealer", how="right").fillna(0)
+        st.markdown(f"**Valor calculado desde la BBDD ({metrica_label}):**")
+        st.dataframe(calculado.set_index("concesionario")[config.MESES], width="stretch")
+
+    st.markdown(f"**Corrección manual ({metrica_label}):**")
+    _tabla_editable(
+        "ajustes_manuales", marca, config.MESES, "mes", dealers_marca,
+        f"ajustes de {metrica_label}", extra_keys={"metrica": metrica},
     )

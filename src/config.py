@@ -40,3 +40,14 @@ BPS_MIN_KM = 6000
 HOJA_VENTAS = "BBDD"
 
 METRICAS = ["Retail", "BPS/MN", "Remarketing", "BEV"]
+
+# Métricas calculadas desde la BBDD que se pueden corregir a mano
+# (página "Objetivos y datos manuales" > pestaña "Ajustes manuales").
+METRICAS_AJUSTABLES = {
+    "retail": "Ventas Retail",
+    "bps": "BPS / MN",
+    "remarketing": "Retail origen Remarketing",
+    "bev": "BEV",
+    "wholesale_uc": "Wholesale UC",
+    "wholesale_yuc": "Wholesale YUC",
+}

@@ -61,6 +61,13 @@ guardados en `data/app.db` (SQLite) para los próximos meses — no hay
 que volver a escribirlos cada vez que subes un archivo de ventas
 nuevo.
 
+Esa misma página tiene una pestaña **"Ajustes manuales"** para corregir
+a mano, mes a mes, cualquier valor que la app haya calculado desde la
+BBDD (retail, BPS/MN, remarketing, BEV, wholesale UC/YUC) por si algún
+mes hace falta arreglar algo puntual. Si dejas la casilla en blanco se
+sigue usando el valor calculado; si escribes un número, ese número
+manda para ese concesionario/mes.
+
 ## Estructura del proyecto
 
 ```

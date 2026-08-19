@@ -6,7 +6,9 @@ concesionario, con una columna de "realizado" por mes y métrica.
 """
 import pandas as pd
 
-from . import config
+from . import config, storage
+
+METRICAS_CALCULADAS = ["retail", "bps", "remarketing", "bev", "wholesale_uc", "wholesale_yuc"]
 
 
 def build_monthly_summary(ventas: pd.DataFrame) -> pd.DataFrame:
@@ -57,6 +59,15 @@ def meses_de_periodo(periodo: str, mes_referencia: str | None = None) -> list[st
     raise ValueError(f"Periodo desconocido: {periodo}")
 
 
+def _ajustes_de(codigo_dealer: int, marca: str) -> dict:
+    """{(mes, metrica): valor} de correcciones manuales guardadas, si las hay."""
+    ajustes = storage.read_table("ajustes_manuales")
+    if ajustes.empty:
+        return {}
+    ajustes = ajustes[(ajustes["codigo_dealer"] == codigo_dealer) & (ajustes["marca"] == marca)]
+    return {(row["mes"], row["metrica"]): row["valor"] for _, row in ajustes.iterrows()}
+
+
 def kpis_periodo(
     resumen: pd.DataFrame,
     codigo_dealer: int,
@@ -65,22 +76,33 @@ def kpis_periodo(
     mes_referencia: str | None = None,
 ) -> dict:
     """Suma las métricas realizadas de un concesionario+marca para el
-    periodo pedido. Devuelve conteos, nunca None (0 si no hay ventas)."""
+    periodo pedido. Devuelve conteos, nunca None (0 si no hay ventas).
+
+    Si hay una corrección manual guardada para algún mes/métrica (página
+    "Objetivos y datos manuales" > pestaña "Ajustes manuales"), esa
+    corrección sustituye al valor calculado de la BBDD para ese mes
+    antes de sumar el periodo."""
     meses = meses_de_periodo(periodo, mes_referencia)
     sub = resumen[
         (resumen["codigo_dealer"] == codigo_dealer)
         & (resumen["marca"] == marca)
         & (resumen["mes"].isin(meses))
-    ]
-    return {
-        "retail": int(sub["retail"].sum()),
-        "bps": int(sub["bps"].sum()),
-        "remarketing": int(sub["remarketing"].sum()),
-        "bev": int(sub["bev"].sum()),
-        "wholesale_uc": int(sub["wholesale_uc"].sum()),
-        "wholesale_yuc": int(sub["wholesale_yuc"].sum()),
-        "meses_incluidos": meses,
-    }
+    ].set_index("mes")
+
+    ajustes = _ajustes_de(codigo_dealer, marca)
+
+    totales = {}
+    for metrica in METRICAS_CALCULADAS:
+        total = 0
+        for mes in meses:
+            if (mes, metrica) in ajustes:
+                total += ajustes[(mes, metrica)]
+            elif mes in sub.index:
+                total += sub.loc[mes, metrica]
+        totales[metrica] = int(total)
+
+    totales["meses_incluidos"] = meses
+    return totales
 
 
 def ranking_periodo(

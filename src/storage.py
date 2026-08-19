@@ -39,6 +39,19 @@ CREATE TABLE IF NOT EXISTS mystery_shopping (
     valor REAL NOT NULL,
     PRIMARY KEY (codigo_dealer, marca, semestre)
 );
+
+-- Correcciones manuales sobre un valor CALCULADO desde la BBDD (retail,
+-- bps, remarketing, bev, wholesale_uc, wholesale_yuc), por si algún mes
+-- hay que arreglar algo a mano. Si existe una fila aquí, sustituye al
+-- valor calculado para ese concesionario/marca/mes/métrica.
+CREATE TABLE IF NOT EXISTS ajustes_manuales (
+    codigo_dealer INTEGER NOT NULL,
+    marca TEXT NOT NULL,
+    metrica TEXT NOT NULL,
+    mes TEXT NOT NULL,
+    valor REAL NOT NULL,
+    PRIMARY KEY (codigo_dealer, marca, metrica, mes)
+);
 """
 
 
