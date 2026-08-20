@@ -83,18 +83,19 @@ def read_bbdd(file_obj) -> pd.DataFrame:
 COLUMNAS_DERIVADAS = [
     "codigo_dealer", "concesionario", "marca", "mes",
     "es_retail", "es_wholesale", "es_bps", "es_remarketing", "es_bev", "yuc_uc",
+    "es_bymycar_directo",
 ]
 
 
-def _reasignar_bymycar_directo(df: pd.DataFrame, canal_actual: pd.Series) -> None:
-    """Las ventas de BYMYCAR cuyo Canal Actual sea de tipo "_DIRECTO" se
-    reasignan al concesionario ficticio BMW DIRECTO (código 12345); el
-    resto se queda en BYMYCAR tal cual. Modifica `df` in place."""
+def _marcar_bymycar_directo(df: pd.DataFrame, canal_actual: pd.Series) -> pd.Series:
+    """BYMYCAR no tiene un concesionario "BMW DIRECTO" aparte en la BBDD
+    -no existe ese código ni ese nombre-: es la propia BYMYCAR, pero las
+    ventas cuyo Canal Actual sea de tipo "_DIRECTO" se cuentan aparte
+    (no dentro del Retail/BPS/BEV normal de BYMYCAR). Devuelve el flag
+    es_bymycar_directo, no modifica el concesionario de la fila."""
     es_bymycar = df["concesionario"].str.upper().str.contains(config.CONCESIONARIO_BYMYCAR, na=False)
     es_directo = canal_actual.str.contains(config.PATRON_CANAL_DIRECTO, na=False)
-    mask = es_bymycar & es_directo
-    df.loc[mask, "codigo_dealer"] = config.CODIGO_BMW_DIRECTO
-    df.loc[mask, "concesionario"] = config.NOMBRE_BMW_DIRECTO
+    return es_bymycar & es_directo
 
 
 def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
@@ -124,7 +125,9 @@ def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
     canal_actual = None
     if config.COLUMNA_CANAL_ACTUAL in df.columns:
         canal_actual = df[config.COLUMNA_CANAL_ACTUAL].astype(str).str.strip().str.upper()
-        _reasignar_bymycar_directo(df, canal_actual)
+        df["es_bymycar_directo"] = _marcar_bymycar_directo(df, canal_actual)
+    else:
+        df["es_bymycar_directo"] = False
 
     motivo = df["Motivo venta"].astype(str).str.strip().str.upper()
     df["es_retail"] = motivo.eq("RETAIL")

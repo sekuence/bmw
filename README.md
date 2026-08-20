@@ -57,8 +57,11 @@ En cuanto subas un archivo que ya traiga `Canal Actual`, la app la
 detecta sola (no hay que tocar nada) y activa:
 
 1. De las ventas de **BYMYCAR**, las que tengan `Canal Actual`
-   terminado en "…DIRECTO" se reasignan al concesionario **BMW DIRECTO**
-   (código `12345`, ya está en el maestro); el resto se queda en BYMYCAR.
+   terminado en "…DIRECTO" dejan de contar en el Retail/BPS/BEV normal
+   de BYMYCAR y se muestran aparte, en un apartado **"BMW DIRECTO"**
+   dentro del propio Dashboard de BYMYCAR -**no existe un concesionario
+   "BMW DIRECTO" en la BBDD** (ni código propio ni ese nombre): sigue
+   siendo BYMYCAR, sólo que esas ventas se cuentan por separado-.
 2. **Retail origen Remarketing** = toda venta Retail *excepto* las de
    canal "…MOBILITY" o "…LANDING".
 
@@ -171,7 +174,7 @@ src/
   guia.py       HTML de las tablas-guía de bonificación
   theme.py      Colores de marca (azul BMW / naranja MINI) para toda la app
 data/
-  dealers.csv   Maestro de ~53 concesionarios BMW/MINI (código, nombre, grupo propietario)
+  dealers.csv   Maestro de ~52 concesionarios BMW/MINI (código, nombre, grupo propietario)
   app.db        (se crea solo) objetivos y datos manuales
 ```
 

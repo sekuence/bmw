@@ -60,15 +60,17 @@ FLAG_DE_METRICA = {
     "ventas_totales": None,
 }
 
-# --- Regla BYMYCAR / BMW DIRECTO y "Retail origen Remarketing" -------
+# --- Regla BYMYCAR "Directo" y "Retail origen Remarketing" -----------
 #
 # Pendiente de que la BBDD incorpore la columna "Canal Actual" (todavía
 # no está en los archivos de ventas que hemos visto). Cuando exista, la
 # app la usa automáticamente:
 #
-#   1) De las ventas de BYMYCAR MADRID, las que tengan Canal Actual
-#      terminado en "_DIRECTO" se reasignan al concesionario ficticio
-#      "BMW DIRECTO" (código 12345) -el resto se quedan en BYMYCAR-.
+#   1) De las ventas de BYMYCAR, las que tengan Canal Actual terminado
+#      en "_DIRECTO" se cuentan aparte, con la etiqueta "BMW DIRECTO"
+#      -NO existe un concesionario con ese nombre ni con código propio
+#      en la BBDD: sigue siendo BYMYCAR, sólo que esas ventas no entran
+#      en su Retail/BPS/BEV normal, se muestran en un apartado aparte-.
 #   2) "Retail origen Remarketing" pasa a ser: todas las ventas Retail
 #      CUYO Canal Actual no sea de tipo "_MOBILITY" ni "_LANDING" (antes
 #      se usaba `Origen contiene "Remarketing"`, que se mantiene como
@@ -83,5 +85,4 @@ PATRON_CANAL_DIRECTO = "DIRECTO"
 PATRONES_CANAL_EXCLUIDOS_REMARKETING = ["MOBILITY", "LANDING"]
 
 CONCESIONARIO_BYMYCAR = "BYMYCAR"  # texto a buscar en Concesión (case-insensitive)
-CODIGO_BMW_DIRECTO = 12345
-NOMBRE_BMW_DIRECTO = "BMW DIRECTO"
+ETIQUETA_BYMYCAR_DIRECTO = "BMW DIRECTO"

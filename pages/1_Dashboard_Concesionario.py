@@ -1,6 +1,6 @@
 import streamlit as st
 
-from src import config, dashboard, detail, guia, ingest, theme
+from src import config, dashboard, detail, guia, ingest, metrics, theme
 
 st.set_page_config(page_title="Dashboard por concesionario", page_icon="📈", layout="wide")
 
@@ -71,10 +71,17 @@ for col, marca in zip(cols, marcas_disponibles):
         st.caption("Meses incluidos: " + ", ".join(meses))
 
         if "BYMYCAR" in concesionario.upper():
-            st.info(
-                "ℹ️ Las ventas de BYMYCAR con canal \"…DIRECTO\" se contabilizan aparte, en "
-                "**BMW DIRECTO** (selecciónalo en el desplegable de Concesión para verlas)."
-            )
+            directo = metrics.kpis_bymycar_directo(ventas, marca, periodo, mes_referencia)
+            with st.container(border=True):
+                st.markdown("**🅱️ BMW DIRECTO** (ventas de BYMYCAR con Canal Actual \"…DIRECTO\")")
+                if remarketing_disponible:
+                    st.caption("No cuentan en el Retail/BPS/BEV de BYMYCAR de arriba -se muestran aparte-.")
+                    d1, d2, d3 = st.columns(3)
+                    d1.metric("Retail", directo["retail"])
+                    d2.metric("BPS/MN", directo["bps"])
+                    d3.metric("BEV", directo["bev"])
+                else:
+                    st.caption("No disponible -depende de la columna Canal Actual, que aún no trae el archivo de ventas.")
 
         m1, m2 = st.columns(2)
         m1.metric("Objetivo Retail", f"{k['objetivo_retail']:.0f}")

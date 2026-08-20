@@ -18,9 +18,17 @@ def build_monthly_summary(ventas: pd.DataFrame) -> pd.DataFrame:
 
     Todas las métricas son dentro de Retail (`es_retail`), salvo
     `ventas_totales`, que cuenta TODO el inventario vendido ese mes
-    (Retail + Wholesale)."""
+    (Retail + Wholesale).
+
+    Las ventas de BYMYCAR marcadas como "Directo" (`es_bymycar_directo`)
+    quedan fuera de este resumen -no cuentan para BYMYCAR ni para
+    ningún concesionario-; se calculan aparte con
+    `kpis_bymycar_directo()` para el apartado específico del Dashboard."""
     if ventas.empty:
         return pd.DataFrame(columns=["codigo_dealer", "marca", "mes", *METRICAS_CALCULADAS])
+
+    if "es_bymycar_directo" in ventas.columns:
+        ventas = ventas[~ventas["es_bymycar_directo"]]
 
     g = ventas.groupby(["codigo_dealer", "marca", "mes"], as_index=False).agg(
         retail=("es_retail", "sum"),
@@ -132,6 +140,24 @@ def kpis_periodo(
 
     totales["meses_incluidos"] = meses
     return totales
+
+
+def kpis_bymycar_directo(ventas: pd.DataFrame, marca: str, periodo: str, mes_referencia: str | None = None) -> dict:
+    """KPIs de las ventas de BYMYCAR marcadas como "Directo" (Canal
+    Actual "…DIRECTO"), que no cuentan en el resumen normal de ningún
+    concesionario. Se calculan directamente sobre `ventas` (no sobre
+    `resumen`, del que están excluidas)."""
+    meses = meses_de_periodo(periodo, mes_referencia)
+    if "es_bymycar_directo" not in ventas.columns:
+        return {"retail": 0, "bps": 0, "bev": 0, "meses_incluidos": meses}
+
+    sub = ventas[ventas["es_bymycar_directo"] & (ventas["marca"] == marca) & (ventas["mes"].isin(meses))]
+    return {
+        "retail": int(sub["es_retail"].sum()),
+        "bps": int(sub["es_bps"].sum()),
+        "bev": int(sub["es_bev"].sum()),
+        "meses_incluidos": meses,
+    }
 
 
 def ranking_periodo(
