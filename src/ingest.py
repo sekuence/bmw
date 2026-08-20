@@ -103,10 +103,10 @@ def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
     Modelo, Vendedor, precios, fechas...) para poder consultar el
     detalle vehículo a vehículo en la app, tal cual como en el Excel.
 
-    Todas las métricas de negocio (retail, BPS/MN, remarketing, BEV) se
-    calculan siempre dentro de `Motivo venta` = "Retail" -salvo
-    "ventas totales", que cuenta todo el inventario vendido
-    independientemente del motivo-.
+    Retail y BPS/MN se calculan dentro de `Motivo venta` = "Retail".
+    BEV y "ventas totales" cuentan TODO el inventario vendido
+    (Retail + Wholesale), sin filtrar por motivo. Remarketing depende
+    de la columna "Canal Actual" (ver más abajo).
     """
     df = raw.dropna(subset=["Chasis"]).copy()
 
@@ -137,23 +137,31 @@ def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
 
     if canal_actual is not None:
         # Retail origen Remarketing = todo Retail salvo los canales
-        # "_MOBILITY" / "_LANDING" (ver config.py).
+        # "_MOBILITY" / "_LANDING" (ver config.py). Única fuente válida:
+        # la columna "Canal Actual".
         excluidos = canal_actual.str.contains("|".join(config.PATRONES_CANAL_EXCLUIDOS_REMARKETING), na=False)
         df["es_remarketing"] = df["es_retail"] & ~excluidos
     else:
-        # Alternativa mientras no exista la columna "Canal Actual" en la BBDD.
-        origen = df["Origen"].astype(str).str.strip().str.upper()
-        df["es_remarketing"] = origen.str.contains("REMARKETING") & df["es_retail"]
+        # Sin la columna "Canal Actual" no hay forma fiable de calcular
+        # Retail origen Remarketing -no se usa ninguna alternativa
+        # (p.ej. la columna "Origen" no representa lo mismo).
+        df["es_remarketing"] = False
 
-    # BEV se determina con la columna COMB, dentro de las ventas Retail.
+    # BEV = todas las ventas BEV (Retail + Wholesale), no sólo Retail.
     comb = df["COMB"].astype(str).str.strip().str.upper()
-    df["es_bev"] = comb.eq("BEV") & df["es_retail"]
+    df["es_bev"] = comb.eq("BEV")
 
     df["yuc_uc"] = df["YUC/UC"].astype(str).str.strip().str.upper()
 
     otras_cols = [c for c in raw.columns if c not in COLUMNAS_DERIVADAS]
     out = df[COLUMNAS_DERIVADAS + otras_cols].reset_index(drop=True)
     return _sanear_para_mostrar(out)
+
+
+def remarketing_disponible(ventas: pd.DataFrame) -> bool:
+    """True si el archivo de ventas cargado trae la columna 'Canal
+    Actual' -única fuente válida para 'Retail origen Remarketing'-."""
+    return config.COLUMNA_CANAL_ACTUAL in ventas.columns
 
 
 def _sanear_para_mostrar(df: pd.DataFrame) -> pd.DataFrame:

@@ -1,6 +1,6 @@
 import streamlit as st
 
-from src import config, dashboard, detail, guia, theme
+from src import config, dashboard, detail, guia, ingest, theme
 
 st.set_page_config(page_title="Dashboard por concesionario", page_icon="📈", layout="wide")
 
@@ -53,12 +53,19 @@ if fila["vende_bmw"] == "Si":
 if fila["vende_mini"] == "Si":
     marcas_disponibles.append("MINI")
 
+remarketing_disponible = ingest.remarketing_disponible(ventas)
+if not remarketing_disponible:
+    st.info(
+        "ℹ️ \"Retail origen Remarketing\" no está disponible todavía -depende de la columna "
+        "**Canal Actual**, que aún no trae el archivo de ventas."
+    )
+
 cols = st.columns(len(marcas_disponibles)) if marcas_disponibles else []
 
 for col, marca in zip(cols, marcas_disponibles):
     with col:
         theme.encabezado(marca)
-        k = dashboard.kpi_bloque(resumen, codigo_dealer, marca, periodo, mes_referencia)
+        k = dashboard.kpi_bloque(resumen, codigo_dealer, marca, periodo, mes_referencia, remarketing_disponible)
         meses = k["meses_incluidos"]
 
         st.caption("Meses incluidos: " + ", ".join(meses))
@@ -88,15 +95,18 @@ for col, marca in zip(cols, marcas_disponibles):
         _boton_detalle(marca, "bps", meses, "BPS / MN")
 
         st.markdown("**Retail origen Remarketing**")
-        r1, r2 = st.columns(2)
-        r1.metric("Ventas remarketing", f"{k['remarketing']:.0f}")
-        r2.metric("% sobre retail", f"{k['pct_remarketing']*100:.1f}%" if k["pct_remarketing"] is not None else "—")
-        with st.expander("Uds. necesarias para alcanzar cada tramo de % remarketing"):
-            for banda in k["bandas_remarketing_necesarias"]:
-                st.write(f"≥ {banda['umbral']*100:.0f}% → faltan **{banda['necesarias']}** uds.")
-        _boton_detalle(marca, "remarketing", meses, "Remarketing")
+        if remarketing_disponible:
+            r1, r2 = st.columns(2)
+            r1.metric("Ventas remarketing", f"{k['remarketing']:.0f}")
+            r2.metric("% sobre retail", f"{k['pct_remarketing']*100:.1f}%" if k["pct_remarketing"] is not None else "—")
+            with st.expander("Uds. necesarias para alcanzar cada tramo de % remarketing"):
+                for banda in k["bandas_remarketing_necesarias"]:
+                    st.write(f"≥ {banda['umbral']*100:.0f}% → faltan **{banda['necesarias']}** uds.")
+            _boton_detalle(marca, "remarketing", meses, "Remarketing")
+        else:
+            st.caption("No disponible -falta la columna Canal Actual en el archivo de ventas.")
 
-        st.markdown("**BEV**")
+        st.markdown("**BEV** (todas las ventas BEV, Retail + Wholesale)")
         e1, e2 = st.columns(2)
         e1.metric("Ventas BEV", f"{k['bev']:.0f}", help=f"Objetivo: {k['objetivo_bev']:.0f}")
         e2.metric("% BEV sobre retail", f"{k['pct_bev']*100:.1f}%" if k["pct_bev"] is not None else "—")
@@ -104,12 +114,6 @@ for col, marca in zip(cols, marcas_disponibles):
             for banda in k["bandas_bev_necesarias"]:
                 st.write(f"≥ {banda['umbral']*100:.0f}% → faltan **{banda['necesarias']}** uds.")
         _boton_detalle(marca, "bev", meses, "BEV")
-
-        st.markdown("**Wholesale**")
-        w1, w2 = st.columns(2)
-        w1.metric("UC", k["wholesale_uc"])
-        w2.metric("YUC", k["wholesale_yuc"])
-        _boton_detalle(marca, "wholesale_uc", meses, "Wholesale UC")
 
         st.markdown("**Ventas totales (Retail + Wholesale)**")
         st.metric("Total vehículos vendidos", k["ventas_totales"])
@@ -134,11 +138,13 @@ for col, marca in zip(cols, marcas_disponibles):
         bono = k["bonificacion"]
         if bono["total"] is not None:
             bo1, bo2, bo3 = st.columns(3)
-            bo1.metric("Base (matriz)", f"{bono['base']:.0f} €")
-            bo2.metric("Multiplicador BEV", f"x{bono['multiplicador']:.2f}")
-            bo3.metric("Total estimado", f"{bono['total']:.0f} €")
+            bo1.metric("€ / vehículo (matriz x BEV)", f"{bono['total']:.2f} €", help=f"Base {bono['base']:.0f} € x multiplicador BEV x{bono['multiplicador']:.2f}")
+            bo2.metric("Ventas Retail", f"{k['realizado_retail']:.0f}")
+            bo3.metric("Total a cobrar", f"{bono['total_a_cobrar']:.0f} €" if bono["total_a_cobrar"] is not None else "—")
             if k["cumple_penetracion_bps"] is False or k["cumple_mystery_shopping"] is False:
                 st.warning("⚠️ No cumple algún mínimo (penetración BPS/MN y/o Mystery Shopping) -puede que este importe no aplique.")
+        elif not remarketing_disponible:
+            st.caption("No se puede calcular todavía -depende de \"Retail origen Remarketing\" (falta la columna Canal Actual).")
         else:
             st.caption("Sin objetivo o sin ventas suficientes para ubicarlo en la matriz de bonificación.")
         with st.expander("📖 Ver guía de bonificación"):
@@ -146,7 +152,7 @@ for col, marca in zip(cols, marcas_disponibles):
 
         st.divider()
         st.markdown("**Evolución mensual**")
-        evolucion = dashboard.evolucion_mensual(resumen, codigo_dealer, marca)
+        evolucion = dashboard.evolucion_mensual(resumen, codigo_dealer, marca, remarketing_disponible)
         if evolucion.empty:
             st.caption("Todavía no hay ventas cargadas para esta marca.")
         else:
@@ -154,4 +160,5 @@ for col, marca in zip(cols, marcas_disponibles):
             with tab_retail:
                 st.bar_chart(evolucion[["Objetivo Retail", "Realizado Retail"]], color=theme.paleta(marca, 2))
             with tab_otros:
-                st.line_chart(evolucion[["BPS/MN", "Remarketing", "BEV"]], color=theme.paleta(marca, 3))
+                cols_otros = ["BPS/MN"] + (["Remarketing"] if remarketing_disponible else []) + ["BEV"]
+                st.line_chart(evolucion[cols_otros], color=theme.paleta(marca, len(cols_otros)))

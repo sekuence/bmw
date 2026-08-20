@@ -5,7 +5,7 @@ mes -igual que en el Excel- en vez de repetir el mes en cada celda."""
 import pandas as pd
 import streamlit as st
 
-from src import config, metrics, storage, theme
+from src import config, ingest, metrics, storage, theme
 
 st.set_page_config(page_title="Seguimiento UC Retail & Wholesale", page_icon="🗂️", layout="wide")
 
@@ -24,7 +24,8 @@ st.caption(
     "el mismo desglose mes a mes por concesionario que ya conoces."
 )
 
-if config.COLUMNA_CANAL_ACTUAL in ventas.columns:
+remarketing_disponible = ingest.remarketing_disponible(ventas)
+if remarketing_disponible:
     st.success(
         "✅ La columna **Canal Actual** está presente: \"Retail origen Remarketing\" se calcula "
         "con ella, y las ventas de BYMYCAR con canal \"…DIRECTO\" ya se están reasignando a "
@@ -32,10 +33,10 @@ if config.COLUMNA_CANAL_ACTUAL in ventas.columns:
     )
 else:
     st.info(
-        "ℹ️ Todavía no hay columna **Canal Actual** en este archivo de ventas. Mientras tanto, "
-        "\"Retail origen Remarketing\" se calcula con la columna `Origen` (contiene "
-        "\"Remarketing\") y no se reasigna nada a BMW DIRECTO. En cuanto subas un archivo que "
-        "ya la traiga, la app cambia sola a la regla nueva."
+        "ℹ️ Todavía no hay columna **Canal Actual** en este archivo de ventas, así que "
+        "\"Retail origen Remarketing\" (columnas RMK / %RMK) no se puede calcular -salen en "
+        "blanco- y no se reasigna nada a BMW DIRECTO. En cuanto subas un archivo que ya la "
+        "traiga, la app cambia sola a la regla nueva."
     )
 
 resumen_ajustado = metrics.aplicar_ajustes(resumen)
@@ -118,11 +119,15 @@ def tabla_retail_bps(marca: str, agrupar: bool) -> pd.DataFrame:
     def calculo(g_mes, obj):
         re = int(g_mes["retail"].sum())
         bps = int(g_mes["bps"].sum())
-        rmk = int(g_mes["remarketing"].sum())
+        if remarketing_disponible:
+            rmk = int(g_mes["remarketing"].sum())
+            rmk_pct = round(rmk / re * 100, 1) if re else None
+        else:
+            rmk, rmk_pct = None, None
         return [
             obj, re,
             bps, round(bps / re * 100, 1) if re else None,
-            rmk, round(rmk / re * 100, 1) if re else None,
+            rmk, rmk_pct,
         ]
     return _construir(marca, agrupar, ["OBJ", "RE", "BPS", "%BPS", "RMK", "%RMK"], calculo, "Retail")
 

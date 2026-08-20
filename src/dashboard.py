@@ -86,7 +86,14 @@ def _bandas_bev_necesarias(marca: str, objetivo_retail: float, bev: float) -> li
     return out
 
 
-def kpi_bloque(resumen, codigo_dealer: int, marca: str, periodo: str, mes_referencia: str | None = None) -> dict:
+def kpi_bloque(
+    resumen,
+    codigo_dealer: int,
+    marca: str,
+    periodo: str,
+    mes_referencia: str | None = None,
+    remarketing_disponible: bool = True,
+) -> dict:
     meses = metrics.meses_de_periodo(periodo, mes_referencia)
     realizado = metrics.kpis_periodo(resumen, codigo_dealer, marca, periodo, mes_referencia)
 
@@ -97,15 +104,31 @@ def kpi_bloque(resumen, codigo_dealer: int, marca: str, periodo: str, mes_refere
 
     retail = realizado["retail"]
     bps = realizado["bps"]
-    remarketing = realizado["remarketing"]
     bev = realizado["bev"]
 
     ventas_bps_necesarias = (4 * retail) if bps == 0 else max(0, _roundup(4 * (retail - 1.25 * bps)))
 
     pct_cumplimiento_retail = (retail / objetivo_retail) if objetivo_retail else None
     pct_bps = (bps / retail) if retail else None
-    pct_remarketing = (remarketing / retail) if retail else None
     pct_bev = (bev / retail) if retail else None
+
+    # "Retail origen Remarketing" sólo se puede calcular con la columna
+    # "Canal Actual" -si no está disponible en el archivo cargado, se
+    # deja en None (no se inventa un 0 ni una alternativa).
+    if remarketing_disponible:
+        remarketing = realizado["remarketing"]
+        pct_remarketing = (remarketing / retail) if retail else None
+        bandas_remarketing = _bandas_remarketing_necesarias(marca, objetivo_retail, remarketing)
+    else:
+        remarketing = None
+        pct_remarketing = None
+        bandas_remarketing = []
+
+    bono = bonus.calcular(marca, pct_cumplimiento_retail, pct_remarketing, pct_bev)
+    if bono["total"] is not None:
+        bono["total_a_cobrar"] = round(bono["total"] * retail, 2)
+    else:
+        bono["total_a_cobrar"] = None
 
     return {
         "meses_incluidos": meses,
@@ -117,7 +140,7 @@ def kpi_bloque(resumen, codigo_dealer: int, marca: str, periodo: str, mes_refere
         "ventas_bps_necesarias_para_25pct": ventas_bps_necesarias,
         "remarketing": remarketing,
         "pct_remarketing": pct_remarketing,
-        "bandas_remarketing_necesarias": _bandas_remarketing_necesarias(marca, objetivo_retail, remarketing),
+        "bandas_remarketing_necesarias": bandas_remarketing,
         "objetivo_bev": objetivo_bev,
         "bev": bev,
         "pct_bev": pct_bev,
@@ -130,30 +153,34 @@ def kpi_bloque(resumen, codigo_dealer: int, marca: str, periodo: str, mes_refere
         "mystery_shopping": mystery,
         "cumple_penetracion_bps": bonus.cumple_penetracion_bps(pct_bps),
         "cumple_mystery_shopping": bonus.cumple_mystery_shopping(mystery),
-        "bonificacion": bonus.calcular(marca, pct_cumplimiento_retail, pct_remarketing, pct_bev),
+        "bonificacion": bono,
     }
 
 
-def evolucion_mensual(resumen: pd.DataFrame, codigo_dealer: int, marca: str) -> pd.DataFrame:
+def evolucion_mensual(resumen: pd.DataFrame, codigo_dealer: int, marca: str, remarketing_disponible: bool = True) -> pd.DataFrame:
     """Serie mes a mes (Objetivo vs Realizado, BPS/MN, Remarketing, BEV)
     para el gráfico del Dashboard. Sólo incluye los meses que ya tienen
     ventas cargadas para ese concesionario+marca."""
     sub = resumen[(resumen["codigo_dealer"] == codigo_dealer) & (resumen["marca"] == marca)]
     meses_con_datos = sorted(sub["mes"].unique(), key=config.MESES.index)
 
-    columnas = ["mes", "Objetivo Retail", "Realizado Retail", "BPS/MN", "Remarketing", "BEV"]
+    columnas = ["mes", "Objetivo Retail", "Realizado Retail", "BPS/MN", "BEV"]
+    if remarketing_disponible:
+        columnas.append("Remarketing")
     if not meses_con_datos:
         return pd.DataFrame(columns=columnas).set_index("mes")
 
     filas = []
     for mes in meses_con_datos:
         k = metrics.kpis_periodo(resumen, codigo_dealer, marca, mes)
-        filas.append({
+        fila = {
             "mes": mes,
             "Objetivo Retail": _objetivo_de(codigo_dealer, marca, "Retail", [mes]),
             "Realizado Retail": k["retail"],
             "BPS/MN": k["bps"],
-            "Remarketing": k["remarketing"],
             "BEV": k["bev"],
-        })
+        }
+        if remarketing_disponible:
+            fila["Remarketing"] = k["remarketing"]
+        filas.append(fila)
     return pd.DataFrame(filas, columns=columnas).set_index("mes")

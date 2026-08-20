@@ -31,8 +31,8 @@ izquierdo y navega por las páginas del menú lateral.
 |---|---|
 | Ventas Retail | `Motivo venta` = "Retail" |
 | BPS / MN | `BPS FISCALGES` = "Sí", dentro de las ventas Retail |
-| Retail origen Remarketing | Ver más abajo -depende de si existe la columna `Canal Actual`- |
-| BEV | `COMB` = "BEV", dentro de Retail |
+| Retail origen Remarketing | Ver más abajo -**sólo** con la columna `Canal Actual`- |
+| BEV | `COMB` = "BEV" -**todas** las ventas BEV, Retail + Wholesale- |
 | Wholesale UC / YUC | Ventas no-Retail, separadas por `YUC/UC` |
 
 **Concesionario y agrupación temporal:** se usa `Código INT` (código de
@@ -41,19 +41,21 @@ cual vienen en la BBDD.
 
 ### Regla BYMYCAR / BMW DIRECTO y Remarketing (pendiente de la columna `Canal Actual`)
 
-La BBDD todavía no trae la columna **`Canal Actual`**, pero en cuanto
-la incluyas la app la detecta sola (no hay que tocar nada) y activa:
+**"Retail origen Remarketing" sólo se calcula con la columna
+`Canal Actual`.** Mientras esa columna no exista en el archivo de
+ventas (todavía no existe, pero existirá), la app **no inventa un
+valor alternativo**: lo muestra como "no disponible" en el Dashboard y
+en blanco en "Seguimiento UC Retail & Wholesale", y la Bonificación
+estimada tampoco se puede calcular (depende de ese %).
+
+En cuanto subas un archivo que ya traiga `Canal Actual`, la app la
+detecta sola (no hay que tocar nada) y activa:
 
 1. De las ventas de **BYMYCAR**, las que tengan `Canal Actual`
    terminado en "…DIRECTO" se reasignan al concesionario **BMW DIRECTO**
    (código `12345`, ya está en el maestro); el resto se queda en BYMYCAR.
-2. **Retail origen Remarketing** pasa a ser: toda venta Retail *excepto*
-   las de canal "…MOBILITY" o "…LANDING".
-
-Mientras tanto (sin esa columna), Remarketing se sigue calculando como
-antes: `Origen` contiene "Remarketing". La página **"Seguimiento UC
-Retail & Wholesale"** te avisa arriba de cuál de las dos reglas está
-activa en cada archivo que subas.
+2. **Retail origen Remarketing** = toda venta Retail *excepto* las de
+   canal "…MOBILITY" o "…LANDING".
 
 Los patrones ("contiene DIRECTO/MOBILITY/LANDING") son una suposición
 razonable hecha sin haber visto datos reales de esa columna todavía
@@ -104,10 +106,12 @@ El **Dashboard por concesionario** incluye además, por marca:
 
 - Semáforo (verde/rojo) de los dos mínimos exigidos: **penetración
   BPS/MN ≥ 80%** y **Mystery Shopping ≥ 90%**.
-- **Bonificación estimada**: importe base según la matriz de
+- **Bonificación estimada**: € por vehículo según la matriz de
   cumplimiento objetivo Retail x % Retail origen Remarketing,
-  multiplicado por el multiplicador de % BEV -con aviso si no se
-  cumple alguno de los dos mínimos-.
+  multiplicado por el multiplicador de % BEV, y ese importe **x el
+  número de ventas Retail realizadas = total a cobrar** -con aviso si
+  no se cumple alguno de los dos mínimos-. No se puede calcular sin la
+  columna `Canal Actual` (depende de "Retail origen Remarketing").
 - Un desplegable **"📖 Ver guía de bonificación"** con las 4 tablas de
   referencia (mínimos, matriz de bonificación, multiplicador BEV y
   Mystery Shopping) tal cual las del Excel original.
