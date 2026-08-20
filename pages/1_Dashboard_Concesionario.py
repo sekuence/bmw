@@ -161,4 +161,4 @@ for col, marca in zip(cols, marcas_disponibles):
                 st.bar_chart(evolucion[["Objetivo Retail", "Realizado Retail"]], color=theme.paleta(marca, 2), sort=False)
             with tab_otros:
                 cols_otros = ["BPS/MN"] + (["Remarketing"] if remarketing_disponible else []) + ["BEV"]
-                st.line_chart(evolucion[cols_otros], color=theme.paleta(marca, len(cols_otros)), sort=False)
+                st.line_chart(evolucion[cols_otros], color=theme.paleta(marca, len(cols_otros)))

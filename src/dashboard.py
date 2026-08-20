@@ -183,4 +183,9 @@ def evolucion_mensual(resumen: pd.DataFrame, codigo_dealer: int, marca: str, rem
         if remarketing_disponible:
             fila["Remarketing"] = k["remarketing"]
         filas.append(fila)
-    return pd.DataFrame(filas, columns=columnas).set_index("mes")
+    out = pd.DataFrame(filas, columns=columnas).set_index("mes")
+    # Índice categórico ordenado cronológicamente: st.line_chart no admite
+    # sort=False (a diferencia de st.bar_chart), así que sin esto el eje X
+    # se reordena alfabéticamente.
+    out.index = pd.CategoricalIndex(out.index, categories=meses_con_datos, ordered=True)
+    return out
