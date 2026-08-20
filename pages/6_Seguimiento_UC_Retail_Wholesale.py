@@ -115,17 +115,18 @@ def _distrito_de(d, agrupar: bool, dealers_completo: pd.DataFrame) -> str:
     return "Varios" if len(distritos) > 1 else ""
 
 
-def construir(marca: str, agrupar: bool, sub_metricas: list[str], calculo, valor_extra_pivot: dict | None) -> pd.DataFrame:
+def construir(marca: str, agrupar: bool, sub_metricas: list[str], calculo, pivots: dict[str, dict] | None = None) -> pd.DataFrame:
     """sub_metricas: nombres de las columnas dentro de cada bloque de
-    periodo. calculo(g_bloque, valor_extra) -> lista de valores en el
-    mismo orden que sub_metricas. valor_extra_pivot es el objetivo o el
-    tamaño de mercado, según la tabla (None si no aplica, p.ej. Wholesale).
+    periodo. calculo(g_bloque, **extras) -> lista de valores en el mismo
+    orden que sub_metricas, donde `extras` trae un valor (sumado en ese
+    bloque) por cada entrada de `pivots` -p.ej. {'obj': ..., 'obj_bev': ...}-.
     Incluye los meses sueltos + Acum. Mes / Anual / Sem. 1 / Sem. 2, y
     mantiene el orden de concesionarios (por distrito) del Excel original."""
     dealers_completo = dealers[dealers["vende_bmw" if marca == "BMW" else "vende_mini"] == "Si"]
     filas_maestro = _dealers_de(marca, agrupar)
     sub_marca = resumen_ajustado[resumen_ajustado["marca"] == marca]
     bloques = _bloques_periodo()
+    pivots = pivots or {}
 
     etiqueta_id = "Grupo propietario" if agrupar else "Concesionario"
     columnas = pd.MultiIndex.from_tuples(
@@ -139,8 +140,11 @@ def construir(marca: str, agrupar: bool, sub_metricas: list[str], calculo, valor
         g = _resumen_grupo(sub_marca, clave, agrupar, dealers_completo)
         for _, meses_bloque in bloques:
             g_bloque = g[g["mes"].isin(meses_bloque)]
-            extra = sum(_valor_grupo(valor_extra_pivot, clave, m, agrupar, dealers_completo) for m in meses_bloque) if valor_extra_pivot else 0
-            fila.extend(calculo(g_bloque, extra))
+            extras = {
+                nombre: sum(_valor_grupo(pivot, clave, m, agrupar, dealers_completo) for m in meses_bloque)
+                for nombre, pivot in pivots.items()
+            }
+            fila.extend(calculo(g_bloque, **extras))
         filas.append(fila)
 
     return pd.DataFrame(filas, columns=columnas)
@@ -151,7 +155,7 @@ def tabla_retail_simple(marca: str, agrupar: bool) -> pd.DataFrame:
     Objetivo y Realizado de ventas Retail."""
     def calculo(g_bloque, obj):
         return [obj, int(g_bloque["retail"].sum())]
-    return construir(marca, agrupar, ["OBJ", "RE"], calculo, _objetivo_pivot(marca, "Retail"))
+    return construir(marca, agrupar, ["OBJ", "RE"], calculo, {"obj": _objetivo_pivot(marca, "Retail")})
 
 
 def tabla_retail_bps(marca: str, agrupar: bool) -> pd.DataFrame:
@@ -160,7 +164,7 @@ def tabla_retail_bps(marca: str, agrupar: bool) -> pd.DataFrame:
         bps = int(g_bloque["bps"].sum())
         if remarketing_disponible:
             rmk = int(g_bloque["remarketing"].sum())
-            rmk_pct = round(rmk / re * 100, 1) if re else None
+            rmk_pct = round(rmk / obj * 100, 1) if obj else None
         else:
             rmk, rmk_pct = None, None
         return [
@@ -168,21 +172,25 @@ def tabla_retail_bps(marca: str, agrupar: bool) -> pd.DataFrame:
             bps, round(bps / re * 100, 1) if re else None,
             rmk, rmk_pct,
         ]
-    return construir(marca, agrupar, ["OBJ", "RE", "BPS", "%BPS", "RMK", "%RMK"], calculo, _objetivo_pivot(marca, "Retail"))
+    return construir(marca, agrupar, ["OBJ", "RE", "BPS", "%BPS", "RMK", "%RMK"], calculo, {"obj": _objetivo_pivot(marca, "Retail")})
 
 
 def tabla_bev(marca: str, agrupar: bool) -> pd.DataFrame:
-    def calculo(g_bloque, obj):
-        re = int(g_bloque["retail"].sum())
+    # %BEV se calcula sobre el Objetivo Retail (igual que en el Excel
+    # original), no sobre el Realizado ni sobre el Objetivo BEV.
+    def calculo(g_bloque, obj_bev, obj_retail):
         bev = int(g_bloque["bev"].sum())
-        return [obj, bev, round(bev / re * 100, 1) if re else None]
-    return construir(marca, agrupar, ["Objetivo", "BEV", "%BEV"], calculo, _objetivo_pivot(marca, "BEV"))
+        return [obj_bev, bev, round(bev / obj_retail * 100, 1) if obj_retail else None]
+    return construir(
+        marca, agrupar, ["Objetivo", "BEV", "%BEV"], calculo,
+        {"obj_bev": _objetivo_pivot(marca, "BEV"), "obj_retail": _objetivo_pivot(marca, "Retail")},
+    )
 
 
 def tabla_wholesale(marca: str, agrupar: bool) -> pd.DataFrame:
-    def calculo(g_bloque, _extra):
+    def calculo(g_bloque):
         return [int(g_bloque["wholesale_uc"].sum()), int(g_bloque["wholesale_yuc"].sum())]
-    return construir(marca, agrupar, ["UC", "YUC"], calculo, None)
+    return construir(marca, agrupar, ["UC", "YUC"], calculo)
 
 
 def tabla_penetracion(marca: str, agrupar: bool) -> pd.DataFrame:
@@ -191,7 +199,7 @@ def tabla_penetracion(marca: str, agrupar: bool) -> pd.DataFrame:
     def calculo(g_bloque, mdo):
         re = int(g_bloque["retail"].sum())
         return [mdo or None, re, round(re / mdo * 100, 1) if mdo else None]
-    return construir(marca, agrupar, ["Mdo <6 años", "Vta Retail", "%Penetración"], calculo, _mercado_pivot(marca))
+    return construir(marca, agrupar, ["Mdo <6 años", "Vta Retail", "%Penetración"], calculo, {"mdo": _mercado_pivot(marca)})
 
 
 TABLAS = {

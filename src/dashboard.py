@@ -108,16 +108,19 @@ def kpi_bloque(
 
     ventas_bps_necesarias = (4 * retail) if bps == 0 else max(0, _roundup(4 * (retail - 1.25 * bps)))
 
+    # %BPS se calcula sobre el Realizado, pero %BEV y %Remarketing se
+    # calculan sobre el Objetivo -así están las fórmulas en el Excel
+    # original (columna G12), no sobre el Realizado (G13)-.
     pct_cumplimiento_retail = (retail / objetivo_retail) if objetivo_retail else None
     pct_bps = (bps / retail) if retail else None
-    pct_bev = (bev / retail) if retail else None
+    pct_bev = (bev / objetivo_retail) if objetivo_retail else None
 
     # "Retail origen Remarketing" sólo se puede calcular con la columna
     # "Canal Actual" -si no está disponible en el archivo cargado, se
     # deja en None (no se inventa un 0 ni una alternativa).
     if remarketing_disponible:
         remarketing = realizado["remarketing"]
-        pct_remarketing = (remarketing / retail) if retail else None
+        pct_remarketing = (remarketing / objetivo_retail) if objetivo_retail else None
         bandas_remarketing = _bandas_remarketing_necesarias(marca, objetivo_retail, remarketing)
     else:
         remarketing = None

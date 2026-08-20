@@ -98,7 +98,7 @@ for col, marca in zip(cols, marcas_disponibles):
         if remarketing_disponible:
             r1, r2 = st.columns(2)
             r1.metric("Ventas remarketing", f"{k['remarketing']:.0f}")
-            r2.metric("% sobre retail", f"{k['pct_remarketing']*100:.1f}%" if k["pct_remarketing"] is not None else "—")
+            r2.metric("% sobre objetivo retail", f"{k['pct_remarketing']*100:.1f}%" if k["pct_remarketing"] is not None else "—")
             with st.expander("Uds. necesarias para alcanzar cada tramo de % remarketing"):
                 for banda in k["bandas_remarketing_necesarias"]:
                     st.write(f"≥ {banda['umbral']*100:.0f}% → faltan **{banda['necesarias']}** uds.")
@@ -109,7 +109,7 @@ for col, marca in zip(cols, marcas_disponibles):
         st.markdown("**BEV** (todas las ventas BEV, Retail + Wholesale)")
         e1, e2 = st.columns(2)
         e1.metric("Ventas BEV", f"{k['bev']:.0f}", help=f"Objetivo: {k['objetivo_bev']:.0f}")
-        e2.metric("% BEV sobre retail", f"{k['pct_bev']*100:.1f}%" if k["pct_bev"] is not None else "—")
+        e2.metric("% BEV sobre objetivo retail", f"{k['pct_bev']*100:.1f}%" if k["pct_bev"] is not None else "—")
         with st.expander("Uds. necesarias para alcanzar cada tramo de % BEV"):
             for banda in k["bandas_bev_necesarias"]:
                 st.write(f"≥ {banda['umbral']*100:.0f}% → faltan **{banda['necesarias']}** uds.")

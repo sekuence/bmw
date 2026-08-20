@@ -39,6 +39,11 @@ izquierdo y navega por las páginas del menú lateral.
 concesionario) y `Fecha venta mes` (nombre del mes en español) tal
 cual vienen en la BBDD.
 
+**Sobre qué se calculan los porcentajes** (igual que en el Excel
+original): **% BPS/MN** es sobre el Realizado de Retail; **% Retail
+origen Remarketing** y **% BEV** son sobre el **Objetivo** de Retail,
+no sobre el Realizado.
+
 ### Regla BYMYCAR / BMW DIRECTO y Remarketing (pendiente de la columna `Canal Actual`)
 
 **"Retail origen Remarketing" sólo se calcula con la columna
