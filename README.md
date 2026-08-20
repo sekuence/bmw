@@ -58,10 +58,14 @@ detecta sola (no hay que tocar nada) y activa:
 
 1. De las ventas de **BYMYCAR**, las que tengan `Canal Actual`
    terminado en "…DIRECTO" dejan de contar en el Retail/BPS/BEV normal
-   de BYMYCAR y se muestran aparte, en un apartado **"BMW DIRECTO"**
-   dentro del propio Dashboard de BYMYCAR -**no existe un concesionario
-   "BMW DIRECTO" en la BBDD** (ni código propio ni ese nombre): sigue
-   siendo BYMYCAR, sólo que esas ventas se cuentan por separado-.
+   de BYMYCAR -**no existe un concesionario "BMW DIRECTO" en la BBDD**
+   (ni código propio ni ese nombre): sigue siendo BYMYCAR, sólo que esas
+   ventas se cuentan aparte-. Se muestran en dos sitios:
+   - **Dashboard**: un apartado "BMW DIRECTO" dentro de la vista de BYMYCAR.
+   - **Seguimiento UC Retail & Wholesale**: una fila más llamada
+     "BMW DIRECTO" al final de cada tabla por concesionario (no en las
+     vistas agrupadas por Grupo Propietario, porque no pertenece a
+     ningún grupo).
 2. **Retail origen Remarketing** = toda venta Retail *excepto* las de
    canal "…MOBILITY" o "…LANDING".
 

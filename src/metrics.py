@@ -42,6 +42,37 @@ def build_monthly_summary(ventas: pd.DataFrame) -> pd.DataFrame:
     return g
 
 
+CODIGO_BYMYCAR_DIRECTO = -1  # clave interna (no es un código real de la BBDD)
+
+
+def build_bymycar_directo_summary(ventas: pd.DataFrame) -> pd.DataFrame:
+    """Igual que build_monthly_summary, pero SÓLO con las ventas de
+    BYMYCAR marcadas como "Directo" (Canal Actual "…DIRECTO"), con las
+    mismas columnas -para poder mezclarse con `resumen` y aparecer como
+    una fila más (codigo_dealer=CODIGO_BYMYCAR_DIRECTO) en las tablas de
+    "Seguimiento UC Retail & Wholesale", igual que un concesionario
+    cualquiera-."""
+    columnas = ["codigo_dealer", "marca", "mes", *METRICAS_CALCULADAS]
+    if ventas.empty or "es_bymycar_directo" not in ventas.columns:
+        return pd.DataFrame(columns=columnas)
+
+    sub = ventas[ventas["es_bymycar_directo"]]
+    if sub.empty:
+        return pd.DataFrame(columns=columnas)
+
+    g = sub.groupby(["marca", "mes"], as_index=False).agg(
+        retail=("es_retail", "sum"),
+        bps=("es_bps", "sum"),
+        remarketing=("es_remarketing", "sum"),
+        bev=("es_bev", "sum"),
+        wholesale_uc=("es_wholesale", lambda s: int((s & (sub.loc[s.index, "yuc_uc"] == "UC")).sum())),
+        wholesale_yuc=("es_wholesale", lambda s: int((s & (sub.loc[s.index, "yuc_uc"] == "YUC")).sum())),
+        ventas_totales=("es_retail", "size"),
+    )
+    g.insert(0, "codigo_dealer", CODIGO_BYMYCAR_DIRECTO)
+    return g
+
+
 def meses_de_periodo(periodo: str, mes_referencia: str | None = None) -> list[str]:
     """Traduce un periodo del selector (mes suelto, trimestre, semestre,
     acumulado o anual) a la lista de meses que hay que sumar. Replica

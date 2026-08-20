@@ -31,18 +31,25 @@ remarketing_disponible = ingest.remarketing_disponible(ventas)
 if remarketing_disponible:
     st.success(
         "✅ La columna **Canal Actual** está presente: \"Retail origen Remarketing\" se calcula "
-        "con ella, y las ventas de BYMYCAR con canal \"…DIRECTO\" ya se están reasignando a "
-        "**BMW DIRECTO**."
+        "con ella, y las ventas de BYMYCAR con canal \"…DIRECTO\" aparecen como la fila "
+        "**BMW DIRECTO** en las tablas de BYMYCAR de abajo."
     )
 else:
     st.info(
         "ℹ️ Todavía no hay columna **Canal Actual** en este archivo de ventas, así que "
         "\"Retail origen Remarketing\" (columnas RMK / %RMK) no se puede calcular -salen en "
-        "blanco- y no se reasigna nada a BMW DIRECTO. En cuanto subas un archivo que ya la "
+        "blanco- y la fila BMW DIRECTO sale siempre a 0. En cuanto subas un archivo que ya la "
         "traiga, la app cambia sola a la regla nueva."
     )
 
 resumen_ajustado = metrics.aplicar_ajustes(resumen)
+# Las ventas "Directo" de BYMYCAR se mezclan aquí como si fueran un
+# concesionario más (codigo_dealer=CODIGO_BYMYCAR_DIRECTO) para que
+# salgan como una fila extra en las tablas de abajo, no en una pestaña
+# aparte.
+resumen_ajustado = pd.concat(
+    [resumen_ajustado, metrics.build_bymycar_directo_summary(ventas)], ignore_index=True
+)
 objetivos = storage.read_table("objetivos")
 mercado = storage.read_table("mercado_menos_6_anos")
 
@@ -81,15 +88,26 @@ def _mercado_pivot(marca: str) -> dict:
     return {(int(r["codigo_dealer"]), r["mes"]): r["valor"] for _, r in sub.iterrows()}
 
 
+_FILA_BYMYCAR_DIRECTO = pd.DataFrame([{
+    "codigo_dealer": metrics.CODIGO_BYMYCAR_DIRECTO,
+    "distrito": pd.NA,
+    "concesionario": "BMW DIRECTO",
+    "grupo_propietario": "",
+}])
+
+
 def _dealers_de(marca: str, agrupar: bool) -> pd.DataFrame:
     """Devuelve los concesionarios de la marca **en el mismo orden en que
     aparecen en el Excel original** (agrupados por distrito, sin
-    reordenar alfabéticamente)."""
+    reordenar alfabéticamente), más la fila "BMW DIRECTO" al final -las
+    ventas de BYMYCAR con Canal Actual "…DIRECTO"- cuando se ve por
+    concesionario (no tiene sentido en la vista agrupada por Grupo
+    Propietario, porque no pertenece a ningún grupo)."""
     col = "vende_bmw" if marca == "BMW" else "vende_mini"
     d = dealers[dealers[col] == "Si"]
     if agrupar:
         return d[["grupo_propietario"]].drop_duplicates()
-    return d
+    return pd.concat([d, _FILA_BYMYCAR_DIRECTO], ignore_index=True)
 
 
 def _resumen_grupo(sub_marca: pd.DataFrame, clave, agrupar: bool, dealers_completo: pd.DataFrame) -> pd.DataFrame:
