@@ -128,14 +128,17 @@ cambian los importes o los tramos-.
   (Retail, BPS/MN, Remarketing, BEV, Wholesale...) hay un botón que abre
   justo los vehículos que componen ese número -el equivalente a hacer
   doble click sobre la cifra en Excel.
-- **"Seguimiento UC Retail & Wholesale"**: un apartado por cada pestaña
-  del Excel original (UC BMW, BPS, BEV, Wholesale, igual para MINI, y
-  MAESTRO), con el desglose mes a mes por concesionario -las columnas
-  van agrupadas por mes (igual que en el Excel), no repetidas celda a
-  celda- e incluye la opción de agrupar por Grupo Propietario. Los
-  concesionarios salen **en el mismo orden y agrupados por distrito**
-  que en el Excel original (columna "Distrito" incluida), no
-  alfabéticamente.
+- **"Seguimiento UC Retail & Wholesale"**: 13 pestañas -por cada marca:
+  UC 2026 (sólo Objetivo/Realizado Retail), UC (Retail + BPS/M-NEXT),
+  BEV, Wholesale, Grupo Propietario y Penetración de mercado-, más
+  Maestro. Columnas agrupadas por mes (igual que en el Excel, no
+  repetidas celda a celda) y, a la derecha del todo, los acumulados
+  **Acum. Mes** (con selector de "hasta qué mes"), **Anual**,
+  **Semestre 1** y **Semestre 2** -igual que en el Excel original-.
+  Los concesionarios salen **en el mismo orden y agrupados por
+  distrito** que en el Excel original (columna "Distrito" incluida),
+  no alfabéticamente. Un botón **"📥 Descargar todo el Seguimiento"**
+  genera un único Excel con las 13 pestañas tal cual se ven en la app.
 
 ## Estructura del proyecto
 
@@ -155,7 +158,8 @@ src/
   detail.py     Filtra la BBDD a nivel de vehículo para el "doble click" sobre un KPI
   importer.py   Importa los objetivos (OBJ) desde el Excel de seguimiento original
   storage.py    Persistencia SQLite de objetivos y datos manuales
-  export.py     Generación del Excel descargable
+  export.py     Generación del Excel descargable (resumen tipo Dealer Dashboard)
+  export_seguimiento.py  Generación del Excel completo de "Seguimiento UC Retail & Wholesale" (13 pestañas)
   dealers.py    Maestro de concesionarios (extraído del Excel original)
   config.py     Constantes de negocio (meses, periodos, métricas)
   bonus.py      Matriz de bonificación, mínimos y multiplicador BEV

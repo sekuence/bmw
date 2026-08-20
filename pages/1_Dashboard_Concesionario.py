@@ -158,7 +158,7 @@ for col, marca in zip(cols, marcas_disponibles):
         else:
             tab_retail, tab_otros = st.tabs(["Objetivo vs Realizado", "BPS / Remarketing / BEV"])
             with tab_retail:
-                st.bar_chart(evolucion[["Objetivo Retail", "Realizado Retail"]], color=theme.paleta(marca, 2))
+                st.bar_chart(evolucion[["Objetivo Retail", "Realizado Retail"]], color=theme.paleta(marca, 2), sort=False)
             with tab_otros:
                 cols_otros = ["BPS/MN"] + (["Remarketing"] if remarketing_disponible else []) + ["BEV"]
-                st.line_chart(evolucion[cols_otros], color=theme.paleta(marca, len(cols_otros)))
+                st.line_chart(evolucion[cols_otros], color=theme.paleta(marca, len(cols_otros)), sort=False)
