@@ -150,7 +150,21 @@ cambian los importes o los tramos-.
   Los concesionarios salen **en el mismo orden y agrupados por
   distrito** que en el Excel original (columna "Distrito" incluida),
   no alfabéticamente. Un botón **"📥 Descargar todo el Seguimiento"**
-  genera un único Excel con las 13 pestañas tal cual se ven en la app.
+  genera un único Excel con las 13 pestañas tal cual se ven en la app,
+  con cabecera del color de la marca (azul BMW / naranja MINI), filas
+  con bandas, bordes y porcentajes con formato -no es una réplica
+  pixel a pixel del Excel original (para eso habría que partir de tu
+  archivo como plantilla, ver nota de más abajo), pero se lee como una
+  tabla real, no como un volcado de datos.
+
+**Nota:** si en el futuro quieres que la descarga sea *literalmente*
+tu archivo de seguimiento original actualizado con los datos nuevos
+(mismo diseño exacto, logos incluidos), es posible partiendo de tu
+Excel como plantilla, pero con dos peros: hay que subir esa plantilla
+cada vez, y al guardarla se rompen los vínculos a los 9 archivos
+externos que trae (Motorflash, penetración de mercado, MYS...). No
+está implementado todavía -se decidió priorizar la versión actual,
+más simple y sin depender de conservar ningún archivo aparte-.
 
 ## Estructura del proyecto
 
