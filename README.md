@@ -188,11 +188,30 @@ cambian los importes o los tramos-.
     dejan tal cual -son locales, así que **Excel las recalcula solas al
     abrir el archivo**, no hace falta esperar a la app. Un mes sin
     archivo de ventas subido se deja en blanco, nunca con el dato
-    antiguo de la plantilla ni con un 0 engañoso. Limitación conocida:
-    los vínculos a esos archivos externos siguen rotos (como ya pasaba
-    antes), y algún gráfico/icono decorativo en formato EMF puede
-    perderse al guardar -el logo de marca en sí (jpeg/png) se conserva
-    bien-.
+    antiguo de la plantilla ni con un 0 engañoso. Un selector **"Hasta
+    el mes de"** sincroniza la celda de "mes de referencia" que trae
+    cada pestaña (de la que dependen las columnas "Acumulado Mes" /
+    "Acumulado Mes 2S" -son fórmulas locales, sólo necesitan que esa
+    celda tenga el mes correcto). La pestaña **"Dealer Dashboard"**
+    -el informe de un concesionario suelto, con desplegables de
+    concesión/periodo/mes- usa fórmulas de matriz (INDEX+MATCH+CHOOSE)
+    para sus KPIs principales (Objetivo/Realizado/BPS/Remarketing/BEV);
+    esas fórmulas pierden su resultado en caché al volver a guardar el
+    archivo (una limitación conocida de la librería usada para
+    escribir Excel, no algo que se pueda evitar del todo), así que esas
+    celdas concretas se sobrescriben con el mismo cálculo que ya usa el
+    Dashboard de la app para el concesionario/periodo/mes que tenga
+    seleccionados esa pestaña en ese momento -el resto (%, semáforos,
+    tablas de bonificación, Mystery Shopping) son fórmulas normales que
+    sí se recalculan solas a partir de esas celdas. Efecto secundario:
+    cambiar a mano el desplegable de concesión/mes/periodo en Excel
+    después de descargar **no actualiza ya esos KPIs** -para ver otro
+    concesionario o mes hay que volver a generar la descarga desde la
+    app (o usar el Dashboard de la app, que sí es interactivo).
+    Limitación conocida: los vínculos a esos archivos externos siguen
+    rotos (como ya pasaba antes), y algún gráfico/icono decorativo en
+    formato EMF puede perderse al guardar -el logo de marca en sí
+    (jpeg/png) se conserva bien-.
 
 ## Estructura del proyecto
 

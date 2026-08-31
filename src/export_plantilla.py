@@ -19,14 +19,58 @@ las recalcula solas al abrir el archivo -la plantilla ya trae activado
 Si para un mes no hay datos en el archivo de ventas subido (todavía no
 ha llegado ese mes), la celda se deja en blanco -nunca se deja el dato
 antiguo que traía la plantilla, para no confundir un mes sin subir con
-un mes en cero."""
+un mes en cero.
+
+Cada hoja tiene además una celda "mes de referencia" (p.ej. BZ4 en
+"UC BMW 2026 BPS") de la que dependen las columnas de "Acumulado Mes"
+/ "Acumulado Mes 2S" -son fórmulas locales (CHOOSE/SUMPRODUCT) que sólo
+necesitan que esa celda tenga el mes correcto para sumar bien; se
+sincroniza con el mes hasta el que se quiere el acumulado en la
+descarga. La pestaña "Dealer Dashboard" tiene su propia celda de mes
+(G3) más una de concesión (E5) y periodo (F3): sus celdas de
+Objetivo/Realizado/BPS/Remarketing/BEV (G12:G19, I12:I19) son fórmulas
+de matriz (INDEX+MATCH+CHOOSE) cuyo resultado en caché se pierde al
+volver a guardar el archivo con openpyxl -por eso, además de
+sincronizar el mes, se sobrescriben esas celdas concretas con el
+mismo cálculo que ya hace `dashboard.kpi_bloque()` para el
+concesionario/periodo/mes que tenga seleccionados esa hoja, así se ve
+bien aunque el visor no recalcule fórmulas de matriz. El resto de la
+hoja (%, semáforos, tablas de bonificación, Mystery Shopping) son
+fórmulas normales que sí se recalculan solas a partir de esas celdas."""
 import io
 from pathlib import Path
 
 import openpyxl
 import pandas as pd
 
-from . import config, storage
+from . import config, dashboard, storage
+
+# Celda "mes de referencia" de la que dependen las columnas Acumulado
+# Mes / Acumulado Mes 2S de cada hoja (encontradas explorando las
+# fórmulas de esas columnas -ver comentario de arriba).
+_CELDA_MES_REFERENCIA = {
+    "UC BMW 2026 BPS": "BZ4",
+    "UC MINI 2026 MINI NEXT": "CL4",
+    "BEV BMW 2026": "AP4",
+    "BEV MINI 2026": "AP4",
+    "WHOLESALE BMW 2026": "AD4",
+    "WHOLESALE MINI 2026": "AD4",
+    "PENETRACION MERCADO VO BMW": "AP4",
+    "PENETRACION MCDO VO MINI": "AP4",
+    "UC BMW 2026": "AD2",
+    "UC MINI 2026": "AD2",
+}
+
+# Traduce el texto del selector de periodo de "Dealer Dashboard" (F3)
+# al nombre de periodo que ya entiende metrics.meses_de_periodo().
+_PERIODO_DASHBOARD = {
+    "ACUMULADO MES": "ACUMULADO MES",
+    "ACUMULADO MES 2º S": "ACUMULADO MES 2S",
+    "ANUAL": "ANUAL",
+    "SEMESTRE 1": "SEMESTRE 1",
+    "SEMESTRE 2": "SEMESTRE 2",
+    **{m: m for m in config.MESES},
+}
 
 PLANTILLA_PATH = Path(__file__).resolve().parent.parent / "data" / "plantilla_seguimiento.xlsx"
 
@@ -115,9 +159,41 @@ def _dict_manual(df: pd.DataFrame, marca: str, col_periodo: str) -> dict:
     return {(int(r["codigo_dealer"]), r[col_periodo]): r["valor"] for _, r in sub.iterrows()}
 
 
-def rellenar_plantilla(resumen: pd.DataFrame, remarketing_disponible: bool) -> bytes:
+def _sincronizar_mes_referencia(wb, mes_referencia: str) -> None:
+    for hoja, celda in _CELDA_MES_REFERENCIA.items():
+        if hoja in wb.sheetnames:
+            wb[hoja][celda].value = mes_referencia
+
+
+def _rellenar_dealer_dashboard(wb, resumen: pd.DataFrame, dealers: pd.DataFrame, remarketing_disponible: bool, mes_referencia: str) -> None:
+    if "Dealer Dashboard" not in wb.sheetnames:
+        return
+    ws = wb["Dealer Dashboard"]
+    ws["G3"].value = mes_referencia
+
+    concesion = str(ws["E5"].value or "").strip().upper()
+    fila_dealer = dealers[dealers["concesionario"].str.strip().str.upper() == concesion]
+    periodo = _PERIODO_DASHBOARD.get(str(ws["F3"].value or "").strip().upper())
+    if fila_dealer.empty or periodo is None:
+        return
+    codigo_dealer = int(fila_dealer["codigo_dealer"].iloc[0])
+    mes_kpi = mes_referencia if periodo in ("ACUMULADO MES", "ACUMULADO MES 2S") else None
+
+    columnas = {"BMW": "G", "MINI": "I"}
+    for marca, col in columnas.items():
+        k = dashboard.kpi_bloque(resumen, codigo_dealer, marca, periodo, mes_kpi, remarketing_disponible)
+        ws[f"{col}12"].value = k["objetivo_retail"]
+        ws[f"{col}13"].value = k["realizado_retail"]
+        ws[f"{col}15"].value = k["bps"]
+        ws[f"{col}17"].value = k["remarketing"] if remarketing_disponible else None
+        ws[f"{col}19"].value = k["bev"]
+
+
+def rellenar_plantilla(resumen: pd.DataFrame, dealers: pd.DataFrame, remarketing_disponible: bool, mes_referencia: str) -> bytes:
     """Devuelve los bytes del Excel de la plantilla original, con las
-    celdas de Realizado/Objetivo rellenas con lo que la app calculó.
+    celdas de Realizado/Objetivo rellenas con lo que la app calculó y
+    el mes de referencia de cada hoja (para las columnas "Acumulado
+    Mes"/"S2") sincronizado con `mes_referencia`.
     Lanza FileNotFoundError si no hay plantilla disponible."""
     if not plantilla_disponible():
         raise FileNotFoundError(f"No se encontró la plantilla en {PLANTILLA_PATH}")
@@ -191,6 +267,9 @@ def rellenar_plantilla(resumen: pd.DataFrame, remarketing_disponible: bool) -> b
             for codigo, fila in filas.items():
                 valor = valores.get(codigo)
                 ws.cell(row=fila, column=col).value = None if valor is None else valor / 100
+
+    _sincronizar_mes_referencia(wb, mes_referencia)
+    _rellenar_dealer_dashboard(wb, resumen, dealers, remarketing_disponible, mes_referencia)
 
     buf = io.BytesIO()
     wb.save(buf)

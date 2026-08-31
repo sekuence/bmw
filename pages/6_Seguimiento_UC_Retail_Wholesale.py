@@ -299,16 +299,24 @@ else:
         "Un mes sin archivo de ventas subido se deja en blanco -nunca se rellena con el dato "
         "antiguo que traía la plantilla ni con un 0 engañoso."
     )
+    meses_presentes = sorted(ventas["mes"].unique(), key=config.MESES.index) if len(ventas) else []
+    mes_por_defecto = meses_presentes[-1] if meses_presentes else config.MESES[0]
+    mes_referencia_plantilla = st.selectbox(
+        "Hasta el mes de (columnas \"Acumulado Mes\" y \"Dealer Dashboard\" de la plantilla)",
+        config.MESES,
+        index=config.MESES.index(mes_por_defecto),
+    )
     if st.button("Generar Excel con tu plantilla"):
         st.session_state["plantilla_export_bytes"] = export_plantilla.rellenar_plantilla(
-            resumen_ajustado, remarketing_disponible
+            resumen_ajustado, dealers, remarketing_disponible, mes_referencia_plantilla
         )
+        st.session_state["plantilla_export_mes"] = mes_referencia_plantilla
         st.success("Listo.")
 
     if "plantilla_export_bytes" in st.session_state:
         st.download_button(
             "⬇️ Descargar Seguimiento (plantilla original).xlsx",
             data=st.session_state["plantilla_export_bytes"],
-            file_name="Seguimiento_UC_Retail_Wholesale.xlsx",
+            file_name=f"Seguimiento_UC_Retail_Wholesale_{st.session_state.get('plantilla_export_mes', mes_referencia_plantilla)}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
