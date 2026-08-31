@@ -80,26 +80,52 @@ tab_importar, tab_retail, tab_bev, tab_mercado, tab_mys, tab_ajustes = st.tabs(
 
 with tab_importar:
     st.caption(
-        "Si ya tienes el Excel de seguimiento (`SEGUIMIENTO UC RETAIL & WHOLESALE`) con los "
-        "objetivos (columnas **OBJ** / **Objetivo**) rellenos, súbelo aquí y se copian todos "
-        "de golpe -no hace falta teclearlos concesionario por concesionario. Lee las pestañas "
-        "`UC BMW 2026 BPS`, `UC MINI 2026 MINI NEXT`, `BEV BMW 2026` y `BEV MINI 2026`."
+        "Si ya tienes el Excel de seguimiento (`SEGUIMIENTO UC RETAIL & WHOLESALE`) relleno, "
+        "súbelo aquí y se copia todo de golpe -no hace falta teclearlo concesionario por "
+        "concesionario. Lee de un tirón **objetivos** (`UC BMW 2026 BPS`, "
+        "`UC MINI 2026 MINI NEXT`, `BEV BMW 2026`, `BEV MINI 2026`), **tamaño de mercado "
+        "<6 años** (`PENETRACION MERCADO VO BMW`, `PENETRACION MCDO VO MINI`) y **mystery "
+        "shopping** (`MYS 2026`) -las que falten en el archivo simplemente no se importan, sin "
+        "dar error."
     )
     archivo_seguimiento = st.file_uploader("Excel de seguimiento (.xlsx)", type=["xlsx"], key="uploader_seguimiento")
     if archivo_seguimiento is not None:
         try:
-            objetivos_importados = importer.importar_objetivos(archivo_seguimiento)
+            importado = importer.importar_todo(archivo_seguimiento)
         except importer.SeguimientoFileError as exc:
             st.error(str(exc))
         else:
-            st.success(f"Encontrados {len(objetivos_importados):,} objetivos.".replace(",", "."))
-            st.dataframe(
-                objetivos_importados.groupby(["marca", "metrica"], as_index=False)["valor"].count().rename(columns={"valor": "nº de registros"}),
-                hide_index=True,
-            )
-            if st.button("💾 Guardar todos estos objetivos"):
-                storage.save_dataframe("objetivos", objetivos_importados, key_cols=["codigo_dealer", "marca", "metrica", "mes"])
-                st.success("Objetivos guardados. Ya se están usando en el Dashboard.")
+            objetivos_importados = importado["objetivos"]
+            mercado_importado = importado["mercado"]
+            mys_importado = importado["mystery_shopping"]
+
+            if not objetivos_importados.empty:
+                st.success(f"Objetivos: {len(objetivos_importados):,} valores encontrados.".replace(",", "."))
+                st.dataframe(
+                    objetivos_importados.groupby(["marca", "metrica"], as_index=False)["valor"].count().rename(columns={"valor": "nº de registros"}),
+                    hide_index=True,
+                )
+            if not mercado_importado.empty:
+                st.success(f"Mercado <6 años: {len(mercado_importado):,} valores encontrados.".replace(",", "."))
+                st.dataframe(
+                    mercado_importado.groupby("marca", as_index=False)["valor"].count().rename(columns={"valor": "nº de registros"}),
+                    hide_index=True,
+                )
+            if not mys_importado.empty:
+                st.success(f"Mystery Shopping: {len(mys_importado):,} valores encontrados.".replace(",", "."))
+                st.dataframe(
+                    mys_importado.groupby(["marca", "semestre"], as_index=False)["valor"].count().rename(columns={"valor": "nº de registros"}),
+                    hide_index=True,
+                )
+
+            if st.button("💾 Guardar todo lo encontrado"):
+                if not objetivos_importados.empty:
+                    storage.save_dataframe("objetivos", objetivos_importados, key_cols=["codigo_dealer", "marca", "metrica", "mes"])
+                if not mercado_importado.empty:
+                    storage.save_dataframe("mercado_menos_6_anos", mercado_importado, key_cols=["codigo_dealer", "marca", "mes"])
+                if not mys_importado.empty:
+                    storage.save_dataframe("mystery_shopping", mys_importado, key_cols=["codigo_dealer", "marca", "semestre"])
+                st.success("Guardado. Ya se está usando en el Dashboard.")
 
 with tab_retail:
     marca = st.radio("Marca", ["BMW", "MINI"], horizontal=True, key="marca_retail")

@@ -76,7 +76,7 @@ FLAG_DE_METRICA = {
 #   2) "Retail origen Remarketing" = ventas Retail cuyo Canal Actual:
 #        a) no esté vacío ni sea de error (#N/A, #N/D, "-", etc.),
 #        b) no sea de tipo MOBILITY / LANDING / DIRECTO / DIRECT_SALES,
-#        c) Y, si existe la columna "V o F Formulada" (mismo grupo
+#        c) Y, si existe la columna "Mismo grupo Rmkt" (mismo grupo
 #           comprador/vendedor -pendiente de que la incorpore la
 #           BBDD-), que valga Verdadero -si el comprador es de otro
 #           grupo, no cuenta como remarketing aunque el canal sea
@@ -95,9 +95,12 @@ VALORES_CANAL_VACIO = ["", "NAN", "NONE", "#N/A", "#N/D", "-", "N/A", "N/D"]
 
 # Columna (pendiente, aún no existe en la BBDD) que indica si el
 # concesionario comprador y el vendedor pertenecen al mismo grupo
-# propietario -viene ya calculada, no hace falta recalcularla-.
+# propietario -viene ya calculada, no hace falta recalcularla-. En el
+# archivo de ejemplo que se usó para definir la regla se llamaba
+# "V o F Formulada"; se renombra a "Mismo grupo Rmkt" a petición del
+# usuario -ajusta esta constante si la BBDD real usa otro nombre.
 # Valores vistos: "VERDADERO" / "FALSO" (booleano en español).
-COLUMNA_MISMO_GRUPO = "V o F Formulada"
+COLUMNA_MISMO_GRUPO = "Mismo grupo Rmkt"
 VALORES_MISMO_GRUPO_TRUE = ["VERDADERO", "TRUE", "SI", "SÍ", "1"]
 
 CONCESIONARIO_BYMYCAR = "BYMYCAR"  # texto a buscar en Concesión (case-insensitive)

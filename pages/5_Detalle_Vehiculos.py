@@ -1,3 +1,6 @@
+import io
+
+import pandas as pd
 import streamlit as st
 
 from src import config, detail
@@ -54,9 +57,15 @@ if busqueda:
 st.caption(f"{len(filtrado):,} vehículos".replace(",", "."))
 st.dataframe(filtrado, width="stretch", hide_index=True, height=600)
 
+buf = io.BytesIO()
+with pd.ExcelWriter(buf, engine="openpyxl") as xw:
+    filtrado.to_excel(xw, sheet_name="Detalle", index=False)
+
 st.download_button(
-    "📥 Descargar esta vista en CSV",
-    data=filtrado.to_csv(index=False).encode("utf-8-sig"),
-    file_name="detalle_vehiculos.csv",
-    mime="text/csv",
+    "📥 Descargar esta vista en Excel",
+    data=buf.getvalue(),
+    file_name="detalle_vehiculos.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    help="Se descarga en Excel (no CSV) para que cada dato quede en su propia columna -en "
+    "CSV, Excel en español lo abre todo junto en una columna separada por comas.",
 )

@@ -7,7 +7,7 @@ trae el Excel original a la derecha del todo."""
 import pandas as pd
 import streamlit as st
 
-from src import config, export_seguimiento, ingest, metrics, storage, theme
+from src import config, export_plantilla, export_seguimiento, ingest, metrics, storage, theme
 
 st.set_page_config(page_title="Seguimiento UC Retail & Wholesale", page_icon="🗂️", layout="wide")
 
@@ -283,3 +283,32 @@ if "seguimiento_export_bytes" in st.session_state:
         file_name="Seguimiento_UC_Retail_Wholesale_completo.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
+
+st.divider()
+st.subheader("📥 Descargar en el formato original (tu plantilla)")
+st.caption(
+    "En vez de generar un Excel desde cero, rellena tu propio archivo de seguimiento "
+    "-mismo diseño, logos y agrupación por Distrito- con los datos ya calculados. Los "
+    "porcentajes y la vista por Grupo Propietario son fórmulas locales del propio archivo: "
+    "Excel las recalcula solas al abrirlo, no hace falta esperar."
+)
+if not export_plantilla.plantilla_disponible():
+    st.info("No hay plantilla cargada todavía en la app.")
+else:
+    st.caption(
+        "Un mes sin archivo de ventas subido se deja en blanco -nunca se rellena con el dato "
+        "antiguo que traía la plantilla ni con un 0 engañoso."
+    )
+    if st.button("Generar Excel con tu plantilla"):
+        st.session_state["plantilla_export_bytes"] = export_plantilla.rellenar_plantilla(
+            resumen_ajustado, remarketing_disponible
+        )
+        st.success("Listo.")
+
+    if "plantilla_export_bytes" in st.session_state:
+        st.download_button(
+            "⬇️ Descargar Seguimiento (plantilla original).xlsx",
+            data=st.session_state["plantilla_export_bytes"],
+            file_name="Seguimiento_UC_Retail_Wholesale.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )

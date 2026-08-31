@@ -70,7 +70,7 @@ def read_bbdd(file_obj) -> pd.DataFrame:
         )
 
     rename_map = {resolved[norm]: real for norm, real in REQUIRED_COLUMNS.items()}
-    # "Canal Actual" y "V o F Formulada" (mismo grupo comprador/vendedor)
+    # "Canal Actual" y "Mismo grupo Rmkt" (mismo grupo comprador/vendedor)
     # son opcionales -todavía no existen en los archivos de ventas
     # reales, pero en cuanto aparezcan la app las detecta y las usa solas.
     for columna_opcional in (config.COLUMNA_CANAL_ACTUAL, config.COLUMNA_MISMO_GRUPO):
@@ -148,7 +148,7 @@ def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
         # Retail origen Remarketing = ventas Retail cuyo Canal Actual:
         #  a) no esté vacío/en blanco/error (#N/A, #N/D...),
         #  b) no sea de tipo MOBILITY/LANDING/DIRECTO/DIRECT_SALES,
-        #  c) y, si existe "V o F Formulada" (mismo grupo comprador
+        #  c) y, si existe "Mismo grupo Rmkt" (mismo grupo comprador
         #     /vendedor), que valga Verdadero.
         # canal_actual ya pasó por fillna("").astype(str).str.upper():
         # una celda vacía/NaN real llega aquí como "" (incluida en

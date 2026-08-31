@@ -74,7 +74,7 @@ detecta sola (no hay que tocar nada) y activa:
    b. `Canal Actual` no es de tipo **MOBILITY, LANDING, DIRECTO o
       DIRECT_SALES** (se busca el patrón dentro del texto, p.ej.
       `rmk_car_mobility` o `rmk_cars_retail_directo` quedan excluidos).
-   c. Y, si el archivo trae también la columna **`V o F Formulada`**
+   c. Y, si el archivo trae también la columna **`Mismo grupo Rmkt`**
       (mismo grupo propietario del concesionario comprador y del
       vendedor -viene ya calculada, la app no la recalcula-), que
       valga **Verdadero**. Si el comprador es de otro grupo, esa venta
@@ -86,8 +86,8 @@ Los nombres exactos de columna y los patrones de texto están
 centralizados en `src/config.py` (`COLUMNA_CANAL_ACTUAL`,
 `PATRONES_CANAL_EXCLUIDOS_REMARKETING`, `VALORES_CANAL_VACIO`,
 `COLUMNA_MISMO_GRUPO`, `VALORES_MISMO_GRUPO_TRUE`) -ajústalos ahí si el
-nombre real de la columna en tu BBDD (p.ej. `V o F Formulada`) acaba
-siendo distinto al del archivo de ejemplo que se usó para definir la regla.
+nombre real de la columna en tu BBDD acaba siendo distinto de
+`Mismo grupo Rmkt`.
 
 ## Qué se sigue introduciendo a mano (y por qué)
 
@@ -109,12 +109,17 @@ nuevo.
 
 **Objetivos:** vienen **precargados de fábrica** (`data/objetivos_default.csv`,
 extraído del Excel de seguimiento que ya nos pasaste) — no hace falta
-importar nada para verlos en el Dashboard. Cuando tengas objetivos
-nuevos de un mes futuro, actualízalos desde la pestaña **"Importar
-objetivos"** (lee de un tirón las columnas OBJ/Objetivo de
-`UC BMW 2026 BPS`, `UC MINI 2026 MINI NEXT`, `BEV BMW 2026` y
-`BEV MINI 2026` de un Excel de seguimiento) o a mano en "Objetivos
-Retail" / "Objetivos BEV".
+importar nada para verlos en el Dashboard.
+
+**Importar todo de golpe:** la pestaña **"Importar objetivos"** (página
+"Objetivos y datos manuales") lee, de un único Excel de seguimiento
+que subas, **objetivos** (`UC BMW 2026 BPS`, `UC MINI 2026 MINI NEXT`,
+`BEV BMW 2026`, `BEV MINI 2026`), **tamaño de mercado &lt;6 años**
+(`PENETRACION MERCADO VO BMW`, `PENETRACION MCDO VO MINI`) y **mystery
+shopping** (`MYS 2026`) -las pestañas que no encuentre simplemente no
+las importa, sin dar error-. También puedes teclearlo a mano en
+"Objetivos Retail" / "Objetivos BEV" / "Mercado &lt;6 años" / "Mystery
+Shopping".
 
 Esa misma página tiene una pestaña **"Ajustes manuales"** para corregir
 a mano, mes a mes, cualquier valor que la app haya calculado desde la
@@ -150,7 +155,10 @@ cambian los importes o los tramos-.
 
 - **"Detalle de vehículos"**: la BBDD completa, con todas sus columnas
   originales (Chasis, Matrícula, Modelo, Vendedor, precios...),
-  filtrable por concesión/marca/mes/métrica y con buscador.
+  filtrable por concesión/marca/mes/métrica y con buscador. La descarga
+  es en **Excel** (no CSV): en CSV, Excel en español abre el archivo
+  con todos los datos juntos en una sola columna separados por comas
+  -en Excel cada dato queda en su propia columna, sin ese problema.
 - **"Ver detalle" en el Dashboard y el Ranking**: al lado de cada KPI
   (Retail, BPS/MN, Remarketing, BEV, Wholesale...) hay un botón que abre
   justo los vehículos que componen ese número -el equivalente a hacer
@@ -164,22 +172,27 @@ cambian los importes o los tramos-.
   **Semestre 1** y **Semestre 2** -igual que en el Excel original-.
   Los concesionarios salen **en el mismo orden y agrupados por
   distrito** que en el Excel original (columna "Distrito" incluida),
-  no alfabéticamente. Un botón **"📥 Descargar todo el Seguimiento"**
-  genera un único Excel con las 13 pestañas tal cual se ven en la app,
-  con cabecera del color de la marca (azul BMW / naranja MINI), filas
-  con bandas, bordes y porcentajes con formato -no es una réplica
-  pixel a pixel del Excel original (para eso habría que partir de tu
-  archivo como plantilla, ver nota de más abajo), pero se lee como una
-  tabla real, no como un volcado de datos.
-
-**Nota:** si en el futuro quieres que la descarga sea *literalmente*
-tu archivo de seguimiento original actualizado con los datos nuevos
-(mismo diseño exacto, logos incluidos), es posible partiendo de tu
-Excel como plantilla, pero con dos peros: hay que subir esa plantilla
-cada vez, y al guardarla se rompen los vínculos a los 9 archivos
-externos que trae (Motorflash, penetración de mercado, MYS...). No
-está implementado todavía -se decidió priorizar la versión actual,
-más simple y sin depender de conservar ningún archivo aparte-.
+  no alfabéticamente. Hay dos formas de descargarlo:
+  - **"📥 Descargar todo el Seguimiento"**: genera un único Excel
+    *desde cero* con las 13 pestañas tal cual se ven en la app, con
+    cabecera del color de la marca (azul BMW / naranja MINI), filas
+    con bandas, bordes y porcentajes con formato.
+  - **"📥 Descargar en el formato original (tu plantilla)"**: rellena
+    **tu propio archivo de seguimiento** (`data/plantilla_seguimiento.xlsx`,
+    el que nos pasaste) con los datos calculados -mismo diseño exacto,
+    logos y agrupación por Distrito incluidos, en vez de recrearlo.
+    Sólo se sobrescriben las celdas que en el Excel original dependían
+    de archivos externos que no tenemos ([2]BPS, [2]BEV,
+    [2]RETAIL ORIGEN RMKT, [2]COMPRAS UC/YUC, [9]BMW/MINI...); el resto
+    de fórmulas (SUMIF locales, %, la vista por Grupo Propietario) se
+    dejan tal cual -son locales, así que **Excel las recalcula solas al
+    abrir el archivo**, no hace falta esperar a la app. Un mes sin
+    archivo de ventas subido se deja en blanco, nunca con el dato
+    antiguo de la plantilla ni con un 0 engañoso. Limitación conocida:
+    los vínculos a esos archivos externos siguen rotos (como ya pasaba
+    antes), y algún gráfico/icono decorativo en formato EMF puede
+    perderse al guardar -el logo de marca en sí (jpeg/png) se conserva
+    bien-.
 
 ## Estructura del proyecto
 
@@ -197,10 +210,11 @@ src/
   metrics.py    Agregados por concesionario/marca/mes + selección de periodo + ajustes manuales
   dashboard.py  KPIs completos (con objetivos, bandas de "ventas necesarias", evolución mensual, etc.)
   detail.py     Filtra la BBDD a nivel de vehículo para el "doble click" sobre un KPI
-  importer.py   Importa los objetivos (OBJ) desde el Excel de seguimiento original
+  importer.py   Importa objetivos, mercado <6 años y mystery shopping desde el Excel de seguimiento original
   storage.py    Persistencia SQLite de objetivos y datos manuales
   export.py     Generación del Excel descargable (resumen tipo Dealer Dashboard)
-  export_seguimiento.py  Generación del Excel completo de "Seguimiento UC Retail & Wholesale" (13 pestañas)
+  export_seguimiento.py  Generación del Excel completo de "Seguimiento UC Retail & Wholesale" (13 pestañas), desde cero
+  export_plantilla.py    Rellena la plantilla original del usuario (mismo diseño, logos y Distrito) en vez de generarla desde cero
   dealers.py    Maestro de concesionarios (extraído del Excel original)
   config.py     Constantes de negocio (meses, periodos, métricas)
   bonus.py      Matriz de bonificación, mínimos y multiplicador BEV
@@ -208,6 +222,7 @@ src/
   theme.py      Colores de marca (azul BMW / naranja MINI) para toda la app
 data/
   dealers.csv   Maestro de ~52 concesionarios BMW/MINI (código, nombre, grupo propietario)
+  plantilla_seguimiento.xlsx  Plantilla original del usuario, usada por export_plantilla.py
   app.db        (se crea solo) objetivos y datos manuales
 ```
 
