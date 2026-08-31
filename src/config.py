@@ -63,26 +63,42 @@ FLAG_DE_METRICA = {
 # --- Regla BYMYCAR "Directo" y "Retail origen Remarketing" -----------
 #
 # Pendiente de que la BBDD incorpore la columna "Canal Actual" (todavía
-# no está en los archivos de ventas que hemos visto). Cuando exista, la
-# app la usa automáticamente:
+# no está en los archivos de ventas que hemos visto, pero ya vimos un
+# ejemplo real -ventas_origen_remarketing_07.xlsx, hoja "2026", columna
+# "CANAL"-, de donde salen los valores de abajo). Cuando exista la
+# columna en la BBDD, la app la usa automáticamente:
 #
-#   1) De las ventas de BYMYCAR, las que tengan Canal Actual terminado
-#      en "_DIRECTO" se cuentan aparte, con la etiqueta "BMW DIRECTO"
+#   1) De las ventas de BYMYCAR, las que tengan Canal Actual con
+#      "DIRECTO" se cuentan aparte, con la etiqueta "BMW DIRECTO"
 #      -NO existe un concesionario con ese nombre ni con código propio
 #      en la BBDD: sigue siendo BYMYCAR, sólo que esas ventas no entran
 #      en su Retail/BPS/BEV normal, se muestran en un apartado aparte-.
-#   2) "Retail origen Remarketing" pasa a ser: todas las ventas Retail
-#      CUYO Canal Actual no sea de tipo "_MOBILITY" ni "_LANDING" (antes
-#      se usaba `Origen contiene "Remarketing"`, que se mantiene como
-#      alternativa mientras no exista la columna Canal Actual).
+#   2) "Retail origen Remarketing" = ventas Retail cuyo Canal Actual:
+#        a) no esté vacío ni sea de error (#N/A, #N/D, "-", etc.),
+#        b) no sea de tipo MOBILITY / LANDING / DIRECTO / DIRECT_SALES,
+#        c) Y, si existe la columna "V o F Formulada" (mismo grupo
+#           comprador/vendedor -pendiente de que la incorpore la
+#           BBDD-), que valga Verdadero -si el comprador es de otro
+#           grupo, no cuenta como remarketing aunque el canal sea
+#           válido-.
 #
-# Los tres patrones de abajo son búsquedas "contiene" (no hace falta
-# que coincidan exactas) porque aún no hemos visto valores reales de
-# esta columna -ajusta estas constantes en cuanto lleguen los primeros
-# datos reales si el texto no encaja.
+# Valores reales de Canal Actual vistos (columna CANAL del ejemplo):
+# rmk_auction_global, rmk_cars_campaigns, rmk_car_mobility (excluido),
+# rmk_cars, rmk_cars_retail_directo (excluido), rmk_cars_landing
+# (excluido), rmk_Auction_Paneuropean, rmk_cars_outlet, rmk_auction,
+# rmk_direct_sales (excluido). Ajusta estas constantes en cuanto la
+# BBDD real traiga esta columna si el texto no encaja exactamente.
 COLUMNA_CANAL_ACTUAL = "Canal Actual"
 PATRON_CANAL_DIRECTO = "DIRECTO"
-PATRONES_CANAL_EXCLUIDOS_REMARKETING = ["MOBILITY", "LANDING"]
+PATRONES_CANAL_EXCLUIDOS_REMARKETING = ["MOBILITY", "LANDING", "DIRECTO", "DIRECT_SALES", "DIRECT SALES"]
+VALORES_CANAL_VACIO = ["", "NAN", "NONE", "#N/A", "#N/D", "-", "N/A", "N/D"]
+
+# Columna (pendiente, aún no existe en la BBDD) que indica si el
+# concesionario comprador y el vendedor pertenecen al mismo grupo
+# propietario -viene ya calculada, no hace falta recalcularla-.
+# Valores vistos: "VERDADERO" / "FALSO" (booleano en español).
+COLUMNA_MISMO_GRUPO = "V o F Formulada"
+VALORES_MISMO_GRUPO_TRUE = ["VERDADERO", "TRUE", "SI", "SÍ", "1"]
 
 CONCESIONARIO_BYMYCAR = "BYMYCAR"  # texto a buscar en Concesión (case-insensitive)
 ETIQUETA_BYMYCAR_DIRECTO = "BMW DIRECTO"

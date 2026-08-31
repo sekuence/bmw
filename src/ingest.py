@@ -70,11 +70,13 @@ def read_bbdd(file_obj) -> pd.DataFrame:
         )
 
     rename_map = {resolved[norm]: real for norm, real in REQUIRED_COLUMNS.items()}
-    # "Canal Actual" es opcional -todavía no existe en los archivos de ventas
-    # reales, pero en cuanto aparezca la app la detecta y la usa sola.
-    canal_actual_norm = _normalize(config.COLUMNA_CANAL_ACTUAL)
-    if canal_actual_norm in resolved:
-        rename_map[resolved[canal_actual_norm]] = config.COLUMNA_CANAL_ACTUAL
+    # "Canal Actual" y "V o F Formulada" (mismo grupo comprador/vendedor)
+    # son opcionales -todavía no existen en los archivos de ventas
+    # reales, pero en cuanto aparezcan la app las detecta y las usa solas.
+    for columna_opcional in (config.COLUMNA_CANAL_ACTUAL, config.COLUMNA_MISMO_GRUPO):
+        norm = _normalize(columna_opcional)
+        if norm in resolved:
+            rename_map[resolved[norm]] = columna_opcional
     raw = raw.rename(columns=rename_map)
     return raw
 
@@ -124,7 +126,11 @@ def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
 
     canal_actual = None
     if config.COLUMNA_CANAL_ACTUAL in df.columns:
-        canal_actual = df[config.COLUMNA_CANAL_ACTUAL].astype(str).str.strip().str.upper()
+        # fillna("") ANTES de astype(str): en pandas >= 2.x/3.x un NaN
+        # real ya no se convierte a la palabra "nan" con .astype(str)
+        # -se queda como NaN-, así que sin este fillna una celda
+        # realmente vacía se cuela sin marcar como "vacío" más abajo.
+        canal_actual = df[config.COLUMNA_CANAL_ACTUAL].fillna("").astype(str).str.strip().str.upper()
         df["es_bymycar_directo"] = _marcar_bymycar_directo(df, canal_actual)
     else:
         df["es_bymycar_directo"] = False
@@ -139,11 +145,23 @@ def clean_ventas(raw: pd.DataFrame) -> pd.DataFrame:
     df["es_bps"] = bps_flag & df["es_retail"]
 
     if canal_actual is not None:
-        # Retail origen Remarketing = todo Retail salvo los canales
-        # "_MOBILITY" / "_LANDING" (ver config.py). Única fuente válida:
-        # la columna "Canal Actual".
+        # Retail origen Remarketing = ventas Retail cuyo Canal Actual:
+        #  a) no esté vacío/en blanco/error (#N/A, #N/D...),
+        #  b) no sea de tipo MOBILITY/LANDING/DIRECTO/DIRECT_SALES,
+        #  c) y, si existe "V o F Formulada" (mismo grupo comprador
+        #     /vendedor), que valga Verdadero.
+        # canal_actual ya pasó por fillna("").astype(str).str.upper():
+        # una celda vacía/NaN real llega aquí como "" (incluida en
+        # VALORES_CANAL_VACIO).
+        vacio = canal_actual.isin(config.VALORES_CANAL_VACIO)
         excluidos = canal_actual.str.contains("|".join(config.PATRONES_CANAL_EXCLUIDOS_REMARKETING), na=False)
-        df["es_remarketing"] = df["es_retail"] & ~excluidos
+        df["es_remarketing"] = df["es_retail"] & ~vacio & ~excluidos
+
+        if config.COLUMNA_MISMO_GRUPO in df.columns:
+            mismo_grupo = df[config.COLUMNA_MISMO_GRUPO].fillna("").astype(str).str.strip().str.upper().isin(
+                config.VALORES_MISMO_GRUPO_TRUE
+            )
+            df["es_remarketing"] = df["es_remarketing"] & mismo_grupo
     else:
         # Sin la columna "Canal Actual" no hay forma fiable de calcular
         # Retail origen Remarketing -no se usa ninguna alternativa

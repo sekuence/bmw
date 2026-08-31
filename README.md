@@ -57,7 +57,7 @@ En cuanto subas un archivo que ya traiga `Canal Actual`, la app la
 detecta sola (no hay que tocar nada) y activa:
 
 1. De las ventas de **BYMYCAR**, las que tengan `Canal Actual`
-   terminado en "…DIRECTO" dejan de contar en el Retail/BPS/BEV normal
+   conteniendo "DIRECTO" dejan de contar en el Retail/BPS/BEV normal
    de BYMYCAR -**no existe un concesionario "BMW DIRECTO" en la BBDD**
    (ni código propio ni ese nombre): sigue siendo BYMYCAR, sólo que esas
    ventas se cuentan aparte-. Se muestran en dos sitios:
@@ -66,13 +66,28 @@ detecta sola (no hay que tocar nada) y activa:
      "BMW DIRECTO" al final de cada tabla por concesionario (no en las
      vistas agrupadas por Grupo Propietario, porque no pertenece a
      ningún grupo).
-2. **Retail origen Remarketing** = toda venta Retail *excepto* las de
-   canal "…MOBILITY" o "…LANDING".
+2. **Retail origen Remarketing** = toda venta Retail que cumpla **las
+   tres** condiciones:
+   a. `Canal Actual` no está vacío ni es un error de fórmula (`#N/D`,
+      `#N/A`, `-`, en blanco...) -si está vacío o en error, **no**
+      cuenta como remarketing.
+   b. `Canal Actual` no es de tipo **MOBILITY, LANDING, DIRECTO o
+      DIRECT_SALES** (se busca el patrón dentro del texto, p.ej.
+      `rmk_car_mobility` o `rmk_cars_retail_directo` quedan excluidos).
+   c. Y, si el archivo trae también la columna **`V o F Formulada`**
+      (mismo grupo propietario del concesionario comprador y del
+      vendedor -viene ya calculada, la app no la recalcula-), que
+      valga **Verdadero**. Si el comprador es de otro grupo, esa venta
+      no cuenta como remarketing aunque el canal sea válido. Igual que
+      `Canal Actual`, esta columna es opcional: si el archivo no la
+      trae todavía, la regla sólo aplica los puntos a) y b).
 
-Los patrones ("contiene DIRECTO/MOBILITY/LANDING") son una suposición
-razonable hecha sin haber visto datos reales de esa columna todavía
--están todos centralizados en `src/config.py` para ajustarlos en un
-segundo en cuanto lleguen los primeros valores reales.
+Los nombres exactos de columna y los patrones de texto están
+centralizados en `src/config.py` (`COLUMNA_CANAL_ACTUAL`,
+`PATRONES_CANAL_EXCLUIDOS_REMARKETING`, `VALORES_CANAL_VACIO`,
+`COLUMNA_MISMO_GRUPO`, `VALORES_MISMO_GRUPO_TRUE`) -ajústalos ahí si el
+nombre real de la columna en tu BBDD (p.ej. `V o F Formulada`) acaba
+siendo distinto al del archivo de ejemplo que se usó para definir la regla.
 
 ## Qué se sigue introduciendo a mano (y por qué)
 
