@@ -15,11 +15,13 @@ from . import config
 # (OBJ/Objetivo en las hojas de objetivos, "Mdo < 6 años" en las de
 # penetración de mercado). Los anchos de bloque están sacados de las
 # fórmulas de la pestaña "Dealer Dashboard" del propio Excel original.
+# No existe un "objetivo BEV" independiente -en el Excel original, la
+# columna "Objetivo" de las pestañas BEV BMW/MINI 2026 es un SUMIF del
+# propio objetivo de Retail, así que no se importa aparte: %BEV se
+# calcula sobre este mismo objetivo de Retail (ver dashboard.py).
 _HOJAS_OBJETIVO = {
     ("BMW", "Retail"): ("UC BMW 2026 BPS", 6, 6),
     ("MINI", "Retail"): ("UC MINI 2026 MINI NEXT", 6, 7),
-    ("BMW", "BEV"): ("BEV BMW 2026", 6, 3),
-    ("MINI", "BEV"): ("BEV MINI 2026", 6, 3),
 }
 
 # Hojas "PENETRACION MERCADO VO BMW/MINI": mismo formato de bloques

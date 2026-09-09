@@ -97,8 +97,11 @@ def kpi_bloque(
     meses = metrics.meses_de_periodo(periodo, mes_referencia)
     realizado = metrics.kpis_periodo(resumen, codigo_dealer, marca, periodo, mes_referencia)
 
+    # No existe un "objetivo BEV" independiente -en el Excel original, la
+    # columna "Objetivo" de las pestañas BEV BMW/MINI 2026 es un SUMIF
+    # del propio objetivo de Retail (confirmado en sus fórmulas): %BEV
+    # se calcula sobre ESE MISMO objetivo de Retail, no sobre uno aparte.
     objetivo_retail = _objetivo_de(codigo_dealer, marca, "Retail", meses)
-    objetivo_bev = _objetivo_de(codigo_dealer, marca, "BEV", meses)
     mercado = _mercado_de(codigo_dealer, marca, meses)
     mystery = _mystery_shopping_de(codigo_dealer, marca, meses)
 
@@ -129,7 +132,10 @@ def kpi_bloque(
 
     bono = bonus.calcular(marca, pct_cumplimiento_retail, pct_remarketing, pct_bev)
     if bono["total"] is not None:
-        bono["total_a_cobrar"] = round(bono["total"] * retail, 2)
+        # El importe (€/vehículo) se cobra sólo por los vehículos Retail
+        # que ADEMÁS sean BPS/MN (`bps` ya es ese subconjunto: es_bps =
+        # BPS FISCALGES & es_retail en ingest.py), no por todo el Retail.
+        bono["total_a_cobrar"] = round(bono["total"] * bps, 2)
     else:
         bono["total_a_cobrar"] = None
 
@@ -144,7 +150,6 @@ def kpi_bloque(
         "remarketing": remarketing,
         "pct_remarketing": pct_remarketing,
         "bandas_remarketing_necesarias": bandas_remarketing,
-        "objetivo_bev": objetivo_bev,
         "bev": bev,
         "pct_bev": pct_bev,
         "bandas_bev_necesarias": _bandas_bev_necesarias(marca, objetivo_retail, bev),

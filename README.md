@@ -98,7 +98,11 @@ Mdo_[mes].xlsx`, `MYS VO BMW_MINI.xlsx`, objetivos que pasa Germán a
 mano...). No están en la BBDD de ventas, así que **no se pueden
 calcular solos**:
 
-- **Objetivos** (Retail y BEV) por concesionario/marca/mes.
+- **Objetivos de Retail** por concesionario/marca/mes -no existe un
+  "objetivo BEV" aparte: en el Excel original la columna "Objetivo" de
+  las pestañas BEV BMW/MINI 2026 es un SUMIF del propio objetivo de
+  Retail, así que **%BEV se calcula sobre este mismo objetivo de
+  Retail** (`dashboard.py`), no hay nada más que introducir para BEV.
 - **Mystery Shopping**, por concesionario/marca/semestre.
 - **Tamaño de mercado &lt;6 años**, para calcular el % de penetración.
 
@@ -113,13 +117,12 @@ importar nada para verlos en el Dashboard.
 
 **Importar todo de golpe:** la pestaña **"Importar objetivos"** (página
 "Objetivos y datos manuales") lee, de un único Excel de seguimiento
-que subas, **objetivos** (`UC BMW 2026 BPS`, `UC MINI 2026 MINI NEXT`,
-`BEV BMW 2026`, `BEV MINI 2026`), **tamaño de mercado &lt;6 años**
+que subas, **objetivos de Retail** (`UC BMW 2026 BPS`,
+`UC MINI 2026 MINI NEXT`), **tamaño de mercado &lt;6 años**
 (`PENETRACION MERCADO VO BMW`, `PENETRACION MCDO VO MINI`) y **mystery
 shopping** (`MYS 2026`) -las pestañas que no encuentre simplemente no
 las importa, sin dar error-. También puedes teclearlo a mano en
-"Objetivos Retail" / "Objetivos BEV" / "Mercado &lt;6 años" / "Mystery
-Shopping".
+"Objetivos Retail" / "Mercado &lt;6 años" / "Mystery Shopping".
 
 Esa misma página tiene una pestaña **"Ajustes manuales"** para corregir
 a mano, mes a mes, cualquier valor que la app haya calculado desde la
@@ -141,9 +144,11 @@ El **Dashboard por concesionario** incluye además, por marca:
 - **Bonificación estimada**: € por vehículo según la matriz de
   cumplimiento objetivo Retail x % Retail origen Remarketing,
   multiplicado por el multiplicador de % BEV, y ese importe **x el
-  número de ventas Retail realizadas = total a cobrar** -con aviso si
-  no se cumple alguno de los dos mínimos-. No se puede calcular sin la
-  columna `Canal Actual` (depende de "Retail origen Remarketing").
+  número de ventas Retail que ADEMÁS son BPS/MN = total a cobrar**
+  -no se cobra por todo el Retail, sólo por los vehículos Retail que
+  también cumplen BPS/MN- con aviso si no se cumple alguno de los dos
+  mínimos. No se puede calcular sin la columna `Canal Actual` (depende
+  de "Retail origen Remarketing").
 - Un desplegable **"📖 Ver guía de bonificación"** con las 4 tablas de
   referencia (mínimos, matriz de bonificación, multiplicador BEV y
   Mystery Shopping) tal cual las del Excel original.
@@ -162,7 +167,10 @@ cambian los importes o los tramos-.
 - **"Ver detalle" en el Dashboard y el Ranking**: al lado de cada KPI
   (Retail, BPS/MN, Remarketing, BEV, Wholesale...) hay un botón que abre
   justo los vehículos que componen ese número -el equivalente a hacer
-  doble click sobre la cifra en Excel.
+  doble click sobre la cifra en Excel. Las ventas de **BYMYCAR
+  "Directo"** quedan siempre fuera de este detalle (igual que ya
+  quedaban fuera del número del KPI) -tienen sus propios botones "Ver
+  detalle" dentro del apartado "BMW DIRECTO" del Dashboard.
 - **"Seguimiento UC Retail & Wholesale"**: 13 pestañas -por cada marca:
   UC 2026 (sólo Objetivo/Realizado Retail), UC (Retail + BPS/M-NEXT),
   BEV, Wholesale, Grupo Propietario y Penetración de mercado-, más

@@ -30,7 +30,7 @@ def _tabla_editable(
     extra_keys: dict | None = None,
 ):
     """extra_keys, p.ej. {'metrica': 'Retail'}, distingue registros que
-    comparten tabla (objetivos de Retail vs de BEV)."""
+    comparten tabla (p.ej. los distintos ajustes manuales por métrica)."""
     extra_keys = extra_keys or {}
     key_cols = ["codigo_dealer", "marca", *extra_keys.keys(), col_nombre]
 
@@ -74,19 +74,19 @@ def _tabla_editable(
         st.success("Guardado.")
 
 
-tab_importar, tab_retail, tab_bev, tab_mercado, tab_mys, tab_ajustes = st.tabs(
-    ["Importar objetivos", "Objetivos Retail", "Objetivos BEV", "Mercado <6 años", "Mystery Shopping", "Ajustes manuales"]
+tab_importar, tab_retail, tab_mercado, tab_mys, tab_ajustes = st.tabs(
+    ["Importar objetivos", "Objetivos Retail", "Mercado <6 años", "Mystery Shopping", "Ajustes manuales"]
 )
 
 with tab_importar:
     st.caption(
         "Si ya tienes el Excel de seguimiento (`SEGUIMIENTO UC RETAIL & WHOLESALE`) relleno, "
         "súbelo aquí y se copia todo de golpe -no hace falta teclearlo concesionario por "
-        "concesionario. Lee de un tirón **objetivos** (`UC BMW 2026 BPS`, "
-        "`UC MINI 2026 MINI NEXT`, `BEV BMW 2026`, `BEV MINI 2026`), **tamaño de mercado "
-        "<6 años** (`PENETRACION MERCADO VO BMW`, `PENETRACION MCDO VO MINI`) y **mystery "
-        "shopping** (`MYS 2026`) -las que falten en el archivo simplemente no se importan, sin "
-        "dar error."
+        "concesionario. Lee de un tirón **objetivos de Retail** (`UC BMW 2026 BPS`, "
+        "`UC MINI 2026 MINI NEXT` -no existe un objetivo de BEV aparte, %BEV se calcula sobre "
+        "este mismo objetivo de Retail-), **tamaño de mercado <6 años** (`PENETRACION MERCADO "
+        "VO BMW`, `PENETRACION MCDO VO MINI`) y **mystery shopping** (`MYS 2026`) -las que "
+        "falten en el archivo simplemente no se importan, sin dar error."
     )
     archivo_seguimiento = st.file_uploader("Excel de seguimiento (.xlsx)", type=["xlsx"], key="uploader_seguimiento")
     if archivo_seguimiento is not None:
@@ -134,15 +134,6 @@ with tab_retail:
     _tabla_editable(
         "objetivos", marca, config.MESES, "mes", dealers[dealers[col] == "Si"],
         "objetivos de retail", extra_keys={"metrica": "Retail"},
-    )
-
-with tab_bev:
-    marca = st.radio("Marca", ["BMW", "MINI"], horizontal=True, key="marca_bev")
-    st.markdown(theme.badge(marca), unsafe_allow_html=True)
-    col = "vende_bmw" if marca == "BMW" else "vende_mini"
-    _tabla_editable(
-        "objetivos", marca, config.MESES, "mes", dealers[dealers[col] == "Si"],
-        "objetivos de BEV", extra_keys={"metrica": "BEV"},
     )
 
 with tab_mercado:

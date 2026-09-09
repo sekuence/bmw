@@ -44,7 +44,7 @@ def build_workbook(resumen, dealers, marca: str, periodo: str, mes_referencia: s
         "Objetivo Retail", "Realizado Retail", "% Cumplimiento",
         "BPS/MN", "% BPS/MN",
         "Remarketing", "% Remarketing",
-        "Objetivo BEV", "BEV", "% BEV",
+        "BEV", "% BEV",
         "Wholesale UC", "Wholesale YUC",
         "Mercado <6 años", "% Penetración",
         "Mystery Shopping",
@@ -62,7 +62,7 @@ def build_workbook(resumen, dealers, marca: str, periodo: str, mes_referencia: s
             k["objetivo_retail"], k["realizado_retail"], None,
             k["bps"], None,
             k["remarketing"], None,
-            k["objetivo_bev"], k["bev"], None,
+            k["bev"], None,
             k["wholesale_uc"], k["wholesale_yuc"],
             k["mercado_menos_6_anos"], None,
             k["mystery_shopping"],
@@ -71,12 +71,15 @@ def build_workbook(resumen, dealers, marca: str, periodo: str, mes_referencia: s
             c = ws.cell(row=fila, column=j, value=v)
             c.font = BASE_FONT
 
-        # % como fórmulas locales (recalculan solas si se edita el valor a mano)
+        # % como fórmulas locales (recalculan solas si se edita el valor a mano).
+        # %BPS se calcula sobre el Realizado (E), pero %Remarketing y %BEV
+        # se calculan sobre el Objetivo (D), no sobre el Realizado -igual
+        # que en dashboard.py y en el Excel original-.
         ws.cell(row=fila, column=6, value=f"=IFERROR(E{fila}/D{fila},\"\")").number_format = PCT_FORMAT
         ws.cell(row=fila, column=8, value=f"=IFERROR(G{fila}/E{fila},\"\")").number_format = PCT_FORMAT
-        ws.cell(row=fila, column=10, value=f"=IFERROR(I{fila}/E{fila},\"\")").number_format = PCT_FORMAT
-        ws.cell(row=fila, column=13, value=f"=IFERROR(L{fila}/E{fila},\"\")").number_format = PCT_FORMAT
-        ws.cell(row=fila, column=17, value=f"=IFERROR(E{fila}/P{fila},\"\")").number_format = PCT_FORMAT
+        ws.cell(row=fila, column=10, value=f"=IFERROR(I{fila}/D{fila},\"\")").number_format = PCT_FORMAT
+        ws.cell(row=fila, column=12, value=f"=IFERROR(K{fila}/D{fila},\"\")").number_format = PCT_FORMAT
+        ws.cell(row=fila, column=16, value=f"=IFERROR(E{fila}/O{fila},\"\")").number_format = PCT_FORMAT
         fila += 1
 
     ws.freeze_panes = ws.cell(row=header_row + 1, column=1)

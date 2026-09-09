@@ -40,9 +40,12 @@ st.caption(f"Grupo propietario: **{fila['grupo_propietario']}**  ·  Código dea
 st.divider()
 
 
-def _boton_detalle(marca: str, metrica: str, meses: list[str], etiqueta: str):
+def _boton_detalle(marca: str, metrica: str, meses: list[str], etiqueta: str, solo_directo: bool = False):
     with st.popover(f"🔎 Ver detalle: {etiqueta}"):
-        filas = detail.filtrar(ventas, codigo_dealer=codigo_dealer, marca=marca, meses=meses, metrica=metrica)
+        filas = detail.filtrar(
+            ventas, codigo_dealer=codigo_dealer, marca=marca, meses=meses, metrica=metrica,
+            solo_bymycar_directo=solo_directo,
+        )
         st.caption(f"{len(filas)} vehículos")
         st.dataframe(filas, width="stretch", hide_index=True, height=350)
 
@@ -103,6 +106,14 @@ if es_bymycar:
                 d1.metric("Retail", directo["retail"])
                 d2.metric("BPS/MN", directo["bps"])
                 d3.metric("BEV", directo["bev"])
+                meses_directo = kpis[marca]["meses_incluidos"]
+                b1, b2, b3 = st.columns(3)
+                with b1:
+                    _boton_detalle(marca, "retail", meses_directo, "BMW DIRECTO · Retail", solo_directo=True)
+                with b2:
+                    _boton_detalle(marca, "bps", meses_directo, "BMW DIRECTO · BPS/MN", solo_directo=True)
+                with b3:
+                    _boton_detalle(marca, "bev", meses_directo, "BMW DIRECTO · BEV", solo_directo=True)
             else:
                 st.caption("No disponible -depende de la columna Canal Actual, que aún no trae el archivo de ventas.")
     _fila(_render_directo)
@@ -165,7 +176,7 @@ st.markdown("### BEV (todas las ventas BEV, Retail + Wholesale)")
 def _render_bev(marca):
     k = kpis[marca]
     e1, e2 = st.columns(2)
-    e1.metric("Ventas BEV", f"{k['bev']:.0f}", help=f"Objetivo: {k['objetivo_bev']:.0f}")
+    e1.metric("Ventas BEV", f"{k['bev']:.0f}", help=f"% BEV se calcula sobre el Objetivo Retail: {k['objetivo_retail']:.0f}")
     e2.metric("% BEV sobre objetivo retail", f"{k['pct_bev']*100:.1f}%" if k["pct_bev"] is not None else "—")
     with st.expander("Uds. necesarias para alcanzar cada tramo de % BEV"):
         for banda in k["bandas_bev_necesarias"]:
@@ -224,7 +235,7 @@ def _render_bonificacion(marca):
     if bono["total"] is not None:
         bo1, bo2, bo3 = st.columns(3)
         bo1.metric("€ / vehículo (matriz x BEV)", f"{bono['total']:.2f} €", help=f"Base {bono['base']:.0f} € x multiplicador BEV x{bono['multiplicador']:.2f}")
-        bo2.metric("Ventas Retail", f"{k['realizado_retail']:.0f}")
+        bo2.metric("Ventas Retail + BPS/MN", f"{k['bps']:.0f}", help="Sólo se cobra por los vehículos Retail que además son BPS/MN.")
         bo3.metric("Total a cobrar", f"{bono['total_a_cobrar']:.0f} €" if bono["total_a_cobrar"] is not None else "—")
         if k["cumple_penetracion_bps"] is False or k["cumple_mystery_shopping"] is False:
             st.warning("⚠️ No cumple algún mínimo (penetración BPS/MN y/o Mystery Shopping) -puede que este importe no aplique.")
