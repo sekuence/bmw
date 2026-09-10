@@ -148,10 +148,14 @@ El **Dashboard por concesionario** incluye además, por marca:
   -no se cobra por todo el Retail, sólo por los vehículos Retail que
   también cumplen BPS/MN- con aviso si no se cumple alguno de los dos
   mínimos. No se puede calcular sin la columna `Canal Actual` (depende
-  de "Retail origen Remarketing"). Los tres % que deciden en qué tramo
-  de la matriz cae un concesionario (cumplimiento Retail, % Remarketing
-  y % BEV) se comparan **exactos, sin redondear** -un 26,6% de
-  remarketing no llega al tramo del 27%, se queda en el anterior.
+  de "Retail origen Remarketing"). Sólo el **% de cumplimiento Retail**
+  se redondea a la unidad porcentual más cercana para decidir si llega
+  al mínimo del 90% (89,91% cuenta como 90%) -el % Remarketing y el %
+  BEV se comparan **exactos, sin redondear**, para elegir el tramo
+  dentro de la matriz (un 26,6% de remarketing no llega al tramo del
+  27%, se queda en el anterior). Si el redondeo del cumplimiento Retail
+  cambia el resultado, aparece un aviso azul con el % exacto y el %
+  redondeado.
 
 - Un desplegable **"📖 Ver guía de bonificación"** con las 4 tablas de
   referencia (mínimos, matriz de bonificación, multiplicador BEV y

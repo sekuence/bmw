@@ -3,6 +3,7 @@ original ('Dealer Dashboard'): mínimos de penetración BPS/MN y Mystery
 Shopping, matriz de bonificación (% cumplimiento objetivo retail x %
 Retail origen Remarketing) y multiplicador por % BEV.
 """
+import math
 
 UMBRAL_PENETRACION_BPS = 0.80
 UMBRAL_MYSTERY_SHOPPING = 90.0  # Mystery Shopping se introduce como puntuación 0-100
@@ -42,6 +43,14 @@ BANDAS_BEV_MULT = {
 }
 
 
+def redondear_pct(valor: float) -> float:
+    """Redondea a la unidad porcentual más cercana, con 0,5 hacia arriba
+    -para que un 89,91% cuente como 90%-. No se usa round() de Python
+    porque redondea los .5 al par más cercano ("banker's rounding"), no
+    siempre hacia arriba."""
+    return math.floor(valor * 100 + 0.5) / 100
+
+
 def _indice_banda(valor: float, bandas: list[tuple[float, float | None]]) -> int | None:
     for i, (lo, hi) in enumerate(bandas):
         if valor >= lo and (hi is None or valor < hi):
@@ -63,20 +72,31 @@ def calcular(marca: str, pct_cumplimiento_retail: float | None, pct_remarketing:
     Devuelve base=None cuando no hay objetivo o no hay ventas con las que
     calcular el % (no se puede ubicar en la matriz).
 
-    Los tres % se comparan EXACTOS contra las bandas, sin redondear -un
-    26,6% de remarketing NO llega al tramo del 27%, se queda en el
-    tramo anterior. No redondear aquí es explícito: se probó a redondear
-    a la unidad porcentual más cercana y se revirtió a petición del
-    usuario, precisamente por casos como ese."""
+    SÓLO el % de cumplimiento Retail (eje X) se redondea a la unidad
+    porcentual más cercana -89,91% cuenta como 90% para decidir si el
+    concesionario llega al mínimo y puede cobrar-. El % Remarketing
+    (eje Y) y el % BEV se comparan EXACTOS, sin redondear -un 26,6% de
+    remarketing NO llega al tramo del 27%, se queda en el anterior-.
+    `redondeo_aplicado` avisa cuando ese redondeo del eje X cambia el
+    resultado (p.ej. hace que SÍ entre en la matriz cuando el % exacto
+    no llegaba), para identificarlo fácilmente."""
     if pct_cumplimiento_retail is None or pct_remarketing is None:
-        return {"base": None, "multiplicador": 1.0, "total": None}
+        return {"base": None, "multiplicador": 1.0, "total": None, "redondeo_aplicado": False}
 
-    ix = _indice_banda(pct_cumplimiento_retail, BANDAS_X)
+    pct_x_redondeado = redondear_pct(pct_cumplimiento_retail)
+    ix = _indice_banda(pct_x_redondeado, BANDAS_X)
     iy = _indice_banda(pct_remarketing, BANDAS_Y[marca])
     base = MATRIZ_BONO[marca][ix][iy] if ix is not None and iy is not None else 0
     mult = multiplicador_bev(marca, pct_bev)
 
-    return {"base": base, "multiplicador": mult, "total": round(base * mult, 2)}
+    redondeo_aplicado = ix != _indice_banda(pct_cumplimiento_retail, BANDAS_X)
+
+    return {
+        "base": base,
+        "multiplicador": mult,
+        "total": round(base * mult, 2),
+        "redondeo_aplicado": redondeo_aplicado,
+    }
 
 
 def cumple_penetracion_bps(pct_bps: float | None) -> bool | None:
