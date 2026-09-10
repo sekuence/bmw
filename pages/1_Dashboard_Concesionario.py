@@ -1,6 +1,6 @@
 import streamlit as st
 
-from src import bonus, config, dashboard, detail, guia, ingest, metrics, theme
+from src import config, dashboard, detail, guia, ingest, metrics, theme
 
 st.set_page_config(page_title="Dashboard por concesionario", page_icon="📈", layout="wide")
 
@@ -237,15 +237,6 @@ def _render_bonificacion(marca):
         bo1.metric("€ / vehículo (matriz x BEV)", f"{bono['total']:.2f} €", help=f"Base {bono['base']:.0f} € x multiplicador BEV x{bono['multiplicador']:.2f}")
         bo2.metric("Ventas Retail + BPS/MN", f"{k['bps']:.0f}", help="Sólo se cobra por los vehículos Retail que además son BPS/MN.")
         bo3.metric("Total a cobrar", f"{bono['total_a_cobrar']:.0f} €" if bono["total_a_cobrar"] is not None else "—")
-        if bono.get("redondeo_aplicado"):
-            pct_x_redondeado = bonus.redondear_pct(k["pct_cumplimiento_retail"]) * 100
-            pct_y_redondeado = bonus.redondear_pct(k["pct_remarketing"]) * 100
-            st.info(
-                f"🔵 Cumplimiento retail: **{k['pct_cumplimiento_retail']*100:.2f}%** redondeado a "
-                f"**{pct_x_redondeado:.0f}%** · % Remarketing: **{k['pct_remarketing']*100:.2f}%** "
-                f"redondeado a **{pct_y_redondeado:.0f}%** -el redondeo cambió a qué tramo de la matriz "
-                "de bonificación entra."
-            )
         if k["cumple_penetracion_bps"] is False or k["cumple_mystery_shopping"] is False:
             st.warning("⚠️ No cumple algún mínimo (penetración BPS/MN y/o Mystery Shopping) -puede que este importe no aplique.")
     elif not remarketing_disponible:

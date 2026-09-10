@@ -150,10 +150,8 @@ El **Dashboard por concesionario** incluye además, por marca:
   mínimos. No se puede calcular sin la columna `Canal Actual` (depende
   de "Retail origen Remarketing"). Los tres % que deciden en qué tramo
   de la matriz cae un concesionario (cumplimiento Retail, % Remarketing
-  y % BEV) se **redondean a la unidad porcentual más cercana** antes de
-  ubicarlos (89,91% cuenta como 90%) -si ese redondeo cambia de tramo a
-  alguno de los dos primeros, aparece un aviso azul debajo del importe
-  con el % exacto y el % redondeado, para que se note siempre que pasa.
+  y % BEV) se comparan **exactos, sin redondear** -un 26,6% de
+  remarketing no llega al tramo del 27%, se queda en el anterior.
 
 - Un desplegable **"📖 Ver guía de bonificación"** con las 4 tablas de
   referencia (mínimos, matriz de bonificación, multiplicador BEV y
