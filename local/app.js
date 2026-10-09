@@ -586,13 +586,21 @@ function objImportGuardar() {
   document.getElementById("obj-import-resultado").innerHTML += `<div class="alert alert-ok">Guardado. Ya se está usando en el Dashboard.</div>`;
 }
 
+// Parámetros de la tabla editable actualmente en pantalla -centralizados
+// aquí (en vez de leerlos de atributos data-* del botón) para que tanto el
+// botón "Guardar" como el autoguardado de cada celda (objCeldaCambio) usen
+// siempre la misma fuente de verdad.
+let objGuardarParams = null;
+
 function renderObjTablaSimple(body, tabla, marca, columnas, colNombre, label, extraKeys, marcaKey) {
   const datos = callPy("objetivos_tabla", tabla, marca, columnas, colNombre, extraKeys);
+  objGuardarParams = { tabla, marca, colNombre, columnas, extraKeys };
   body.innerHTML = `
     ${marcaRadioHtml(marcaKey, marca)}
     ${badgeHtml(marca)}
+    <p class="caption">Los cambios se guardan solos al salir de cada celda -no hace falta pulsar nada más.</p>
     <div id="obj-editable"></div>
-    <button class="btn" style="margin-top:10px" data-action="objGuardar" data-tabla="${tabla}" data-marca="${marca}" data-colnombre="${colNombre}" data-columnas='${esc(JSON.stringify(columnas))}' data-extrakeys='${esc(JSON.stringify(extraKeys))}'>💾 Guardar ${esc(label)} (${marca})</button>
+    <button class="btn secondary" style="margin-top:10px" data-action="objGuardar">💾 Guardar ${esc(label)} (${marca}) ahora</button>
     <span id="obj-guardado-msg"></span>
   `;
   document.getElementById("obj-editable").innerHTML = editableTableHtml(datos);
@@ -603,7 +611,7 @@ function editableTableHtml(datos) {
   const tbody = datos.filas.map((fila, i) => `
     <tr>
       <td>${fila.codigo_dealer}</td><td>${esc(fila.concesionario)}</td>
-      ${datos.columnas.map((c) => `<td><input type="number" step="any" data-row="${i}" data-col="${esc(c)}" value="${fila[c] ?? ""}"></td>`).join("")}
+      ${datos.columnas.map((c) => `<td><input type="number" step="any" data-row="${i}" data-col="${esc(c)}" data-onchange="objCeldaCambio" value="${fila[c] ?? ""}"></td>`).join("")}
     </tr>`).join("");
   return `<div class="tablewrap editable-table"><table class="datatable"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`;
 }
@@ -621,14 +629,18 @@ function leerEditableTable(datos) {
   return filas;
 }
 
-function objGuardar(btn) {
-  const tabla = btn.dataset.tabla, marca = btn.dataset.marca, colNombre = btn.dataset.colnombre;
-  const columnas = JSON.parse(btn.dataset.columnas), extraKeys = JSON.parse(btn.dataset.extrakeys);
+function guardarTablaActual() {
+  if (!objGuardarParams) return;
+  const { tabla, marca, colNombre, columnas, extraKeys } = objGuardarParams;
   const datosActuales = { columnas, filas: leerEditableTableRaw(columnas) };
   const filas = leerEditableTable(datosActuales);
   callPy("objetivos_guardar", tabla, marca, columnas, colNombre, filas, extraKeys);
-  document.getElementById("obj-guardado-msg").innerHTML = ` <span class="caption">✅ Guardado.</span>`;
+  const msg = document.getElementById("obj-guardado-msg");
+  if (msg) msg.innerHTML = ` <span class="caption">✅ Guardado -${new Date().toLocaleTimeString("es-ES")}.</span>`;
 }
+
+function objGuardar() { guardarTablaActual(); }
+function objCeldaCambio() { guardarTablaActual(); }
 
 function leerEditableTableRaw(columnas) {
   const rows = document.querySelectorAll("#obj-editable tbody tr");
@@ -650,13 +662,15 @@ function renderObjAjustes(body) {
     </div>
     <div id="obj-ajustes-calculado"></div>
     <div class="sectiontitle">Corrección manual</div>
+    <p class="caption">Los cambios se guardan solos al salir de cada celda -no hace falta pulsar nada más.</p>
     <div id="obj-editable"></div>
-    <button class="btn" style="margin-top:10px" data-action="objGuardar" data-tabla="ajustes_manuales" data-marca="${objState.marcaAjustes}" data-colnombre="mes" data-columnas='${esc(JSON.stringify(MESES))}' data-extrakeys='${esc(JSON.stringify({ metrica: objState.metricaAjustes }))}'>💾 Guardar ajustes (${objState.marcaAjustes})</button>
+    <button class="btn secondary" style="margin-top:10px" data-action="objGuardar">💾 Guardar ajustes (${objState.marcaAjustes}) ahora</button>
     <span id="obj-guardado-msg"></span>
   `;
   const calc = callPy("objetivos_ajuste_calculado", objState.marcaAjustes, objState.metricaAjustes);
   document.getElementById("obj-ajustes-calculado").innerHTML = `<p><strong>Valor calculado desde la BBDD:</strong></p>` + simpleTableHtml(["concesionario", ...MESES], calc.filas);
   const datos = callPy("objetivos_tabla", "ajustes_manuales", objState.marcaAjustes, MESES, "mes", { metrica: objState.metricaAjustes });
+  objGuardarParams = { tabla: "ajustes_manuales", marca: objState.marcaAjustes, colNombre: "mes", columnas: MESES, extraKeys: { metrica: objState.metricaAjustes } };
   document.getElementById("obj-editable").innerHTML = editableTableHtml(datos);
 }
 function objMetricaCambio(sel) { objState.metricaAjustes = sel.value; rerenderPage(); }
@@ -891,7 +905,7 @@ const ACTIONS = {
 };
 const ONCHANGE = {
   homeFileChange, dashCambio, periodoCambio, mesRefCambio, rerenderPage, objMarcaCambio, objMetricaCambio,
-  objImportFile, segMesAcumCambio, segAgruparCambio,
+  objImportFile, objCeldaCambio, segMesAcumCambio, segAgruparCambio,
 };
 
 function wireDelegatedEvents() {
