@@ -25,6 +25,46 @@ streamlit run app.py
 Abre `http://localhost:8501`, sube el archivo de ventas desde el panel
 izquierdo y navega por las páginas del menú lateral.
 
+## Versión local sin servidor (un solo archivo .html)
+
+Para usarla donde instalar Python/Streamlit o levantar un servidor no
+es viable (equipos corporativos bloqueados), existe `seguimiento_local.html`:
+un único archivo que basta con abrir con doble click -no necesita
+Python instalado, ni servidor, ni permisos de instalación-.
+
+**Cómo funciona:** el archivo lleva embebido el mismo código Python de
+`src/*.py` que usa esta app de Streamlit, y lo ejecuta dentro del
+propio navegador con [Pyodide](https://pyodide.org) (Python compilado
+a WebAssembly). La primera vez que lo abres necesita internet unos
+segundos para descargar el motor Python y pandas/openpyxl (de los CDN
+públicos `cdn.jsdelivr.net` y PyPI); a partir de ahí el navegador los
+cachea. **El archivo de ventas y todos los datos calculados nunca
+salen del navegador** -no hay ningún servidor propio ni llamada a
+ningún backend; sólo se descargan librerías genéricas, nunca se suben
+datos. Lo que escribes en "Objetivos y datos manuales" se guarda con
+`localStorage` del navegador (por eso sólo se recuerda en ese mismo
+navegador/equipo; si cambias de navegador, hay que volver a
+importarlo o teclearlo).
+
+Incluye las mismas 7 páginas que la app de Streamlit (Home, Dashboard,
+Objetivos y datos manuales, Ranking, Exportar, Detalle de vehículos,
+Seguimiento UC Retail & Wholesale), con el mismo cálculo y las mismas
+reglas de negocio -es la interfaz la que está reescrita en HTML/JS, no
+la lógica.
+
+**Regenerar el archivo tras tocar `src/`:** `seguimiento_local.html` se
+genera con `local/build.py`, que vuelca el contenido real de
+`src/*.py` (sin transcribir nada a mano, así nunca queda
+desincronizado) más `local/browser_views.py` (la capa que traduce esas
+funciones a algo que la página pueda llamar), `local/storage_browser.py`
+(sustituye el `src/storage.py` de SQLite por uno que guarda en
+`localStorage`) y `local/app.js` (la interfaz) dentro de la plantilla
+`local/app_template.html`:
+
+```bash
+python3 local/build.py
+```
+
 ## Qué se calcula automáticamente desde la BBDD
 
 | Métrica | Regla aplicada sobre la hoja `BBDD` |
