@@ -31,7 +31,7 @@ with c3:
     elif periodo == "ACUMULADO MES 2S":
         mes_referencia = st.selectbox("Hasta el mes de", config.MESES_S2, index=0)
 
-theme.encabezado(marca)
+st.markdown(theme.encabezado(marca), unsafe_allow_html=True)
 
 tabla = metrics.ranking_periodo(resumen, dealers, marca, periodo, mes_referencia)
 

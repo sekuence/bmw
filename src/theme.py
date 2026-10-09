@@ -1,7 +1,6 @@
 """Colores de marca usados en toda la app, para que BMW y MINI se
 distingan de un vistazo -azul BMW / naranja MINI-, igual que en el
 Excel original."""
-import streamlit as st
 
 COLOR_BMW = "#0066B1"
 COLOR_MINI = "#F5811F"
@@ -25,15 +24,18 @@ def paleta(marca: str, n: int) -> list[str]:
     return (colores * ((n // len(colores)) + 1))[:n]
 
 
-def encabezado(marca: str, extra: str = "") -> None:
-    """Cabecera de sección con el color de la marca (fondo azul/naranja)."""
+def encabezado(marca: str, extra: str = "") -> str:
+    """HTML de la cabecera de sección con el color de la marca (fondo
+    azul/naranja) -como badge()/semaforo(), devuelve el HTML en vez de
+    pintarlo directamente, para poder reutilizar esta función fuera de
+    Streamlit (p.ej. en la versión HTML local). Pintarla con
+    st.markdown(theme.encabezado(marca), unsafe_allow_html=True)."""
     color = color_de(marca)
     texto_extra = f" — {extra}" if extra else ""
-    st.markdown(
+    return (
         f"<div style='background:{color};color:white;padding:8px 14px;"
         f"border-radius:6px;font-weight:600;font-size:1.15rem;margin-bottom:10px;'>"
-        f"{marca}{texto_extra}</div>",
-        unsafe_allow_html=True,
+        f"{marca}{texto_extra}</div>"
     )
 
 

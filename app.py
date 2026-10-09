@@ -85,7 +85,7 @@ else:
     cols_marca = st.columns(len(resumen_marca))
     for col, (marca, fila) in zip(cols_marca, resumen_marca.iterrows()):
         with col:
-            theme.encabezado(marca)
+            st.markdown(theme.encabezado(marca), unsafe_allow_html=True)
             st.metric("Retail", int(fila["retail"]))
             st.metric("BPS/MN", int(fila["bps"]))
             st.metric("Remarketing", int(fila["remarketing"]))

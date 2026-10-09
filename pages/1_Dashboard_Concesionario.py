@@ -93,7 +93,7 @@ def _fila(render):
             render(marca)
 
 
-_fila(lambda marca: (theme.encabezado(marca), st.caption("Meses incluidos: " + ", ".join(kpis[marca]["meses_incluidos"]))))
+_fila(lambda marca: (st.markdown(theme.encabezado(marca), unsafe_allow_html=True), st.caption("Meses incluidos: " + ", ".join(kpis[marca]["meses_incluidos"]))))
 
 if es_bymycar:
     def _render_directo(marca):

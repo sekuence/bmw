@@ -248,7 +248,7 @@ combinaciones = [(marca, tipo) for marca in ("BMW", "MINI") for tipo in ORDEN_TI
 
 for tab, (marca, tipo) in zip(tabs, combinaciones):
     with tab:
-        theme.encabezado(marca)
+        st.markdown(theme.encabezado(marca), unsafe_allow_html=True)
         agrupar_fijo = tipo == "grupo"
         if agrupar_fijo:
             agrupar = True
