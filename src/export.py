@@ -31,7 +31,43 @@ def _autosize(ws, n_cols, width=16):
         ws.column_dimensions[get_column_letter(j)].width = width
 
 
-def build_workbook(resumen, dealers, marca: str, periodo: str, mes_referencia: str | None = None) -> bytes:
+def _dealers_de_marca(dealers, marca: str, codigos: list[int] | None = None):
+    """Concesionarios que venden `marca`, filtrados a `codigos` si se
+    da una lista -usado tanto para la vista previa de tarjetas como
+    para el propio Excel, así nunca se desincronizan."""
+    col = "vende_bmw" if marca == "BMW" else "vende_mini"
+    sub = dealers[dealers[col] == "Si"]
+    if codigos is not None:
+        sub = sub[sub["codigo_dealer"].isin(codigos)]
+    return sub.sort_values("concesionario")
+
+
+def resumen_dealers(resumen, dealers, marca: str, periodo: str, mes_referencia: str | None = None, codigos: list[int] | None = None) -> list[dict]:
+    """Un dict por concesionario (de `marca`, filtrado a `codigos` si se
+    da) con los KPIs clave -pensado para pintar tarjetas visuales antes
+    de generar el Excel, en vez de tener que abrirlo para verlas."""
+    filas = []
+    for _, d in _dealers_de_marca(dealers, marca, codigos).iterrows():
+        codigo = int(d["codigo_dealer"])
+        k = dashboard.kpi_bloque(resumen, codigo, marca, periodo, mes_referencia)
+        objetivo, realizado = k["objetivo_retail"], k["realizado_retail"]
+        filas.append({
+            "codigo_dealer": codigo,
+            "concesionario": d["concesionario"],
+            "grupo_propietario": d["grupo_propietario"],
+            "objetivo_retail": objetivo,
+            "realizado_retail": realizado,
+            "pct_cumplimiento": (realizado / objetivo) if objetivo else None,
+            "bps": k["bps"],
+            "bev": k["bev"],
+        })
+    return filas
+
+
+def build_workbook(resumen, dealers, marca: str, periodo: str, mes_referencia: str | None = None, codigos: list[int] | None = None) -> bytes:
+    """codigos: si se da, el Excel sólo incluye esos concesionarios
+    (selección manual) -si es None, incluye todos los que venden
+    `marca`, igual que antes."""
     wb = Workbook()
 
     ws = wb.active
@@ -52,9 +88,8 @@ def build_workbook(resumen, dealers, marca: str, periodo: str, mes_referencia: s
     header_row = 3
     _write_header(ws, header_row, headers)
 
-    col_bmw = "vende_bmw" if marca == "BMW" else "vende_mini"
     fila = header_row + 1
-    for _, d in dealers[dealers[col_bmw] == "Si"].sort_values("concesionario").iterrows():
+    for _, d in _dealers_de_marca(dealers, marca, codigos).iterrows():
         codigo = int(d["codigo_dealer"])
         k = dashboard.kpi_bloque(resumen, codigo, marca, periodo, mes_referencia)
         valores = [
@@ -87,7 +122,10 @@ def build_workbook(resumen, dealers, marca: str, periodo: str, mes_referencia: s
 
     # Hoja de detalle mensual (equivalente a las pestañas "feeder" del Excel original)
     ws2 = wb.create_sheet("Detalle mensual")
-    detalle = resumen[resumen["marca"] == marca].merge(
+    detalle = resumen[resumen["marca"] == marca]
+    if codigos is not None:
+        detalle = detalle[detalle["codigo_dealer"].isin(codigos)]
+    detalle = detalle.merge(
         dealers[["codigo_dealer", "concesionario", "grupo_propietario"]], on="codigo_dealer", how="left"
     )
     det_headers = ["codigo_dealer", "concesionario", "grupo_propietario", "mes", "retail", "bps", "remarketing", "bev", "wholesale_uc", "wholesale_yuc"]

@@ -241,6 +241,7 @@ const PAGES = {
   exportar: { label: "Exportar", render: renderExportar },
   detalle: { label: "Detalle", render: renderDetalle },
   seguimiento: { label: "Seguimiento", render: renderSeguimiento },
+  comparativa: { label: "Comparativa", render: renderComparativa },
 };
 let currentPage = "home";
 
@@ -726,31 +727,98 @@ function rankVerDetalle() {
 
 /* ------------------------------ Exportar ------------------------------ */
 
-let exportState = { marca: "BMW", periodo: "ACUMULADO MES", mesRef: "JULIO" };
+let exportState = { marca: "BMW", periodo: "ACUMULADO MES", mesRef: "JULIO", todos: true, seleccionados: new Set() };
 registrarEstadoPeriodo("export", exportState);
 
 function renderExportar() {
   const content = document.getElementById("content");
+  const dealersMarca = callPy("exportar_dealers", exportState.marca);
+  if (exportState.todos || exportState.seleccionados.size === 0) {
+    exportState.seleccionados = new Set(dealersMarca.map((d) => d.codigo_dealer));
+  }
   content.innerHTML = `
     <h2 class="pagetitle">⬇️ Exportar a Excel</h2>
-    <p class="subtitle">Genera un .xlsx con el resumen tipo "Dealer Dashboard" para todos los concesionarios de una marca.</p>
+    <p class="subtitle">Genera un .xlsx con el resumen tipo "Dealer Dashboard" -más el detalle mensual- para uno, varios o todos los concesionarios de una marca.</p>
     <div class="panel row">
       <div>${marcaRadioHtml("exportMarca", exportState.marca)}</div>
       ${periodoSelectorHtml("export", exportState.periodo, exportState.mesRef)}
     </div>
+    <div class="panel">
+      <label><input type="checkbox" data-onchange="exportTodosCambio" ${exportState.todos ? "checked" : ""}> Incluir todos los concesionarios</label>
+      <div id="export-concesionarios" style="${exportState.todos ? "display:none;" : ""}margin-top:8px;max-height:220px;overflow:auto;border-top:1px solid var(--border);padding-top:8px;">
+        ${dealersMarca.map((d) => `<label style="display:block;font-size:13px;margin-bottom:4px"><input type="checkbox" data-onchange="exportConcesionarioCambio" data-codigo="${d.codigo_dealer}" ${exportState.seleccionados.has(d.codigo_dealer) ? "checked" : ""}> ${esc(d.concesionario)}</label>`).join("")}
+      </div>
+    </div>
+    <div id="export-preview"></div>
     <button class="btn" data-action="exportarGenerar">Generar Excel</button>
     <div id="export-status"></div>
   `;
-  document.querySelectorAll('[name="exportMarca"]').forEach((r) => r.addEventListener("change", (e) => { exportState.marca = e.target.value; }));
+  document.querySelectorAll('[name="exportMarca"]').forEach((r) => r.addEventListener("change", (e) => {
+    exportState.marca = e.target.value;
+    exportState.todos = true;
+    rerenderPage();
+  }));
+  renderExportPreview();
+}
+
+function exportTodosCambio(chk) {
+  exportState.todos = chk.checked;
+  rerenderPage();
+}
+
+function exportConcesionarioCambio(chk) {
+  const codigo = Number(chk.dataset.codigo);
+  if (chk.checked) exportState.seleccionados.add(codigo);
+  else exportState.seleccionados.delete(codigo);
+  renderExportPreview();
+}
+
+function renderExportPreview() {
+  const { periodo, mesRef } = leerPeriodo("export");
+  exportState.periodo = periodo;
+  exportState.mesRef = mesRef;
+  const codigos = Array.from(exportState.seleccionados);
+  const btn = document.querySelector('[data-action="exportarGenerar"]');
+  const prevDiv = document.getElementById("export-preview");
+  if (!codigos.length) {
+    prevDiv.innerHTML = `<p class="caption">Elige al menos un concesionario para ver la vista previa y poder generar el Excel.</p>`;
+    if (btn) btn.disabled = true;
+    return;
+  }
+  if (btn) btn.disabled = false;
+  const r = callPy("exportar_preview", exportState.marca, periodo, mesRef, codigos);
+  prevDiv.innerHTML = `
+    <div class="sectiontitle">Vista previa (${r.filas.length} concesionario${r.filas.length !== 1 ? "s" : ""})</div>
+    <div class="cardgrid">${r.filas.map((t) => exportCardHtml(t, exportState.marca)).join("")}</div>
+  `;
+}
+
+function exportCardHtml(t, marca) {
+  const pct = t.pct_cumplimiento;
+  const pctTxt = pct !== null && pct !== undefined ? fmtPct(pct, 0) : "sin objetivo";
+  const ancho = pct !== null && pct !== undefined ? Math.min(pct, 1) * 100 : 0;
+  return `<div class="panel exportcard">
+    <strong>${esc(t.concesionario)}</strong>
+    <div class="caption">${esc(t.grupo_propietario)}</div>
+    <div class="progressbar"><div class="progressbar-fill" style="width:${ancho}%;background:${colorDe(marca)}"></div></div>
+    <div class="caption">Retail: ${fmtNum(t.realizado_retail)} / ${fmtNum(t.objetivo_retail)} (${pctTxt})</div>
+    <div class="metricgrid" style="margin-top:6px">
+      ${metricHtml("BPS/MN", fmtNum(t.bps))}
+      ${metricHtml("BEV", fmtNum(t.bev))}
+    </div>
+  </div>`;
 }
 
 function exportarGenerar() {
+  const codigos = Array.from(exportState.seleccionados);
+  if (!codigos.length) return;
   const { periodo, mesRef } = leerPeriodo("export");
-  exportState.periodo = periodo; exportState.mesRef = mesRef;
-  const bytes = callPy("exportar_generar", exportState.marca, periodo, mesRef);
+  exportState.periodo = periodo;
+  exportState.mesRef = mesRef;
+  const bytes = callPy("exportar_generar", exportState.marca, periodo, mesRef, codigos);
   const nombre = `Seguimiento_${exportState.marca}_${periodo.replace(/ /g, "_")}.xlsx`;
   downloadBytes(bytes, nombre, XLSX_MIME);
-  document.getElementById("export-status").innerHTML = `<div class="alert alert-ok">Listo: se ha descargado ${esc(nombre)}.</div>`;
+  document.getElementById("export-status").innerHTML = `<div class="alert alert-ok">Listo: se ha descargado ${esc(nombre)} (${codigos.length} concesionario${codigos.length !== 1 ? "s" : ""}).</div>`;
 }
 
 /* ------------------------------ Detalle de vehículos ------------------------------ */
@@ -895,6 +963,121 @@ function segExportarPlantilla() {
   document.getElementById("seg-plantilla-status").innerHTML = `<div class="alert alert-ok">Listo.</div>`;
 }
 
+/* ------------------------------ Comparativa interanual ------------------------------ */
+
+let compState = { marca: "BMW", periodo: "ACUMULADO MES", mesRef: "JULIO", metrica: "retail" };
+registrarEstadoPeriodo("comp", compState);
+
+function renderComparativa() {
+  const content = document.getElementById("content");
+  const cargado = callPy("comparativa_cargado");
+  content.innerHTML = `
+    <h2 class="pagetitle">📆 Comparativa interanual</h2>
+    <p class="subtitle">Sube el archivo de ventas del año pasado (mismo formato, hoja BBDD) para comparar Retail, BPS/MN, Remarketing, BEV y Wholesale concesionario a concesionario frente a este año.</p>
+    <div class="panel">
+      <label>Archivo de ventas del año pasado (.xlsx)</label>
+      <input type="file" id="comp-file" accept=".xlsx" data-onchange="compFileChange">
+      <div id="comp-file-status"></div>
+    </div>
+    <div id="comp-body"></div>
+  `;
+  if (cargado) renderComparativaBody();
+  else document.getElementById("comp-body").innerHTML = `<p class="caption">⬆️ Sube el archivo del año pasado para ver la comparativa.</p>`;
+}
+
+async function compFileChange(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById("comp-file-status").innerHTML = `<div class="alert alert-info">Leyendo ${esc(file.name)}…</div>`;
+  const buf = await file.arrayBuffer();
+  const r = callPy("comparativa_cargar_archivo", file.name, new Uint8Array(buf));
+  if (!r.ok) {
+    document.getElementById("comp-file-status").innerHTML = `<div class="alert alert-error">${esc(r.error)}</div>`;
+    return;
+  }
+  document.getElementById("comp-file-status").innerHTML = `<div class="alert alert-ok">Cargadas ${r.vehiculos.toLocaleString("es-ES")} filas del año pasado.</div>`;
+  renderComparativaBody();
+}
+
+function renderComparativaBody() {
+  const body = document.getElementById("comp-body");
+  body.innerHTML = `
+    <div class="panel row">
+      <div>${marcaRadioHtml("compMarca", compState.marca)}</div>
+      ${periodoSelectorHtml("comp", compState.periodo, compState.mesRef)}
+      <div><label>Métrica de las tarjetas</label><select id="comp-metrica" data-onchange="compMetricaCambio">${Object.entries(METRICAS_AJUSTABLES).map(([k, v]) => `<option value="${k}" ${k === compState.metrica ? "selected" : ""}>${esc(v)}</option>`).join("")}</select></div>
+    </div>
+    <div id="comp-resumen"></div>
+    <div class="sectiontitle">Por concesionario</div>
+    <div id="comp-tabla"></div>
+    <hr>
+    <div class="sectiontitle">📥 Descargar comparativa completa</div>
+    <p class="caption">El Excel incluye las 7 métricas calculadas (Retail, BPS/MN, Remarketing, BEV, Wholesale UC/YUC, Ventas totales), no sólo la de las tarjetas.</p>
+    <button class="btn" data-action="compExportar">Generar Excel comparativo</button>
+    <div id="comp-export-status"></div>
+  `;
+  document.querySelectorAll('[name="compMarca"]').forEach((r) => r.addEventListener("change", (e) => { compState.marca = e.target.value; renderComparativaDatos(); }));
+  renderComparativaDatos();
+}
+
+function compMetricaCambio(sel) {
+  compState.metrica = sel.value;
+  renderComparativaDatos();
+}
+
+function renderComparativaDatos() {
+  const { periodo, mesRef } = leerPeriodo("comp");
+  compState.periodo = periodo;
+  compState.mesRef = mesRef;
+  const r = callPy("comparativa_tabla", compState.marca, periodo, mesRef, compState.metrica);
+  const etiqueta = METRICAS_AJUSTABLES[compState.metrica];
+
+  const t = r.totales;
+  const pctTxt = t.var_pct !== null && t.var_pct !== undefined ? fmtPct(t.var_pct, 1) : "—";
+  const signo = t.var_abs > 0 ? "+" : "";
+  document.getElementById("comp-resumen").innerHTML = `
+    <div class="metricgrid">
+      ${metricHtml(`${etiqueta} -este año`, fmtNum(t.actual))}
+      ${metricHtml(`${etiqueta} -año pasado`, fmtNum(t.anterior))}
+      ${metricHtml("Variación", `${signo}${fmtNum(t.var_abs)} (${pctTxt})`)}
+    </div>
+  `;
+
+  const campoActual = `${compState.metrica}_actual`;
+  const campoAnterior = `${compState.metrica}_anterior`;
+  const campoVarAbs = `${compState.metrica}_var_abs`;
+  const campoVarPct = `${compState.metrica}_var_pct`;
+  const etiquetas = {
+    concesionario: "Concesionario",
+    grupo_propietario: "Grupo propietario",
+    [campoActual]: "Este año",
+    [campoAnterior]: "Año pasado",
+    [campoVarAbs]: "Variación",
+    [campoVarPct]: "Variación %",
+  };
+  const cols = ["concesionario", "grupo_propietario", campoActual, campoAnterior, campoVarAbs, campoVarPct];
+  const filasFmt = r.filas.map((f) => {
+    const nueva = {};
+    cols.forEach((c) => {
+      let v = f[c];
+      if (c === campoVarPct) v = v !== null && v !== undefined ? fmtPct(v, 1) : "—";
+      nueva[etiquetas[c]] = v;
+    });
+    return nueva;
+  });
+  document.getElementById("comp-tabla").innerHTML = simpleTableHtml(cols.map((c) => etiquetas[c]), filasFmt);
+}
+
+function compExportar() {
+  const { periodo, mesRef } = leerPeriodo("comp");
+  compState.periodo = periodo;
+  compState.mesRef = mesRef;
+  const bytes = callPy("comparativa_exportar", compState.marca, periodo, mesRef);
+  const nombre = `Comparativa_${compState.marca}_${periodo.replace(/ /g, "_")}.xlsx`;
+  downloadBytes(bytes, nombre, XLSX_MIME);
+  document.getElementById("comp-export-status").innerHTML = `<div class="alert alert-ok">Listo: se ha descargado ${esc(nombre)}.</div>`;
+}
+
 /* ------------------------------ eventos delegados ------------------------------ */
 
 const ACTIONS = {
@@ -902,10 +1085,13 @@ const ACTIONS = {
   objTab, objImportGuardar, objGuardar,
   rankVerDetalle, exportarGenerar, detalleBuscar, detalleDescargar,
   segTab, segExportarCompleto, segExportarPlantilla,
+  compExportar,
 };
 const ONCHANGE = {
   homeFileChange, dashCambio, periodoCambio, mesRefCambio, rerenderPage, objMarcaCambio, objMetricaCambio,
   objImportFile, objCeldaCambio, segMesAcumCambio, segAgruparCambio,
+  exportTodosCambio, exportConcesionarioCambio,
+  compFileChange, compMetricaCambio,
 };
 
 function wireDelegatedEvents() {

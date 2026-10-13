@@ -46,10 +46,11 @@ datos. Lo que escribes en "Objetivos y datos manuales" se guarda con
 navegador/equipo; si cambias de navegador, hay que volver a
 importarlo o teclearlo).
 
-Incluye las mismas 7 páginas que la app de Streamlit (Home, Dashboard,
+Incluye las mismas 8 páginas que la app de Streamlit (Home, Dashboard,
 Objetivos y datos manuales, Ranking, Exportar, Detalle de vehículos,
-Seguimiento UC Retail & Wholesale), con el mismo cálculo y las mismas
-reglas de negocio -es la interfaz la que está reescrita en HTML/JS, no
+Seguimiento UC Retail & Wholesale, Comparativa interanual), con el
+mismo cálculo y las mismas reglas de negocio -es la interfaz la que
+está reescrita en HTML/JS, no
 la lógica.
 
 **Regenerar el archivo tras tocar `src/`:** `seguimiento_local.html` se
@@ -204,6 +205,40 @@ El **Dashboard por concesionario** incluye además, por marca:
 Estas tablas están centralizadas en `src/bonus.py` -ajústalas ahí si
 cambian los importes o los tramos-.
 
+## Exportar a Excel: elegir concesionarios y ver una vista previa
+
+La página **"Exportar a Excel"** deja elegir **uno, varios o todos** los
+concesionarios de una marca antes de generar el archivo -no hace falta
+descargarlo entero para quedarte con un solo concesionario-. Antes de
+generar el Excel se ve en pantalla una **tarjeta por concesionario
+elegido** (nombre, grupo propietario, barra de progreso del %
+cumplimiento de Retail, BPS/MN y BEV), para comprobar de un vistazo que
+es justo lo que quieres exportar. El Excel generado -con su hoja de
+resumen y su "Detalle mensual"- sólo incluye los concesionarios
+marcados.
+
+## Comparativa interanual
+
+La página **"Comparativa interanual"** deja subir el archivo de ventas
+del **año pasado** (mismo formato, hoja `BBDD`) sin tocar el de este
+año, y compara Retail, BPS/MN, Remarketing, BEV, Wholesale UC/YUC y
+Ventas totales **concesionario a concesionario**, con el mismo selector
+de marca/periodo que el resto de la app.
+
+- Son dos archivos completamente independientes en memoria -subir el
+  del año pasado no sustituye ni mezcla nada del año en curso-.
+- La comparación empareja por **nombre de mes** (ENERO de este año
+  contra ENERO del año pasado), porque la BBDD no trae columna de año.
+- Las correcciones de **"Ajustes manuales"** sólo se aplican al año en
+  curso -esa tabla no distingue año, así que aplicarla también al año
+  pasado mezclaría por error una corrección de este año con datos de
+  hace un año-.
+- Tarjetas resumen (totales de la métrica elegida, este año vs año
+  pasado, con la variación) + tabla concesionario a concesionario +
+  descarga en Excel con las 7 métricas completas (no sólo la de las
+  tarjetas), con las celdas de variación en verde/rojo según suban o
+  bajen.
+
 ## Ver el detalle vehículo a vehículo (como el Excel)
 
 - **"Detalle de vehículos"**: la BBDD completa, con todas sus columnas
@@ -280,6 +315,7 @@ pages/
   4_Exportar.py                 Genera y descarga el Excel de salida
   5_Detalle_Vehiculos.py        BBDD completa filtrable, vehículo a vehículo
   6_Seguimiento_UC_Retail_Wholesale.py  Réplica del Excel original: una pestaña por apartado, separado por marca
+  7_Comparativa_Interanual.py   Compara este año contra el año pasado (archivo de ventas aparte)
 src/
   ingest.py     Lectura y limpieza de la BBDD + reglas de negocio (conserva todas las columnas originales)
   metrics.py    Agregados por concesionario/marca/mes + selección de periodo + ajustes manuales
@@ -287,9 +323,10 @@ src/
   detail.py     Filtra la BBDD a nivel de vehículo para el "doble click" sobre un KPI
   importer.py   Importa objetivos, mercado <6 años y mystery shopping desde el Excel de seguimiento original
   storage.py    Persistencia SQLite de objetivos y datos manuales
-  export.py     Generación del Excel descargable (resumen tipo Dealer Dashboard)
+  export.py     Generación del Excel descargable (resumen tipo Dealer Dashboard, con selección de concesionarios)
   export_seguimiento.py  Generación del Excel completo de "Seguimiento UC Retail & Wholesale" (13 pestañas), desde cero
   export_plantilla.py    Rellena la plantilla original del usuario (mismo diseño, logos y Distrito) en vez de generarla desde cero
+  comparativa.py  Compara los KPIs de este año con los del año pasado, concesionario a concesionario
   dealers.py    Maestro de concesionarios (extraído del Excel original)
   config.py     Constantes de negocio (meses, periodos, métricas)
   bonus.py      Matriz de bonificación, mínimos y multiplicador BEV

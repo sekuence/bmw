@@ -12,6 +12,7 @@ import pandas as pd
 
 from src import (
     bonus,
+    comparativa,
     config,
     dashboard,
     dealers as dealers_mod,
@@ -290,10 +291,64 @@ def ranking_detalle(codigo_dealer: int, marca: str, periodo: str, mes_referencia
 # Exportar (resumen tipo Dealer Dashboard)
 # ---------------------------------------------------------------------
 
-def exportar_generar(marca: str, periodo: str, mes_referencia: str | None) -> bytes:
+def exportar_dealers(marca: str) -> list[dict]:
+    """Concesionarios que venden `marca`, para la lista de selección."""
+    dealers = ESTADO["dealers"]
+    col = "vende_bmw" if marca == "BMW" else "vende_mini"
+    sub = dealers[dealers[col] == "Si"].sort_values("concesionario")
+    return [{"codigo_dealer": int(r["codigo_dealer"]), "concesionario": r["concesionario"]} for _, r in sub.iterrows()]
+
+
+def exportar_preview(marca: str, periodo: str, mes_referencia: str | None, codigos: list[int]) -> dict:
     dealers = ESTADO["dealers"]
     resumen = ESTADO["resumen"]
-    return export.build_workbook(resumen, dealers, marca, periodo, mes_referencia)
+    return {"filas": _limpio(export.resumen_dealers(resumen, dealers, marca, periodo, mes_referencia, codigos=codigos))}
+
+
+def exportar_generar(marca: str, periodo: str, mes_referencia: str | None, codigos: list[int] | None = None) -> bytes:
+    dealers = ESTADO["dealers"]
+    resumen = ESTADO["resumen"]
+    return export.build_workbook(resumen, dealers, marca, periodo, mes_referencia, codigos=codigos)
+
+
+# ---------------------------------------------------------------------
+# Comparativa interanual
+# ---------------------------------------------------------------------
+
+def comparativa_cargado() -> bool:
+    return bool(ESTADO.get("cargado_anterior"))
+
+
+def comparativa_cargar_archivo(nombre: str, contenido: bytes) -> dict:
+    try:
+        raw = ingest.read_bbdd(io.BytesIO(bytes(contenido)))
+        ventas_anterior = ingest.clean_ventas(raw)
+    except ingest.VentasFileError as exc:
+        return {"ok": False, "error": str(exc)}
+
+    ESTADO["ventas_anterior"] = ventas_anterior
+    ESTADO["resumen_anterior"] = metrics.build_monthly_summary(ventas_anterior)
+    ESTADO["cargado_anterior"] = True
+    ESTADO["nombre_archivo_anterior"] = nombre
+    return {"ok": True, "vehiculos": int(len(ventas_anterior)), "nombre": nombre}
+
+
+def comparativa_tabla(marca: str, periodo: str, mes_referencia: str | None, metrica: str) -> dict:
+    dealers = ESTADO["dealers"]
+    resumen_actual = ESTADO["resumen"]
+    resumen_anterior = ESTADO["resumen_anterior"]
+    tabla = comparativa.tabla_comparativa(resumen_actual, resumen_anterior, dealers, marca, periodo, mes_referencia)
+    totales = comparativa.totales_comparativa(tabla, metrica)
+    cols = ["codigo_dealer", "concesionario", "grupo_propietario", f"{metrica}_actual", f"{metrica}_anterior", f"{metrica}_var_abs", f"{metrica}_var_pct"]
+    return {"totales": totales, "filas": _limpio(tabla[cols])}
+
+
+def comparativa_exportar(marca: str, periodo: str, mes_referencia: str | None) -> bytes:
+    dealers = ESTADO["dealers"]
+    resumen_actual = ESTADO["resumen"]
+    resumen_anterior = ESTADO["resumen_anterior"]
+    tabla = comparativa.tabla_comparativa(resumen_actual, resumen_anterior, dealers, marca, periodo, mes_referencia)
+    return comparativa.build_workbook(tabla, marca, periodo)
 
 
 # ---------------------------------------------------------------------

@@ -129,6 +129,11 @@ dialog.detail-modal .dm-body { padding: 12px 16px; overflow: auto; max-height: 6
 .legend .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
 
 .editable-table input[type=number] { width: 70px; padding: 4px 6px; font-size: 12px; }
+
+.cardgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin: 10px 0; }
+.exportcard { margin-bottom: 0; }
+.progressbar { background: var(--bg); border-radius: 999px; height: 8px; overflow: hidden; margin: 6px 0; }
+.progressbar-fill { height: 100%; border-radius: 999px; }
 footer.note { color: var(--text-muted); font-size: 11.5px; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 10px; }
 </style>
 </head>
@@ -151,6 +156,7 @@ footer.note { color: var(--text-muted); font-size: 11.5px; margin-top: 30px; bor
     <button class="navbtn" data-page="exportar" disabled>⬇️ Exportar</button>
     <button class="navbtn" data-page="detalle" disabled>🚗 Detalle de vehículos</button>
     <button class="navbtn" data-page="seguimiento" disabled>🗂️ Seguimiento UC Retail &amp; Wholesale</button>
+    <button class="navbtn" data-page="comparativa" disabled>📆 Comparativa interanual</button>
     <div class="filename" id="sidebar-filename"></div>
   </nav>
   <main id="content"></main>
@@ -267,6 +273,149 @@ def cumple_penetracion_bps(pct_bps: float | None) -> bool | None:
 
 def cumple_mystery_shopping(mystery: float | None) -> bool | None:
     return None if mystery is None else mystery >= UMBRAL_MYSTERY_SHOPPING
+
+</script>
+<script type="text/python" data-vpath="src/comparativa.py">
+"""Compara los KPIs realizados de este año con los del año pasado -dos
+archivos de ventas distintos, cargados por separado (éste y
+"Comparativa interanual")-. La BBDD no trae columna de año, sólo el
+nombre del mes (se repite cada año), así que la comparación empareja
+por nombre de mes (ENERO de este año con ENERO del año pasado), no por
+fecha real.
+
+El año pasado NO lleva aplicadas las correcciones de "Ajustes
+manuales": esa tabla no distingue año -está pensada para corregir el
+año en curso-, así que reutilizar kpis_periodo() (que sí las aplica)
+también para el año pasado mezclaría por error una corrección de este
+año con los datos del año pasado."""
+import io
+
+import pandas as pd
+from openpyxl import Workbook
+from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.utils import get_column_letter
+
+from . import metrics
+
+FUENTE = "Arial"
+HEADER_FILL = PatternFill("solid", fgColor="1F3864")
+HEADER_FONT = Font(name=FUENTE, bold=True, color="FFFFFF")
+TITLE_FONT = Font(name=FUENTE, bold=True, size=14)
+BASE_FONT = Font(name=FUENTE)
+PCT_FORMAT = "0.0%"
+POS_FILL = PatternFill("solid", fgColor="E8F5E9")
+NEG_FILL = PatternFill("solid", fgColor="FDEAEA")
+
+METRICAS = metrics.METRICAS_CALCULADAS  # retail, bps, remarketing, bev, wholesale_uc, wholesale_yuc, ventas_totales
+
+METRICAS_LEGIBLES = {
+    "retail": "Retail",
+    "bps": "BPS/MN",
+    "remarketing": "Remarketing",
+    "bev": "BEV",
+    "wholesale_uc": "Wholesale UC",
+    "wholesale_yuc": "Wholesale YUC",
+    "ventas_totales": "Ventas totales",
+}
+
+
+def _totales_sin_ajustes(resumen: pd.DataFrame, codigo_dealer: int, marca: str, periodo: str, mes_referencia: str | None) -> dict:
+    """Igual que metrics.kpis_periodo() pero sin aplicar ajustes_manuales -ver docstring del módulo."""
+    meses = metrics.meses_de_periodo(periodo, mes_referencia)
+    sub = resumen[
+        (resumen["codigo_dealer"] == codigo_dealer)
+        & (resumen["marca"] == marca)
+        & (resumen["mes"].isin(meses))
+    ]
+    return {m: int(sub[m].sum()) for m in METRICAS}
+
+
+def tabla_comparativa(resumen_actual: pd.DataFrame, resumen_anterior: pd.DataFrame, dealers: pd.DataFrame, marca: str, periodo: str, mes_referencia: str | None = None) -> pd.DataFrame:
+    """Una fila por concesionario de `marca`, con el total de cada
+    métrica este año (con ajustes manuales aplicados, igual que el
+    resto de la app) y el año pasado (sin ajustes), más la variación
+    absoluta y en %."""
+    col = "vende_bmw" if marca == "BMW" else "vende_mini"
+    filas = []
+    for _, d in dealers[dealers[col] == "Si"].sort_values("concesionario").iterrows():
+        codigo = int(d["codigo_dealer"])
+        actual = metrics.kpis_periodo(resumen_actual, codigo, marca, periodo, mes_referencia)
+        anterior = _totales_sin_ajustes(resumen_anterior, codigo, marca, periodo, mes_referencia)
+        fila = {"codigo_dealer": codigo, "concesionario": d["concesionario"], "grupo_propietario": d["grupo_propietario"]}
+        for m in METRICAS:
+            val_actual, val_anterior = actual[m], anterior[m]
+            fila[f"{m}_actual"] = val_actual
+            fila[f"{m}_anterior"] = val_anterior
+            fila[f"{m}_var_abs"] = val_actual - val_anterior
+            fila[f"{m}_var_pct"] = ((val_actual - val_anterior) / val_anterior) if val_anterior else None
+        filas.append(fila)
+    return pd.DataFrame(filas)
+
+
+def totales_comparativa(tabla: pd.DataFrame, metrica: str) -> dict:
+    """Totales agregados de toda la tabla para una métrica -para las tarjetas resumen."""
+    if tabla.empty:
+        return {"actual": 0, "anterior": 0, "var_abs": 0, "var_pct": None}
+    actual = int(tabla[f"{metrica}_actual"].sum())
+    anterior = int(tabla[f"{metrica}_anterior"].sum())
+    var_abs = actual - anterior
+    var_pct = (var_abs / anterior) if anterior else None
+    return {"actual": actual, "anterior": anterior, "var_abs": var_abs, "var_pct": var_pct}
+
+
+def build_workbook(tabla: pd.DataFrame, marca: str, periodo: str, etiqueta_actual: str = "Este año", etiqueta_anterior: str = "Año pasado") -> bytes:
+    """Excel descargable: una fila por concesionario, con
+    Actual/Año pasado/Variación para cada métrica calculada."""
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Comparativa interanual"
+    ws["A1"] = f"Comparativa interanual — {marca} — {periodo}"
+    ws["A1"].font = TITLE_FONT
+
+    header_row = 3
+    headers = ["Código", "Concesionario", "Grupo propietario"]
+    for m in METRICAS:
+        legible = METRICAS_LEGIBLES[m]
+        headers += [f"{legible} ({etiqueta_actual})", f"{legible} ({etiqueta_anterior})", f"{legible} Var.", f"{legible} Var. %"]
+    for j, h in enumerate(headers, start=1):
+        c = ws.cell(row=header_row, column=j, value=h)
+        c.font = HEADER_FONT
+        c.fill = HEADER_FILL
+        c.alignment = Alignment(horizontal="center", wrap_text=True)
+
+    fila_excel = header_row + 1
+    for _, r in tabla.iterrows():
+        col = 1
+        for v in (int(r["codigo_dealer"]), r["concesionario"], r["grupo_propietario"]):
+            ws.cell(row=fila_excel, column=col, value=v).font = BASE_FONT
+            col += 1
+        for m in METRICAS:
+            actual, anterior = int(r[f"{m}_actual"]), int(r[f"{m}_anterior"])
+            var_abs, var_pct = int(r[f"{m}_var_abs"]), r[f"{m}_var_pct"]
+            ws.cell(row=fila_excel, column=col, value=actual).font = BASE_FONT
+            col += 1
+            ws.cell(row=fila_excel, column=col, value=anterior).font = BASE_FONT
+            col += 1
+            c = ws.cell(row=fila_excel, column=col, value=var_abs)
+            c.font = BASE_FONT
+            if var_abs > 0:
+                c.fill = POS_FILL
+            elif var_abs < 0:
+                c.fill = NEG_FILL
+            col += 1
+            c = ws.cell(row=fila_excel, column=col, value=var_pct)
+            c.number_format = PCT_FORMAT
+            c.font = BASE_FONT
+            col += 1
+        fila_excel += 1
+
+    ws.freeze_panes = ws.cell(row=header_row + 1, column=1)
+    for j in range(1, len(headers) + 1):
+        ws.column_dimensions[get_column_letter(j)].width = 15
+
+    buf = io.BytesIO()
+    wb.save(buf)
+    return buf.getvalue()
 
 </script>
 <script type="text/python" data-vpath="src/config.py">
@@ -733,7 +882,43 @@ def _autosize(ws, n_cols, width=16):
         ws.column_dimensions[get_column_letter(j)].width = width
 
 
-def build_workbook(resumen, dealers, marca: str, periodo: str, mes_referencia: str | None = None) -> bytes:
+def _dealers_de_marca(dealers, marca: str, codigos: list[int] | None = None):
+    """Concesionarios que venden `marca`, filtrados a `codigos` si se
+    da una lista -usado tanto para la vista previa de tarjetas como
+    para el propio Excel, así nunca se desincronizan."""
+    col = "vende_bmw" if marca == "BMW" else "vende_mini"
+    sub = dealers[dealers[col] == "Si"]
+    if codigos is not None:
+        sub = sub[sub["codigo_dealer"].isin(codigos)]
+    return sub.sort_values("concesionario")
+
+
+def resumen_dealers(resumen, dealers, marca: str, periodo: str, mes_referencia: str | None = None, codigos: list[int] | None = None) -> list[dict]:
+    """Un dict por concesionario (de `marca`, filtrado a `codigos` si se
+    da) con los KPIs clave -pensado para pintar tarjetas visuales antes
+    de generar el Excel, en vez de tener que abrirlo para verlas."""
+    filas = []
+    for _, d in _dealers_de_marca(dealers, marca, codigos).iterrows():
+        codigo = int(d["codigo_dealer"])
+        k = dashboard.kpi_bloque(resumen, codigo, marca, periodo, mes_referencia)
+        objetivo, realizado = k["objetivo_retail"], k["realizado_retail"]
+        filas.append({
+            "codigo_dealer": codigo,
+            "concesionario": d["concesionario"],
+            "grupo_propietario": d["grupo_propietario"],
+            "objetivo_retail": objetivo,
+            "realizado_retail": realizado,
+            "pct_cumplimiento": (realizado / objetivo) if objetivo else None,
+            "bps": k["bps"],
+            "bev": k["bev"],
+        })
+    return filas
+
+
+def build_workbook(resumen, dealers, marca: str, periodo: str, mes_referencia: str | None = None, codigos: list[int] | None = None) -> bytes:
+    """codigos: si se da, el Excel sólo incluye esos concesionarios
+    (selección manual) -si es None, incluye todos los que venden
+    `marca`, igual que antes."""
     wb = Workbook()
 
     ws = wb.active
@@ -754,9 +939,8 @@ def build_workbook(resumen, dealers, marca: str, periodo: str, mes_referencia: s
     header_row = 3
     _write_header(ws, header_row, headers)
 
-    col_bmw = "vende_bmw" if marca == "BMW" else "vende_mini"
     fila = header_row + 1
-    for _, d in dealers[dealers[col_bmw] == "Si"].sort_values("concesionario").iterrows():
+    for _, d in _dealers_de_marca(dealers, marca, codigos).iterrows():
         codigo = int(d["codigo_dealer"])
         k = dashboard.kpi_bloque(resumen, codigo, marca, periodo, mes_referencia)
         valores = [
@@ -789,7 +973,10 @@ def build_workbook(resumen, dealers, marca: str, periodo: str, mes_referencia: s
 
     # Hoja de detalle mensual (equivalente a las pestañas "feeder" del Excel original)
     ws2 = wb.create_sheet("Detalle mensual")
-    detalle = resumen[resumen["marca"] == marca].merge(
+    detalle = resumen[resumen["marca"] == marca]
+    if codigos is not None:
+        detalle = detalle[detalle["codigo_dealer"].isin(codigos)]
+    detalle = detalle.merge(
         dealers[["codigo_dealer", "concesionario", "grupo_propietario"]], on="codigo_dealer", how="left"
     )
     det_headers = ["codigo_dealer", "concesionario", "grupo_propietario", "mes", "retail", "bps", "remarketing", "bev", "wholesale_uc", "wholesale_yuc"]
@@ -2314,6 +2501,7 @@ import pandas as pd
 
 from src import (
     bonus,
+    comparativa,
     config,
     dashboard,
     dealers as dealers_mod,
@@ -2592,10 +2780,64 @@ def ranking_detalle(codigo_dealer: int, marca: str, periodo: str, mes_referencia
 # Exportar (resumen tipo Dealer Dashboard)
 # ---------------------------------------------------------------------
 
-def exportar_generar(marca: str, periodo: str, mes_referencia: str | None) -> bytes:
+def exportar_dealers(marca: str) -> list[dict]:
+    """Concesionarios que venden `marca`, para la lista de selección."""
+    dealers = ESTADO["dealers"]
+    col = "vende_bmw" if marca == "BMW" else "vende_mini"
+    sub = dealers[dealers[col] == "Si"].sort_values("concesionario")
+    return [{"codigo_dealer": int(r["codigo_dealer"]), "concesionario": r["concesionario"]} for _, r in sub.iterrows()]
+
+
+def exportar_preview(marca: str, periodo: str, mes_referencia: str | None, codigos: list[int]) -> dict:
     dealers = ESTADO["dealers"]
     resumen = ESTADO["resumen"]
-    return export.build_workbook(resumen, dealers, marca, periodo, mes_referencia)
+    return {"filas": _limpio(export.resumen_dealers(resumen, dealers, marca, periodo, mes_referencia, codigos=codigos))}
+
+
+def exportar_generar(marca: str, periodo: str, mes_referencia: str | None, codigos: list[int] | None = None) -> bytes:
+    dealers = ESTADO["dealers"]
+    resumen = ESTADO["resumen"]
+    return export.build_workbook(resumen, dealers, marca, periodo, mes_referencia, codigos=codigos)
+
+
+# ---------------------------------------------------------------------
+# Comparativa interanual
+# ---------------------------------------------------------------------
+
+def comparativa_cargado() -> bool:
+    return bool(ESTADO.get("cargado_anterior"))
+
+
+def comparativa_cargar_archivo(nombre: str, contenido: bytes) -> dict:
+    try:
+        raw = ingest.read_bbdd(io.BytesIO(bytes(contenido)))
+        ventas_anterior = ingest.clean_ventas(raw)
+    except ingest.VentasFileError as exc:
+        return {"ok": False, "error": str(exc)}
+
+    ESTADO["ventas_anterior"] = ventas_anterior
+    ESTADO["resumen_anterior"] = metrics.build_monthly_summary(ventas_anterior)
+    ESTADO["cargado_anterior"] = True
+    ESTADO["nombre_archivo_anterior"] = nombre
+    return {"ok": True, "vehiculos": int(len(ventas_anterior)), "nombre": nombre}
+
+
+def comparativa_tabla(marca: str, periodo: str, mes_referencia: str | None, metrica: str) -> dict:
+    dealers = ESTADO["dealers"]
+    resumen_actual = ESTADO["resumen"]
+    resumen_anterior = ESTADO["resumen_anterior"]
+    tabla = comparativa.tabla_comparativa(resumen_actual, resumen_anterior, dealers, marca, periodo, mes_referencia)
+    totales = comparativa.totales_comparativa(tabla, metrica)
+    cols = ["codigo_dealer", "concesionario", "grupo_propietario", f"{metrica}_actual", f"{metrica}_anterior", f"{metrica}_var_abs", f"{metrica}_var_pct"]
+    return {"totales": totales, "filas": _limpio(tabla[cols])}
+
+
+def comparativa_exportar(marca: str, periodo: str, mes_referencia: str | None) -> bytes:
+    dealers = ESTADO["dealers"]
+    resumen_actual = ESTADO["resumen"]
+    resumen_anterior = ESTADO["resumen_anterior"]
+    tabla = comparativa.tabla_comparativa(resumen_actual, resumen_anterior, dealers, marca, periodo, mes_referencia)
+    return comparativa.build_workbook(tabla, marca, periodo)
 
 
 # ---------------------------------------------------------------------
@@ -2944,6 +3186,7 @@ const PAGES = {
   exportar: { label: "Exportar", render: renderExportar },
   detalle: { label: "Detalle", render: renderDetalle },
   seguimiento: { label: "Seguimiento", render: renderSeguimiento },
+  comparativa: { label: "Comparativa", render: renderComparativa },
 };
 let currentPage = "home";
 
@@ -3429,31 +3672,98 @@ function rankVerDetalle() {
 
 /* ------------------------------ Exportar ------------------------------ */
 
-let exportState = { marca: "BMW", periodo: "ACUMULADO MES", mesRef: "JULIO" };
+let exportState = { marca: "BMW", periodo: "ACUMULADO MES", mesRef: "JULIO", todos: true, seleccionados: new Set() };
 registrarEstadoPeriodo("export", exportState);
 
 function renderExportar() {
   const content = document.getElementById("content");
+  const dealersMarca = callPy("exportar_dealers", exportState.marca);
+  if (exportState.todos || exportState.seleccionados.size === 0) {
+    exportState.seleccionados = new Set(dealersMarca.map((d) => d.codigo_dealer));
+  }
   content.innerHTML = `
     <h2 class="pagetitle">⬇️ Exportar a Excel</h2>
-    <p class="subtitle">Genera un .xlsx con el resumen tipo "Dealer Dashboard" para todos los concesionarios de una marca.</p>
+    <p class="subtitle">Genera un .xlsx con el resumen tipo "Dealer Dashboard" -más el detalle mensual- para uno, varios o todos los concesionarios de una marca.</p>
     <div class="panel row">
       <div>${marcaRadioHtml("exportMarca", exportState.marca)}</div>
       ${periodoSelectorHtml("export", exportState.periodo, exportState.mesRef)}
     </div>
+    <div class="panel">
+      <label><input type="checkbox" data-onchange="exportTodosCambio" ${exportState.todos ? "checked" : ""}> Incluir todos los concesionarios</label>
+      <div id="export-concesionarios" style="${exportState.todos ? "display:none;" : ""}margin-top:8px;max-height:220px;overflow:auto;border-top:1px solid var(--border);padding-top:8px;">
+        ${dealersMarca.map((d) => `<label style="display:block;font-size:13px;margin-bottom:4px"><input type="checkbox" data-onchange="exportConcesionarioCambio" data-codigo="${d.codigo_dealer}" ${exportState.seleccionados.has(d.codigo_dealer) ? "checked" : ""}> ${esc(d.concesionario)}</label>`).join("")}
+      </div>
+    </div>
+    <div id="export-preview"></div>
     <button class="btn" data-action="exportarGenerar">Generar Excel</button>
     <div id="export-status"></div>
   `;
-  document.querySelectorAll('[name="exportMarca"]').forEach((r) => r.addEventListener("change", (e) => { exportState.marca = e.target.value; }));
+  document.querySelectorAll('[name="exportMarca"]').forEach((r) => r.addEventListener("change", (e) => {
+    exportState.marca = e.target.value;
+    exportState.todos = true;
+    rerenderPage();
+  }));
+  renderExportPreview();
+}
+
+function exportTodosCambio(chk) {
+  exportState.todos = chk.checked;
+  rerenderPage();
+}
+
+function exportConcesionarioCambio(chk) {
+  const codigo = Number(chk.dataset.codigo);
+  if (chk.checked) exportState.seleccionados.add(codigo);
+  else exportState.seleccionados.delete(codigo);
+  renderExportPreview();
+}
+
+function renderExportPreview() {
+  const { periodo, mesRef } = leerPeriodo("export");
+  exportState.periodo = periodo;
+  exportState.mesRef = mesRef;
+  const codigos = Array.from(exportState.seleccionados);
+  const btn = document.querySelector('[data-action="exportarGenerar"]');
+  const prevDiv = document.getElementById("export-preview");
+  if (!codigos.length) {
+    prevDiv.innerHTML = `<p class="caption">Elige al menos un concesionario para ver la vista previa y poder generar el Excel.</p>`;
+    if (btn) btn.disabled = true;
+    return;
+  }
+  if (btn) btn.disabled = false;
+  const r = callPy("exportar_preview", exportState.marca, periodo, mesRef, codigos);
+  prevDiv.innerHTML = `
+    <div class="sectiontitle">Vista previa (${r.filas.length} concesionario${r.filas.length !== 1 ? "s" : ""})</div>
+    <div class="cardgrid">${r.filas.map((t) => exportCardHtml(t, exportState.marca)).join("")}</div>
+  `;
+}
+
+function exportCardHtml(t, marca) {
+  const pct = t.pct_cumplimiento;
+  const pctTxt = pct !== null && pct !== undefined ? fmtPct(pct, 0) : "sin objetivo";
+  const ancho = pct !== null && pct !== undefined ? Math.min(pct, 1) * 100 : 0;
+  return `<div class="panel exportcard">
+    <strong>${esc(t.concesionario)}</strong>
+    <div class="caption">${esc(t.grupo_propietario)}</div>
+    <div class="progressbar"><div class="progressbar-fill" style="width:${ancho}%;background:${colorDe(marca)}"></div></div>
+    <div class="caption">Retail: ${fmtNum(t.realizado_retail)} / ${fmtNum(t.objetivo_retail)} (${pctTxt})</div>
+    <div class="metricgrid" style="margin-top:6px">
+      ${metricHtml("BPS/MN", fmtNum(t.bps))}
+      ${metricHtml("BEV", fmtNum(t.bev))}
+    </div>
+  </div>`;
 }
 
 function exportarGenerar() {
+  const codigos = Array.from(exportState.seleccionados);
+  if (!codigos.length) return;
   const { periodo, mesRef } = leerPeriodo("export");
-  exportState.periodo = periodo; exportState.mesRef = mesRef;
-  const bytes = callPy("exportar_generar", exportState.marca, periodo, mesRef);
+  exportState.periodo = periodo;
+  exportState.mesRef = mesRef;
+  const bytes = callPy("exportar_generar", exportState.marca, periodo, mesRef, codigos);
   const nombre = `Seguimiento_${exportState.marca}_${periodo.replace(/ /g, "_")}.xlsx`;
   downloadBytes(bytes, nombre, XLSX_MIME);
-  document.getElementById("export-status").innerHTML = `<div class="alert alert-ok">Listo: se ha descargado ${esc(nombre)}.</div>`;
+  document.getElementById("export-status").innerHTML = `<div class="alert alert-ok">Listo: se ha descargado ${esc(nombre)} (${codigos.length} concesionario${codigos.length !== 1 ? "s" : ""}).</div>`;
 }
 
 /* ------------------------------ Detalle de vehículos ------------------------------ */
@@ -3598,6 +3908,121 @@ function segExportarPlantilla() {
   document.getElementById("seg-plantilla-status").innerHTML = `<div class="alert alert-ok">Listo.</div>`;
 }
 
+/* ------------------------------ Comparativa interanual ------------------------------ */
+
+let compState = { marca: "BMW", periodo: "ACUMULADO MES", mesRef: "JULIO", metrica: "retail" };
+registrarEstadoPeriodo("comp", compState);
+
+function renderComparativa() {
+  const content = document.getElementById("content");
+  const cargado = callPy("comparativa_cargado");
+  content.innerHTML = `
+    <h2 class="pagetitle">📆 Comparativa interanual</h2>
+    <p class="subtitle">Sube el archivo de ventas del año pasado (mismo formato, hoja BBDD) para comparar Retail, BPS/MN, Remarketing, BEV y Wholesale concesionario a concesionario frente a este año.</p>
+    <div class="panel">
+      <label>Archivo de ventas del año pasado (.xlsx)</label>
+      <input type="file" id="comp-file" accept=".xlsx" data-onchange="compFileChange">
+      <div id="comp-file-status"></div>
+    </div>
+    <div id="comp-body"></div>
+  `;
+  if (cargado) renderComparativaBody();
+  else document.getElementById("comp-body").innerHTML = `<p class="caption">⬆️ Sube el archivo del año pasado para ver la comparativa.</p>`;
+}
+
+async function compFileChange(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById("comp-file-status").innerHTML = `<div class="alert alert-info">Leyendo ${esc(file.name)}…</div>`;
+  const buf = await file.arrayBuffer();
+  const r = callPy("comparativa_cargar_archivo", file.name, new Uint8Array(buf));
+  if (!r.ok) {
+    document.getElementById("comp-file-status").innerHTML = `<div class="alert alert-error">${esc(r.error)}</div>`;
+    return;
+  }
+  document.getElementById("comp-file-status").innerHTML = `<div class="alert alert-ok">Cargadas ${r.vehiculos.toLocaleString("es-ES")} filas del año pasado.</div>`;
+  renderComparativaBody();
+}
+
+function renderComparativaBody() {
+  const body = document.getElementById("comp-body");
+  body.innerHTML = `
+    <div class="panel row">
+      <div>${marcaRadioHtml("compMarca", compState.marca)}</div>
+      ${periodoSelectorHtml("comp", compState.periodo, compState.mesRef)}
+      <div><label>Métrica de las tarjetas</label><select id="comp-metrica" data-onchange="compMetricaCambio">${Object.entries(METRICAS_AJUSTABLES).map(([k, v]) => `<option value="${k}" ${k === compState.metrica ? "selected" : ""}>${esc(v)}</option>`).join("")}</select></div>
+    </div>
+    <div id="comp-resumen"></div>
+    <div class="sectiontitle">Por concesionario</div>
+    <div id="comp-tabla"></div>
+    <hr>
+    <div class="sectiontitle">📥 Descargar comparativa completa</div>
+    <p class="caption">El Excel incluye las 7 métricas calculadas (Retail, BPS/MN, Remarketing, BEV, Wholesale UC/YUC, Ventas totales), no sólo la de las tarjetas.</p>
+    <button class="btn" data-action="compExportar">Generar Excel comparativo</button>
+    <div id="comp-export-status"></div>
+  `;
+  document.querySelectorAll('[name="compMarca"]').forEach((r) => r.addEventListener("change", (e) => { compState.marca = e.target.value; renderComparativaDatos(); }));
+  renderComparativaDatos();
+}
+
+function compMetricaCambio(sel) {
+  compState.metrica = sel.value;
+  renderComparativaDatos();
+}
+
+function renderComparativaDatos() {
+  const { periodo, mesRef } = leerPeriodo("comp");
+  compState.periodo = periodo;
+  compState.mesRef = mesRef;
+  const r = callPy("comparativa_tabla", compState.marca, periodo, mesRef, compState.metrica);
+  const etiqueta = METRICAS_AJUSTABLES[compState.metrica];
+
+  const t = r.totales;
+  const pctTxt = t.var_pct !== null && t.var_pct !== undefined ? fmtPct(t.var_pct, 1) : "—";
+  const signo = t.var_abs > 0 ? "+" : "";
+  document.getElementById("comp-resumen").innerHTML = `
+    <div class="metricgrid">
+      ${metricHtml(`${etiqueta} -este año`, fmtNum(t.actual))}
+      ${metricHtml(`${etiqueta} -año pasado`, fmtNum(t.anterior))}
+      ${metricHtml("Variación", `${signo}${fmtNum(t.var_abs)} (${pctTxt})`)}
+    </div>
+  `;
+
+  const campoActual = `${compState.metrica}_actual`;
+  const campoAnterior = `${compState.metrica}_anterior`;
+  const campoVarAbs = `${compState.metrica}_var_abs`;
+  const campoVarPct = `${compState.metrica}_var_pct`;
+  const etiquetas = {
+    concesionario: "Concesionario",
+    grupo_propietario: "Grupo propietario",
+    [campoActual]: "Este año",
+    [campoAnterior]: "Año pasado",
+    [campoVarAbs]: "Variación",
+    [campoVarPct]: "Variación %",
+  };
+  const cols = ["concesionario", "grupo_propietario", campoActual, campoAnterior, campoVarAbs, campoVarPct];
+  const filasFmt = r.filas.map((f) => {
+    const nueva = {};
+    cols.forEach((c) => {
+      let v = f[c];
+      if (c === campoVarPct) v = v !== null && v !== undefined ? fmtPct(v, 1) : "—";
+      nueva[etiquetas[c]] = v;
+    });
+    return nueva;
+  });
+  document.getElementById("comp-tabla").innerHTML = simpleTableHtml(cols.map((c) => etiquetas[c]), filasFmt);
+}
+
+function compExportar() {
+  const { periodo, mesRef } = leerPeriodo("comp");
+  compState.periodo = periodo;
+  compState.mesRef = mesRef;
+  const bytes = callPy("comparativa_exportar", compState.marca, periodo, mesRef);
+  const nombre = `Comparativa_${compState.marca}_${periodo.replace(/ /g, "_")}.xlsx`;
+  downloadBytes(bytes, nombre, XLSX_MIME);
+  document.getElementById("comp-export-status").innerHTML = `<div class="alert alert-ok">Listo: se ha descargado ${esc(nombre)}.</div>`;
+}
+
 /* ------------------------------ eventos delegados ------------------------------ */
 
 const ACTIONS = {
@@ -3605,10 +4030,13 @@ const ACTIONS = {
   objTab, objImportGuardar, objGuardar,
   rankVerDetalle, exportarGenerar, detalleBuscar, detalleDescargar,
   segTab, segExportarCompleto, segExportarPlantilla,
+  compExportar,
 };
 const ONCHANGE = {
   homeFileChange, dashCambio, periodoCambio, mesRefCambio, rerenderPage, objMarcaCambio, objMetricaCambio,
   objImportFile, objCeldaCambio, segMesAcumCambio, segAgruparCambio,
+  exportTodosCambio, exportConcesionarioCambio,
+  compFileChange, compMetricaCambio,
 };
 
 function wireDelegatedEvents() {
