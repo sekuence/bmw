@@ -12,6 +12,8 @@ instagram/
 ├── importar_windsor.py       # JSON de Windsor (data/raw/) + CSV manuales → data/publicaciones_12m.csv
 ├── evaluar_experimento.py    # Cruza plan/calendario.csv con los datos → plan/resultados.md
 ├── generar_dashboard.py      # → dashboard.html
+├── outliers.py               # Múltiplo sobre la mediana propia → informes/outliers.md
+├── voz.md                    # voice.md para los skills ig-* (borrador, revisar [CONFIRMAR])
 ├── data/
 │   ├── publicaciones_12m.csv           # 191 publicaciones (16-oct-2025 → 15-oct-2026), fuente principal
 │   ├── publicaciones.csv               # 18-abr → 15-oct-2026, clasificado a mano
@@ -28,6 +30,12 @@ instagram/
     ├── calendario.csv                  # El mismo plan en datos; rellenar shortcode/leads al publicar
     └── resultados.md                   # Estado de cada hipótesis (generado)
 ```
+
+## Skills de Instagram
+
+En `.claude/skills/ig-*` está instalado el paquete [instagram-agent-skill](https://github.com/Jakeschincariol/instagram-agent-skill) (MIT, commit d03c56b). Son 13 skills y no necesitan red. Para usarlos con tu voz: `mkdir -p ~/.claude/instagram && cp instagram/voz.md ~/.claude/instagram/voice.md`.
+
+**Aviso:** `hookscore.py` está calibrado para inglés y no predice el alcance de @healthyanii (validado con 137 reels: ρ = 0,15). Usa sus guías de estructura, pero no su nota.
 
 ## Rutina semanal (lunes)
 

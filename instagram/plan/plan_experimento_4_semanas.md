@@ -6,6 +6,19 @@
 
 ---
 
+## Actualización 16-oct: método del outlier multiple ([informe](../informes/outliers.md))
+
+Cada publicación se compara con la mediana de las 12 anteriores. Así se corrige el crecimiento de la cuenta, que hacía engañoso comparar alcances brutos.
+
+- **H4 (opinión) es la apuesta más segura.** Las publicaciones de opinión rinden de mediana **2,6 veces** lo habitual de su momento, el mejor resultado de todos los temas, y tienen 2 outliers en 6 publicaciones. Si va bien en las semanas 1 y 2, se sube a 2 por semana.
+- **H2 se refuerza.** Con "Sígueme" las publicaciones rinden 1,6 veces lo habitual (10 outliers). Con "Comenta X" rinden 0,8 veces, un 20 % por debajo de su contexto.
+- **H1 es la hipótesis con más riesgo.** El tema lesiones rinde 0,75 veces lo habitual de mediana: la periostitis fue la excepción. Las publicaciones de lesiones con "Comenta RODILLA/CORRER" bajaron la media. Por eso los reels de H1 van con "Sígueme" y sin palabra clave.
+- **Técnica es lo más fiable:** 10 de sus 28 publicaciones superan 3 veces lo habitual.
+- **Los ganchos no se puntúan con `hookscore.py`.** Lo validé con tus 137 reels y no predice tu alcance en español (correlación de 0,15). Tus 5 mayores virales salen como "débiles". Se usan tus datos, no esa nota.
+- **Comentarios:** en tus publicaciones recientes casi todos son la palabra clave o felicitaciones. Casi no hay preguntas reales, así que **las dudas de tu audiencia están en los DM, no en los comentarios**. Además, alguien escribió que **no le llegan tus mensajes** y dejó su email en público: revisa la entrega de la automatización y las solicitudes de mensaje.
+
+---
+
 ## 0. Punto de partida (lo que hay que superar)
 
 | Métrica (últimos 90 días) | Valor actual | Meta del experimento |
