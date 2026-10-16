@@ -1,0 +1,542 @@
+<title>Informe @healthyanii</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Public+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: una columna de lectura (máx. 1080px) con índice fijo arriba; secciones separadas por bandas finas, como la pista de atletismo. */
+:root{
+  --bg:#f6f7f5; --surface:#ffffff; --ink:#18201d; --muted:#5d6763; --line:#dde2df;
+  --accent:#0d6b5f; --accent-soft:#e1efeb; --low:#9aa5a0;
+  --good:#1f7a3d; --good-bg:#e5f3e8; --warn:#9a5b00; --warn-bg:#fbf0dc; --bad:#b0302a; --bad-bg:#fbe7e5;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121614; --surface:#1a201d; --ink:#e7ece9; --muted:#9daaa4; --line:#2c3531;
+  --accent:#4fc2ae; --accent-soft:#183a33; --low:#5b6762;
+  --good:#6fd08a; --good-bg:#16301f; --warn:#f0b75a; --warn-bg:#352812; --bad:#f08a82; --bad-bg:#3a1b19; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121614; --surface:#1a201d; --ink:#e7ece9; --muted:#9daaa4; --line:#2c3531;
+  --accent:#4fc2ae; --accent-soft:#183a33; --low:#5b6762;
+  --good:#6fd08a; --good-bg:#16301f; --warn:#f0b75a; --warn-bg:#352812; --bad:#f08a82; --bad-bg:#3a1b19; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--body);margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{padding-block:40px 24px}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;line-height:1.05;margin:0}
+h1{font-size:clamp(40px,7vw,64px);margin-top:10px}
+h2{font-size:clamp(30px,4.5vw,40px)}
+h3{font-size:22px}
+p{margin:0;max-width:68ch}
+.lede{font-size:17px;color:var(--muted);margin-top:12px}
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-block:1px solid var(--line)}
+nav.toc .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:8px;scrollbar-width:thin}
+nav.toc a{flex:none;color:var(--ink);text-decoration:none;font-weight:600;font-size:14px;padding:6px 12px;border-radius:999px}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--accent);outline:none}
+section{padding-block:44px;border-bottom:1px solid var(--line)}
+section > .wrap{display:grid;gap:22px}
+.sub{color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.tile b{display:block;font:700 34px/1 var(--display);font-variant-numeric:tabular-nums}
+.tile span{display:block;color:var(--muted);font-size:13px;margin-top:6px;line-height:1.4}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.grid2 > *{min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:12px;align-content:start}
+.list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.list li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start}
+.mark{font:700 12px/1 var(--body);padding:5px 8px;border-radius:6px;white-space:nowrap;margin-top:2px}
+.m-good{background:var(--good-bg);color:var(--good)} .m-warn{background:var(--warn-bg);color:var(--warn)} .m-bad{background:var(--bad-bg);color:var(--bad)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.92em}
+/* barras */
+.chart{display:grid;gap:8px}
+.chart h4{margin:0;font-size:15px}
+.bar{display:grid;grid-template-columns:minmax(110px,34%) 1fr;gap:10px;align-items:center;font-size:13px}
+.bar .lab{color:var(--ink);line-height:1.25}
+.bar .lab small{color:var(--muted)}
+.track{position:relative;height:22px}
+.fill{position:absolute;left:0;top:3px;height:16px;border-radius:0 4px 4px 0;background:var(--accent)}
+.fill.low{background:var(--low)}
+.val{position:absolute;top:0;font:500 12px/22px var(--mono);color:var(--ink);padding-left:6px;white-space:nowrap}
+.ref{position:absolute;top:-4px;bottom:-4px;border-left:1.5px dashed var(--muted)}
+.legend{font-size:12px;color:var(--muted)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.me td{background:var(--accent-soft);font-weight:600}
+tr:last-child td{border-bottom:0}
+a{color:var(--accent)}
+.callout{border-left:3px solid var(--accent);padding:4px 0 4px 14px}
+/* guiones */
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filters button{font:600 13px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 14px;border-radius:999px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.filters button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.scripts{display:grid;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.card .head{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;padding:14px 18px;border-bottom:1px solid var(--line)}
+.card .head h3{flex:1 1 260px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:600 11px/1 var(--body);letter-spacing:.04em;text-transform:uppercase;padding:5px 8px;border-radius:6px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.card .body{display:grid;grid-template-columns:1.25fr 1fr;gap:0}
+.card .body > div{padding:16px 18px;min-width:0;display:grid;gap:10px;align-content:start}
+.card .body > div + div{border-left:1px solid var(--line);background:color-mix(in srgb,var(--bg) 55%,var(--surface))}
+.k{font:600 11px/1.2 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tp{font-weight:700;font-size:16px}
+.beats{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.beats li{display:grid;grid-template-columns:62px 1fr;gap:8px;font-size:14px}
+.beats li .t{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:2px}
+blockquote{margin:0;padding:10px 12px;background:var(--bg);border-radius:8px;font-size:14px;white-space:pre-line}
+.verdict{display:flex;gap:8px;align-items:center;font-weight:700}
+.alist{margin:0;padding-left:18px;display:grid;gap:5px;font-size:14px}
+@media (max-width:720px){.card .body{grid-template-columns:1fr}.card .body > div + div{border-left:0;border-top:1px solid var(--line)}}
+footer{padding-block:32px 48px;color:var(--muted);font-size:13px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="eyebrow">Instagram · @healthyanii · 16 de octubre de 2026</div>
+  <h1>Qué funciona, qué no y qué publicar</h1>
+  <p class="lede">Todo lo analizado en un sitio: 191 publicaciones tuyas de 12 meses, 103 reels de 7 cuentas del nicho y los 20 guiones del plan del 19 de octubre al 14 de noviembre, revisados uno a uno con esos datos.</p>
+</div></header>
+
+<nav class="toc" aria-label="Índice"><div class="wrap">
+  <a href="#resumen">Resumen</a><a href="#bien">Qué haces bien</a><a href="#fallas">Dónde fallas</a><a href="#mejorar">Qué hacer</a><a href="#nicho">Comparación</a><a href="#stats">Estadísticas</a><a href="#guiones">Guiones</a><a href="#metas">Metas</a>
+</div></nav>
+
+<section id="resumen"><div class="wrap">
+  <h2>Resumen en un minuto</h2>
+  <div class="tiles">
+    <div class="tile"><b>37.009</b><span>seguidores. +2.420 en los últimos 30 días (unos 80 al día)</span></div>
+    <div class="tile"><b>9.431</b><span>vistas medianas por reel (ago-oct): el 25 % de tus seguidores. Carlos, con 248k, llega al 6 %</span></div>
+    <div class="tile"><b>89 %</b><span>de tu alcance viene de gente que no te sigue. A tus seguidores llegas poco: un 3,6 % al día</span></div>
+    <div class="tile"><b>28</b><span>publicaciones en 12 meses que triplicaron tu alcance habitual. 10 de ellas son de técnica</span></div>
+  </div>
+  <div class="grid2">
+    <div class="panel callout"><h3>Lo más importante</h3>
+      <p>Creces cuando enseñas algo concreto que se puede guardar: un ejercicio, una técnica, un plan. Los reels cortos (de 16 a 35 s) rinden el doble que los largos, y eso se repite en las 6 cuentas del nicho. Lo que te frena es la mentalidad, la marca, la venta directa y los "Comenta X" con promesas vagas.</p></div>
+    <div class="panel"><h3>Tres cambios para esta semana</h3>
+      <ol class="alist">
+        <li>Ningún reel de más de 30 s.</li>
+        <li>Si pides "Comenta X", promete un resultado medible ("aguantar 30 min", "bajar de 1 h en 10K"), no "la guía".</li>
+        <li>Captions con el tema en la primera frase. Nunca solo "Sígueme".</li>
+      </ol></div>
+  </div>
+</div></section>
+
+<section id="bien"><div class="wrap">
+  <h2>Qué haces bien</h2>
+  <p class="sub">Esto ya funciona. No lo cambies, haz más.</p>
+  <div class="grid2">
+    <div class="panel"><ul class="list">
+      <li><span class="mark m-good">Educativo</span><p>Tus 12 publicaciones con más alcance son todas educativas y prácticas: periostitis (199.220), plan de 30 min (161.532), pliometría (138.759), pisada (141.494 en carrusel).</p></li>
+      <li><span class="mark m-good">Técnica</span><p>Tu motor de virales: 10 de 28 publicaciones de técnica triplicaron tu alcance habitual. Rinden 1,75 veces tu mediana.</p></li>
+      <li><span class="mark m-good">Opinión</span><p>El tema que mejor rinde frente a tu mediana: 2,6 veces. Y el que más se comparte (2 % del alcance). Ejemplo: "Todos quieren correr 21K, pocos se preparan" (22,6 veces).</p></li>
+      <li><span class="mark m-good">Listas cortas</span><p>"Con estos 4 trucos…", "estos 2 gestos…": 2,4 veces tu mediana y ninguna en el tercio bajo.</p></li>
+    </ul></div>
+    <div class="panel"><ul class="list">
+      <li><span class="mark m-good">Crecimiento</span><p>De 1.750 de alcance mediano (ene-abr) a 6.010 (jul-oct), y de 3 a 9 virales por trimestre. El cambio fue pasar de mentalidad a ejercicios concretos.</p></li>
+      <li><span class="mark m-good">Conexión</span><p>Tu tasa de likes es del 4,5 % de las vistas. Carlos tiene 1,4 % y Clara 1,0 %. Tu audiencia te aprecia más que la de cuentas 3 a 7 veces más grandes.</p></li>
+      <li><span class="mark m-good">"Sígueme"</span><p>Las publicaciones con "Sígueme" rinden 1,6 veces tu mediana y suman 10 virales.</p></li>
+      <li><span class="mark m-good">Embudo</span><p>El 80 % de tus comentarios llega por "Comenta X". "Postura" sacó 1.006 comentarios y "Fuerza", 1.694: cuando el vídeo da mucho valor, la palabra clave funciona.</p></li>
+    </ul></div>
+  </div>
+</div></section>
+
+<section id="fallas"><div class="wrap">
+  <h2>Dónde estás fallando</h2>
+  <p class="sub">Ordenado de mayor a menor impacto.</p>
+  <div class="grid2">
+    <div class="panel"><ul class="list">
+      <li><span class="mark m-bad">Duración</span><p>44 de tus 67 reels recientes duran más de 35 s. Esos rinden 0,85 veces tu mediana; los de 16 a 35 s, 2,1 veces. La mediana de tus reels es de 41 s.</p></li>
+      <li><span class="mark m-bad">Primeros 3 s</span><p>50 de tus 137 reels pierden a más de la mitad de la gente en 3 segundos. Esos tienen 2.085 de alcance mediano; los que retienen, 10.731. El abandono empeoró de 43,9 % a 47,9 %.</p></li>
+      <li><span class="mark m-bad">Temas flojos</span><p>Mentalidad (24 publicaciones, 0,70 veces), marca (19, 0,60) y venta (7, 0,60). Son un tercio de lo que publicas y casi nunca crecen.</p></li>
+      <li><span class="mark m-bad">"Comenta" vago</span><p>Tus reels con "Comenta X" rinden 0,80 veces (50 publicaciones). Empezar el caption pidiendo el comentario, 0,65 veces. "Comenta TRANSFORMACIÓN" llegó a 662 personas.</p></li>
+    </ul></div>
+    <div class="panel"><ul class="list">
+      <li><span class="mark m-warn">Captions</span><p>Muchos dicen solo "Sígueme @healthyanii para más contenido". Instagram usa el caption para la búsqueda y para saber de qué va el vídeo: así lo pierdes.</p></li>
+      <li><span class="mark m-warn">Tus seguidores</span><p>Solo el 3,6 % de tu base te ve cada día. Faltan stories diarias con encuestas y preguntas, que son las que ven tus seguidores.</p></li>
+      <li><span class="mark m-warn">Republicar pronto</span><p>"Qué comer antes de correr" bajó de 82.418 a 5.326 al republicarlo 2 días después. Con 4 semanas o más sí funciona.</p></li>
+      <li><span class="mark m-warn">Tu audiencia real</span><p>El 64 % tiene de 35 a 54 años y el 58 % son mujeres, pero no habías hecho contenido para ellas. En octubre el alcance mediano cayó a 3.548, con más marca y venta.</p></li>
+    </ul></div>
+  </div>
+</div></section>
+
+<section id="mejorar"><div class="wrap">
+  <h2>Qué debes hacer mejor</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Cambio</th><th>Cómo</th><th>Por qué (dato)</th></tr></thead>
+    <tbody>
+      <tr><td><b>Reels de 30 s como máximo</b></td><td>Entre 20 y 30 s. Si no cabe, quita un punto o pásalo al caption.</td><td>Tus reels de 16-35 s: 2,1 veces tu mediana. Nicho, hasta 15 s: 1,63 veces.</td></tr>
+      <tr><td><b>Gancho en el primer fotograma</b></td><td>El dolor o el resultado escrito en pantalla en el segundo 0. Nada de entradas ni paisajes.</td><td>Abandono por debajo del 40 %: 5 veces más alcance.</td></tr>
+      <tr><td><b>"Comenta X" con promesa medible</b></td><td>"…para aguantar 30 min sin parar", no "te mando la guía". Y siempre después de dar valor.</td><td>Carlos: 1,91 veces con promesa concreta y 0,84 sin ella.</td></tr>
+      <tr><td><b>70 / 20 / 10</b></td><td>70 % educativo guardable (técnica, lesiones, fuerza, principiantes), 20 % confianza, 10 % marca integrada.</td><td>Técnica 1,75 veces y fuerza 1,5; marca 0,6.</td></tr>
+      <tr><td><b>Opinión una vez por semana</b></td><td>Una afirmación clara y "envíaselo a…".</td><td>2,6 veces tu mediana, el tema que más se comparte.</td></tr>
+      <tr><td><b>Captions con palabras clave</b></td><td>Primera frase: el tema exacto ("Dolor de rodilla al correr: 3 ejercicios…").</td><td>Búsqueda y clasificación del vídeo.</td></tr>
+      <tr><td><b>Marca con ángulo</b></td><td>La zapatilla con un mensaje útil o contraintuitivo, no la publi sola.</td><td>Carlos, "ASICS te obliga a correr lento": 4,9 veces. Publis sin ángulo: 0,3 a 0,4.</td></tr>
+      <tr><td><b>Contenido para mujeres de 40 a 55</b></td><td>Empezar después de los 40, menopausia y fuerza. Abre con un dato verificado.</td><td>Es el 64 % de tu audiencia. Clara, con un dato sobre mujeres: 8,1 veces.</td></tr>
+    </tbody></table></div>
+</div></section>
+
+<section id="nicho"><div class="wrap">
+  <h2>Comparación con otras cuentas</h2>
+  <p class="sub">"Alcance relativo" = vistas medianas por reel dividido entre seguidores. Indica cuánto empuja Instagram cada cuenta para su tamaño. Datos de agosto a octubre (Paola publica poco: sus reels van de marzo a septiembre).</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Cuenta</th><th class="n">Seguidores</th><th class="n">Vistas medianas</th><th class="n">Alcance relativo</th><th class="n">Reels/semana</th><th class="n">Duración mediana</th><th class="n">Likes / vistas</th><th class="n">Coment. / 1.000 vistas</th><th>Estilo</th></tr></thead>
+    <tbody>
+      <tr class="me"><td>@healthyanii (tú)</td><td class="n">37.009</td><td class="n">9.431</td><td class="n">25 %</td><td class="n">3,5</td><td class="n">41 s</td><td class="n">4,5 %</td><td class="n">0,7</td><td>Técnica, lesiones, fuerza; "Comenta" en 3 de cada 10</td></tr>
+      <tr><td><a href="https://www.instagram.com/carlosrojo_running/">@carlosrojo_running</a></td><td class="n">247.826</td><td class="n">14.818</td><td class="n">6 %</td><td class="n">16,9</td><td class="n">37 s</td><td class="n">1,4 %</td><td class="n">5,4</td><td>Competidor directo. "Comenta X" en casi todos, con promesa medible</td></tr>
+      <tr><td><a href="https://www.instagram.com/claraalvarez.nutricion/">@claraalvarez.nutricion</a></td><td class="n">114.214</td><td class="n">13.249</td><td class="n">12 %</td><td class="n">4,8</td><td class="n">60 s</td><td class="n">1,0 %</td><td class="n">0,3</td><td>Nutrición para corredoras + su embarazo</td></tr>
+      <tr><td><a href="https://www.instagram.com/lacoachpaolafuentes/">@lacoachpaolafuentes</a></td><td class="n">195.005</td><td class="n">31.586</td><td class="n">16 %</td><td class="n">0,5</td><td class="n">20 s</td><td class="n">2,3 %</td><td class="n">0,2</td><td>Movilidad y fuerza sin voz, solo texto</td></tr>
+      <tr><td><a href="https://www.instagram.com/dr.gabygo/">@dr.gabygo</a> (inglés)</td><td class="n">182.861</td><td class="n">52.396</td><td class="n">29 %</td><td class="n">4,0</td><td class="n">25 s</td><td class="n">1,6 %</td><td class="n">0,4</td><td>Fisio: lesión + ejercicios, explicado en el caption</td></tr>
+      <tr><td><a href="https://www.instagram.com/valeargandona/">@valeargandona</a></td><td class="n">18.208</td><td class="n">6.450</td><td class="n">35 %</td><td class="n">1,2</td><td class="n">15 s</td><td class="n">5,2 %</td><td class="n">3,7</td><td>Vlog de maratones y comunidad</td></tr>
+      <tr><td><a href="https://www.instagram.com/imanoloizaga/">@imanoloizaga</a></td><td class="n">12.030</td><td class="n">9.413</td><td class="n">78 %</td><td class="n">1,1</td><td class="n">31 s</td><td class="n">4,1 %</td><td class="n">3,3</td><td>Humor y opinión de entrenador</td></tr>
+      <tr><td><a href="https://www.instagram.com/daniel_runningtrainer/">@daniel_runningtrainer</a></td><td class="n">5.656</td><td class="n">1.345</td><td class="n">24 %</td><td class="n">3,0</td><td class="n">48 s</td><td class="n">2,4 %</td><td class="n">0,0</td><td>Entrenos propios explicados, trail</td></tr>
+    </tbody></table></div>
+  <div class="grid2">
+    <div class="panel"><h3>Lo que te enseña Carlos (tu competidor)</h3>
+      <ul class="alist">
+        <li>Su bio es casi la tuya: "corredores ocupados +35", "+400 casos de éxito", "Empieza aquí".</li>
+        <li>Publica 17 reels por semana; tú, 3,5. No hace falta copiar el volumen: Instagram te da 4 veces más alcance relativo que a él.</li>
+        <li>Sus mejores reels prometen un número con plazo: "correr a 4:30/km en 60 días", "bajar de 35' en 10K".</li>
+        <li>Sus peores: "Comenta X y te envío el plan" sin nada más (0,34 a 0,84 veces).</li>
+      </ul></div>
+    <div class="panel"><h3>Lo que te enseña Clara (tu misma audiencia)</h3>
+      <ul class="alist">
+        <li>Su mejor reel (10,3 veces) es un hito personal: "semana 32 de embarazo". Lo personal funciona cuando su audiencia lo vive.</li>
+        <li>Un dato sobre mujeres en la primera frase ("el 35 % de las deportistas sufre anemia") la llevó a 8,1 veces.</li>
+        <li>Sus reels largos de reflexión (más de 60 s) se quedan en 0,4 a 0,8 veces.</li>
+      </ul></div>
+  </div>
+  <h3>Los reels del nicho que más superaron su mediana</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th class="n">Veces su mediana</th><th>Cuenta</th><th class="n">Vistas</th><th class="n">Dur.</th><th>Gancho</th><th>Por qué funcionó</th></tr></thead>
+    <tbody>
+      <tr><td class="n">10,3</td><td>Clara</td><td class="n">136.772</td><td class="n">14 s</td><td>"Y llegamos a la semana 32 de embarazo"</td><td>Hito personal real, corto</td></tr>
+      <tr><td class="n">8,1</td><td>Clara</td><td class="n">107.888</td><td class="n">34 s</td><td>"El 35 % de las mujeres deportistas sufre anemia…"</td><td>Dato sobre mujeres + receta útil</td></tr>
+      <tr><td class="n">6,4</td><td>Carlos</td><td class="n">94.419</td><td class="n">28 s</td><td>"¿A qué ritmo corres ahora y a qué ritmo te gustaría correr dentro de 60 días?"</td><td>Meta medible con plazo, sin voz</td></tr>
+      <tr><td class="n">5,2</td><td>Clara</td><td class="n">68.924</td><td class="n">69 s</td><td>"Estos son los 10 alimentos que priorizo en mi embarazo"</td><td>Personal + lista útil</td></tr>
+      <tr><td class="n">4,9</td><td>Carlos</td><td class="n">72.476</td><td class="n">50 s</td><td>"ASICS GEL-SLOWCUSH te obliga a correr lento (y eso es bueno)"</td><td>Producto con ángulo contraintuitivo</td></tr>
+      <tr><td class="n">4,8</td><td>Paola</td><td class="n">151.819</td><td class="n">11 s</td><td>"Isquiosurales: una variante de curl"</td><td>Ejercicio visual, muy corto</td></tr>
+      <tr><td class="n">4,0</td><td>Carlos</td><td class="n">59.151</td><td class="n">54 s</td><td>"Top 5 entrenamientos para bajar de 35 minutos en 10K"</td><td>Lista con objetivo concreto</td></tr>
+      <tr><td class="n">3,5</td><td>Paola</td><td class="n">109.634</td><td class="n">21 s</td><td>"Después de muchos meses hoy corrimos sin dolor"</td><td>Vuelta de una lesión</td></tr>
+      <tr><td class="n">2,8</td><td>Carlos</td><td class="n">41.466</td><td class="n">10 s</td><td>"Si corres dando pasos cortos, estás frenándote en cada zancada" (+40 años)</td><td>Error concreto + edad</td></tr>
+    </tbody></table></div>
+  <div class="panel"><h3>Lo que se hunde en todas las cuentas (0,25 a 0,5 veces)</h3>
+    <p>Publis sin un ángulo propio ("mi rutina de suplementación"), avisos y logística ("mañana enlace en stories"), motivación genérica ("Una vuelta más. Una pausa.") y "Comenta X" sin promesa concreta.</p></div>
+</div></section>
+
+<section id="stats"><div class="wrap">
+  <h2>Todas las estadísticas</h2>
+  <p class="sub">"Veces tu mediana" compara cada publicación con la mediana de tus 12 anteriores. Así se corrige que la cuenta haya crecido. La línea discontinua marca 1 (un día normal). Pasa el cursor por una barra para ver cuántas publicaciones hay detrás.</p>
+  <div class="grid2">
+    <div class="panel chart" id="c-temas"><h4>Por tema (12 meses)</h4></div>
+    <div class="panel chart" id="c-dur-ana"><h4>Por duración: tus reels (may-oct, 67)</h4></div>
+    <div class="panel chart" id="c-cta"><h4>Por llamada a la acción</h4></div>
+    <div class="panel chart" id="c-dur-nicho"><h4>Por duración: el nicho (103 reels, 7 cuentas)</h4></div>
+    <div class="panel chart" id="c-form"><h4>Por tipo de gancho (tus reels)</h4><p class="legend">Con menos de 5 reels es solo una pista.</p></div>
+    <div class="panel chart" id="c-trim"><h4>Alcance mediano por trimestre</h4></div>
+  </div>
+  <div class="grid2">
+    <div class="panel"><h3>Tu audiencia</h3>
+      <ul class="alist">
+        <li><b>Mujeres 58,5 %</b>, hombres 30,7 %, sin especificar 10,8 %.</li>
+        <li><b>De 35 a 54 años: 64 %</b> (35-44: 34,2 %; 45-54: 29,8 %; 25-34: 17,9 %).</li>
+        <li>Mayor grupo: mujeres de 35 a 44 (7.647), luego mujeres de 45 a 54 (6.049).</li>
+        <li><b>Latinoamérica 82 %</b>: Venezuela 19,7 %, México 12,5 %, Argentina 12,4 %, Colombia 10,1 %, Chile 5,3 %. España 7,9 %.</li>
+      </ul></div>
+    <div class="panel"><h3>Retención y republicación</h3>
+      <ul class="alist">
+        <li>Abandono en 3 s por debajo del 40 %: 23 reels, <b>10.731</b> de alcance mediano. Por encima del 50 %: 50 reels, <b>2.085</b>.</li>
+        <li>Guardados y compartidos son lo que más se relaciona con tu alcance (0,47 y 0,42), más que el tiempo de visualización (0,29).</li>
+        <li>Pliometría: 138.759, republicada a las 4 semanas 108.354, y otra vez a las 6, 10.183. A la tercera ya cansó.</li>
+        <li>Republicar a 1 o 2 días: de 82.418 a 5.326 y de 37.627 a 3.394.</li>
+      </ul></div>
+  </div>
+  <h3>Tus 12 mayores éxitos frente a su contexto</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Fecha</th><th class="n">Veces tu mediana</th><th class="n">Alcance</th><th>Tema</th><th>Publicación</th></tr></thead>
+    <tbody>
+      <tr><td>02-jun-26</td><td class="n">53,6</td><td class="n">108.354</td><td>Fuerza</td><td>Rutina de pliometría (republicada)</td></tr>
+      <tr><td>04-may-26</td><td class="n">40,8</td><td class="n">138.759</td><td>Fuerza</td><td>Rutina de pliometría para runners</td></tr>
+      <tr><td>09-jun-26</td><td class="n">33,5</td><td class="n">82.418</td><td>Nutrición</td><td>Qué comer antes de correr</td></tr>
+      <tr><td>02-sep-26</td><td class="n">26,7</td><td class="n">161.532</td><td>Principiantes</td><td>Plan para correr 30 minutos sin parar</td></tr>
+      <tr><td>14-ago-26</td><td class="n">26,7</td><td class="n">199.220</td><td>Lesiones</td><td>Periostitis tibial: 3 ejercicios</td></tr>
+      <tr><td>22-feb-26</td><td class="n">25,8</td><td class="n">40.964</td><td>Técnica</td><td>7 trucos de running (carrusel)</td></tr>
+      <tr><td>23-mar-26</td><td class="n">22,6</td><td class="n">39.559</td><td>Opinión</td><td>Todos quieren correr 21K, pocos se preparan</td></tr>
+      <tr><td>25-mar-26</td><td class="n">19,3</td><td class="n">33.783</td><td>Opinión</td><td>Todo el mundo quiere correr un maratón…</td></tr>
+      <tr><td>01-jul-26</td><td class="n">15,5</td><td class="n">64.452</td><td>Fuerza</td><td>Fuerza para corredores (comenta FUERZA)</td></tr>
+      <tr><td>07-jul-26</td><td class="n">9,3</td><td class="n">37.627</td><td>Ciencia</td><td>Correr con calor mejora tu rendimiento</td></tr>
+      <tr><td>29-jul-26</td><td class="n">7,7</td><td class="n">53.903</td><td>Técnica</td><td>Correr más tiempo sin quedarte sin aire</td></tr>
+      <tr><td>03-ago-26</td><td class="n">7,6</td><td class="n">76.042</td><td>Técnica</td><td>Tipo de pisada y zapatillas (ASICS)</td></tr>
+    </tbody></table></div>
+</div></section>
+
+<section id="guiones"><div class="wrap">
+  <h2>Los 20 guiones, analizados</h2>
+  <p class="sub">Cada ficha tiene el guion completo a la izquierda y, a la derecha, lo que dicen tus datos y los del nicho, con los cambios concretos. TP = texto en pantalla, V = lo que dices.</p>
+  <div class="filters" role="group" aria-label="Filtrar guiones">
+    <button type="button" id="f-all" data-f="all" aria-pressed="true">Todos</button>
+    <button type="button" id="f-1" data-f="1" aria-pressed="false">Semana 1</button>
+    <button type="button" id="f-2" data-f="2" aria-pressed="false">Semana 2</button>
+    <button type="button" id="f-3" data-f="3" aria-pressed="false">Semana 3</button>
+    <button type="button" id="f-4" data-f="4" aria-pressed="false">Semana 4</button>
+    <button type="button" id="f-adj" data-f="adj" aria-pressed="false">Necesitan ajustes</button>
+  </div>
+  <div class="scripts" id="scripts"></div>
+</div></section>
+
+<section id="metas"><div class="wrap">
+  <h2>Metas del experimento (19 oct - 15 nov)</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Métrica</th><th class="n">Ahora</th><th class="n">Meta</th></tr></thead>
+    <tbody>
+      <tr><td>Alcance mediano por publicación</td><td class="n">6.010</td><td class="n">≥ 9.000</td></tr>
+      <tr><td>Abandono en los primeros 3 s</td><td class="n">47,9 %</td><td class="n">≤ 42 %</td></tr>
+      <tr><td>Guardados / alcance</td><td class="n">0,6 %</td><td class="n">≥ 1,2 %</td></tr>
+      <tr><td>Compartidos / alcance</td><td class="n">0,3 %</td><td class="n">≥ 0,6 %</td></tr>
+      <tr><td>Nuevos seguidores al día</td><td class="n">71</td><td class="n">≥ 100</td></tr>
+      <tr><td>Leads por DM en 4 semanas</td><td class="n">sin medir</td><td class="n">≥ 400</td></tr>
+    </tbody></table></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Hipótesis</th><th>Qué se prueba</th><th>Se confirma si…</th></tr></thead>
+    <tbody>
+      <tr><td><b>H1</b></td><td>Serie "dolor + 3 ejercicios" (reels 1, 6, 12, 16)</td><td>Alcance mediano ≥ 15.000 y guardados ≥ 1,5 %</td></tr>
+      <tr><td><b>H2</b></td><td>"Comenta" al final frente a "Comenta" primero (A/B 15)</td><td>La versión con valor primero tiene ≥ 30 % más vistas a las 24 h</td></tr>
+      <tr><td><b>H3</b></td><td>Carruseles educativos con palabra clave (2, 7, 17; control 13)</td><td>Alcance ≥ 4.000 y ≥ 80 comentarios de palabra clave</td></tr>
+      <tr><td><b>H4</b></td><td>Opinión semanal (5, 10, 20)</td><td>Compartidos ≥ 1 % del alcance</td></tr>
+      <tr><td><b>H5</b></td><td>Republicar virales con gancho nuevo (3, 14, 19)</td><td>Cada una ≥ 30 % del alcance original</td></tr>
+      <tr><td><b>H6</b></td><td>Pilar de más de 40 (8, 18)</td><td>Alcance ≥ 6.000 y comentarios ≥ 0,5 %</td></tr>
+    </tbody></table></div>
+  <div class="panel"><h3>Reglas fijas durante las 4 semanas</h3>
+    <ul class="alist">
+      <li>Publicar entre las 19:00 y las 19:30 UTC, lunes, martes, miércoles, viernes y sábado. Jueves y domingo, solo stories.</li>
+      <li>Gancho escrito en el primer fotograma, subtítulos y <b>30 s como máximo</b>.</li>
+      <li>Caption que empieza con el tema. Responder a todos los comentarios en la primera hora.</li>
+      <li>Tres stories al día: encuesta del tema, detrás de cámaras y "nuevo reel". Los jueves, caja de preguntas.</li>
+      <li>Cada lunes: rellenar <code>calendario.csv</code> y tomar una sola decisión.</li>
+    </ul></div>
+</div></section>
+
+<footer><div class="wrap">
+  Fuentes: Instagram (vía Windsor.ai) para tu cuenta, de oct-2025 a oct-2026; Manifold para los reels públicos del nicho, leídos el 16-oct-2026. Limitaciones: 7 cuentas y unos 60 días; Carlos aporta 29 de los 103 reels; la duración puede ir ligada al tema. Es una tendencia que el plan pone a prueba, no una ley.
+</div></footer>
+
+<script>
+const CH={
+ "c-temas":{max:3,rows:[["Opinión",2.6,6],["Técnica",1.75,28],["Fuerza",1.5,10],["Personal",1.2,25],["Nutrición",1.0,7],["Principiantes",0.9,17],["Lesiones",0.75,12],["Mentalidad",0.7,24],["Marca",0.6,19],["Venta",0.6,7]]},
+ "c-cta":{max:3,rows:[["Sígueme",1.6,36],["Comenta + sígueme",1.3,3],["Sin llamada",0.95,96],["Comenta X",0.8,50]]},
+ "c-dur-ana":{max:3,rows:[["16-25 s",2.21,9],["26-35 s",2.03,13],["36-50 s",0.9,26],["Más de 50 s",0.74,18]]},
+ "c-dur-nicho":{max:3,rows:[["Hasta 15 s",1.63,19],["16-25 s",1.13,19],["26-35 s",1.05,17],["36-50 s",0.88,16],["Más de 50 s",0.84,32]]},
+ "c-form":{max:8,rows:[["La receta (plan, rutina)",7.73,3],["Causa → consecuencia",5.36,4],["Error / forma correcta",2.57,5],["Lista con número",2.44,8],["Si te pasa esto…",1.44,20],["Pregunta",0.89,11],["Si te duele…",0.71,3],["Comenta primero",0.65,9]]},
+ "c-trim":{max:6500,abs:true,rows:[["Oct-ene (1 viral)",2631,60],["Ene-abr (3 virales)",1750,40],["Abr-jul (5 virales)",4214,44],["Jul-oct (9 virales)",6010,47]]}
+};
+const fmt=(v,abs)=>abs?v.toLocaleString("es-ES"):v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2})+"×";
+for(const [id,c] of Object.entries(CH)){
+  const el=document.getElementById(id);
+  c.rows.forEach(([lab,v,n])=>{
+    const pct=Math.min(v/c.max,1)*100;
+    const row=document.createElement("div");row.className="bar";
+    row.title=`${lab}: ${fmt(v,c.abs)} (${n} publicaciones)`;
+    const low=!c.abs&&v<1;
+    row.innerHTML=`<div class="lab">${lab} <small>· ${n}</small></div><div class="track">${c.abs?"":`<div class="ref" style="left:${100/c.max}%"></div>`}<div class="fill${low?" low":""}" style="width:${pct}%"></div><div class="val" style="left:${pct}%">${fmt(v,c.abs)}</div></div>`;
+    el.appendChild(row);
+  });
+}
+
+const S=[
+{id:"1",w:1,fecha:"Lun 19-oct",fmt:"Reel",h:"H1",t:"Rodilla del corredor",v:"adj",
+ tp:"Si te duele AQUÍ al correr, haz estos 3 ejercicios (flecha a la rótula)",
+ voz:"Si te duele alrededor de la rótula al correr o al bajar escaleras, haz estos 3 ejercicios.",
+ beats:[["0-3 s","Gancho. Plano cerrado del dedo señalando la rodilla."],["3-8 s","Casi siempre no es la rodilla, es que tu cadera y tu glúteo no la están sosteniendo."],["8-15 s","1. Puente de glúteo a una pierna, 3×12. TP: Glúteo."],["15-22 s","2. Abducción de cadera tumbada de lado, 3×15, lenta. TP: Glúteo medio."],["22-30 s","3. Bajada excéntrica desde un escalón, 3×8, bajando en 3 s. TP: Control de rodilla."],["30-35 s","3 veces por semana durante 6 semanas. Si no mejora, ve a un fisio. TP: Guárdalo 📌"]],
+ cap:"Dolor de rodilla al correr (alrededor de la rótula): 3 ejercicios para fortalecer cadera y glúteo y correr sin molestias.\n\n1️⃣ Puente de glúteo a una pierna, 3x12\n2️⃣ Abducción de cadera de lado, 3x15\n3️⃣ Bajada excéntrica en escalón, 3x8 (lento)\n\nHazlos 3 veces por semana durante 6 semanas. Si el dolor persiste, consulta con un fisioterapeuta.\n\nSígueme @healthyanii para más ejercicios para correr sin lesiones ‼️",
+ cta:"Sígueme + Guárdalo. Sin palabra clave.",
+ good:["Copia la fórmula de tu mayor viral (periostitis, 199.220): dolor + 3 ejercicios.","\"Sígueme\" rinde 1,6 veces tu mediana."],
+ risk:["El tema lesiones rinde 0,75 veces de mediana; la periostitis fue la excepción.","Dura 35 s, por encima del límite de 30."],
+ fix:["Pasa la frase final (30-35 s) al caption y al texto en pantalla. Queda en 30 s.","Acorta el 3-8 s a una frase: \"No es la rodilla: es tu cadera.\""]},
+{id:"2",w:1,fecha:"Mar 20-oct",fmt:"Carrusel",h:"H3",t:"Pisada (remake del de 141.000)",v:"ok",
+ tp:"Me costó 6 meses de lesión no saber esto",voz:"",
+ beats:[["Slide 1","Portada: Me costó 6 meses de lesión no saber esto (foto mirando tus zapatillas)."],["Slide 2","Elegí zapatillas porque 'todo el mundo las usaba'… y no eran para mí."],["Slide 3","Los 3 tipos de pisada (neutra, pronadora, supinadora) con dibujo de la huella."],["Slide 4","Test casero 1: mira el desgaste de la suela de tus zapatillas viejas."],["Slide 5","Test casero 2: la huella mojada en un cartón."],["Slide 6","La ciencia dice que la comodidad es tu mejor filtro: pruébate 3 modelos."],["Slide 7","Qué buscar según tu pisada (un modelo por tipo si ASICS lo pide)."],["Slide 8","Comenta PISADA y te envío la guía completa para saber tu pisada y qué zapatilla elegir 👟"]],
+ cap:"Cuando empecé a correr cometí un error que me costó 6 meses de lesión: elegir zapatillas sin saber cómo piso.\n\nEn este carrusel te enseño 2 tests caseros para saber tu tipo de pisada y qué mirar al comprar tus próximas zapatillas.\n\n💬 Comenta PISADA y te mando la guía completa.\n📌 Guárdalo para tu próxima compra.",
+ cta:"Comentar PISADA.",
+ good:["Tema validado dos veces: carrusel de 141.494 (5.557 comentarios) y reel de 76.042.","En carruseles la palabra clave suma: 2.429 frente a 1.550 sin ella."],
+ risk:["La portada \"me costó…\" (confesión) no tiene datos propios aún."],
+ fix:["Nada obligatorio. Si quieres, pon la promesa en la última slide: \"…y qué zapatilla elegir en 2 minutos\"."]},
+{id:"3",w:1,fecha:"Mié 21-oct",fmt:"Reel",h:"H5",t:"Republicar: plan para correr 30 min sin parar",v:"ok",
+ tp:"Si hoy no aguantas ni 5 minutos corriendo, guarda esto.",voz:"(mismo vídeo del 2-sep)",
+ beats:[["Vídeo","El original (52 s) con portada y texto en pantalla nuevos."]],
+ cap:"Plan para pasar de no aguantar 5 minutos a correr 30 minutos sin parar, aunque nunca hayas hecho deporte.\n\nLa clave no es aguantar: es alternar caminar y correr (CACO) e ir subiendo poco a poco.\n\nSi estás comprometida déjame un 🙋🏻‍♀️ en comentarios y te mando una sorpresa por DM.\nSígueme @healthyanii para más contenido sobre correr 🫶🏻",
+ cta:"Emoji en comentarios + Sígueme (lo que funcionó).",
+ good:["El original rindió 26,7 veces tu mediana (161.532).","Han pasado 7 semanas: más de las 4 que necesita una republicación."],
+ risk:["El vídeo dura 52 s y no se puede recortar sin regrabar."],
+ fix:["Si tienes el material, sube una versión recortada a 30 s como Trial Reel y compara."]},
+{id:"4",w:1,fecha:"Vie 23-oct",fmt:"Reel",h:"H2 control",t:"Zancada larga = freno",v:"adj",
+ tp:"Este error te frena en CADA paso",voz:"Si tu pie cae por delante de tu rodilla, estás frenando cada vez que pisas.",
+ beats:[["0-3 s","Gancho. Cámara lenta lateral de una zancada larga con una X roja."],["3-10 s","Comparación: zancada larga frente a pie que cae bajo la cadera."],["10-18 s","Lo arreglas así: pasos más cortos y más rápidos."],["18-26 s","Sube tu cadencia un 5 %: si das 160 pasos por minuto, prueba con 168. Usa un metrónomo."],["26-32 s","No lo cambies todo de golpe: 2 o 3 minutos por salida."],["32-36 s","Si quieres el ejercicio con metrónomo paso a paso, comenta CADENCIA y te lo mando."]],
+ cap:"Zancada demasiado larga (overstriding): el error de técnica que te frena en cada paso y sobrecarga tus rodillas.\n\nCómo corregirlo: pasos más cortos, el pie cae bajo la cadera y la cadencia sube un 5 %.\n\n💬 Comenta CADENCIA y te envío el ejercicio con metrónomo.",
+ cta:"Comenta CADENCIA, al final.",
+ good:["Gancho de \"error\": 2,57 veces tu mediana en reels.","Técnica es tu tema más fiable (10 de 28 superan 3 veces lo habitual)."],
+ risk:["36 s.","Carlos acaba de hacer lo contrario (\"pasos cortos te frenan\", 2,8 veces): tu audiencia puede ver los dos mensajes."],
+ fix:["Une 10-18 y 18-26 en uno: \"Pasos más cortos: sube tu cadencia un 5 %\". Queda en 28-30 s.","Haz la promesa medible: \"…comenta CADENCIA y te mando el ejercicio para dejar de frenarte en 2 semanas\".","Aclara en el caption que no es dar pasitos, es que el pie caiga bajo la cadera."]},
+{id:"5",w:1,fecha:"Sáb 24-oct",fmt:"Reel",h:"H4",t:"Opinión: maratón en tu primer año",v:"ok",
+ tp:"Correr un maratón en tu primer año es mala idea",voz:"Lo digo yo, que he corrido 9 maratones: no corras un maratón en tu primer año corriendo.",
+ beats:[["0-3 s","Gancho, hablando a cámara en primer plano."],["3-12 s","No porque no puedas. Porque tus tendones y huesos se adaptan mucho más lento que tu corazón."],["12-20 s","El corazón mejora en semanas; los tendones tardan meses. Ahí llegan las lesiones."],["20-28 s","Primer año 5K y 10K; segundo año, media; y después, maratón."],["28-33 s","¿Estás de acuerdo o crees que exagero? Te leo."]],
+ cap:"¿Maratón en tu primer año corriendo? Mi opinión después de 9 maratones y de entrenar a +300 personas.\n\nTu corazón se adapta en semanas, pero tus tendones y huesos tardan meses. Por eso tantas personas se lesionan preparando su primer 42K.\n\n👇 ¿Estás de acuerdo o crees que exagero?\n📲 Envíaselo a esa persona que se apuntó a un maratón sin haber corrido un 10K.",
+ cta:"Debate + envío.",
+ good:["Opinión: 2,6 veces tu mediana y el tema que más se comparte.","Tus dos virales de opinión (22,6 y 19,3 veces) iban de \"todos quieren correr X, pocos se preparan\"."],
+ risk:["33 s, casi en el límite."],
+ fix:["Junta 3-12 y 12-20 en una frase y quedará en unos 27 s."]},
+{id:"6",w:2,fecha:"Lun 26-oct",fmt:"Reel",h:"H1",t:"Cintilla iliotibial",v:"adj",
+ tp:"Si te duele FUERA de la rodilla, probablemente sea tu cintilla",voz:"Si te duele la parte de fuera de la rodilla a partir del km 5, probablemente es tu cintilla iliotibial.",
+ beats:[["3-8 s","Estirarla no sirve de mucho. Lo que funciona es fortalecer tu cadera."],["8-15 s","1. Plancha lateral con elevación de pierna, 3×8 por lado."],["15-22 s","2. Peso muerto a una pierna, 3×10."],["22-30 s","3. Bajada lateral desde un escalón, 3×8, lenta."],["30-35 s","3 veces por semana. Si no mejora en 4 a 6 semanas, ve a un fisio. TP: Guárdalo 📌"]],
+ cap:"Dolor en la parte externa de la rodilla al correr (síndrome de la cintilla iliotibial): 3 ejercicios de cadera para correr sin molestias.\n\n[lista de los 3 ejercicios con series]\n\nSígueme @healthyanii para más ejercicios para correr sin lesiones ‼️",
+ cta:"Sígueme + Guárdalo.",
+ good:["\"Estirarla no sirve\" es contraintuitivo, como el reel de Gaby sobre la cintilla (58.019 vistas)."],
+ risk:["35 s.","Lesiones rinde 0,75 veces de mediana."],
+ fix:["Pasa el aviso del fisio al caption; queda en 30 s.","Escribe la lista completa en el caption (ahora pone [lista])."]},
+{id:"7",w:2,fecha:"Mar 27-oct",fmt:"Carrusel",h:"H3",t:"Plan de 0 a 5K en 8 semanas",v:"ok",
+ tp:"De 0 a 5K en 8 semanas (aunque hoy no aguantes 1 minuto)",voz:"",
+ beats:[["Slide 1","De 0 a 5K en 8 semanas (aunque hoy no aguantes 1 minuto)."],["Slide 2","Reglas: 3 días por semana, nunca dos seguidos, ritmo en el que puedas hablar."],["Slides 3-6","S1-2: 1' corriendo / 2' caminando ×8 · S3-4: 3'/2' ×6 · S5-6: 5'/1' ×5 · S7-8: 10'/1' ×3, para terminar con 30' seguidos."],["Slide 7","Si una semana te cuesta, repítela. No pasa nada."],["Slide 8","Comenta 5K y te mando el plan en PDF para imprimir y pegar en la nevera 🧡"]],
+ cap:"Plan de 8 semanas para correr tus primeros 5K desde cero, con el método CACO (caminar + correr).\n\n💬 Comenta 5K y te envío el plan en PDF.\n📲 Envíaselo a la amiga que siempre dice \"quiero empezar a correr\".",
+ cta:"Comentar 5K.",
+ good:["Es la versión carrusel de tu reel de 161.532 (30 min sin parar).","Promesa medible y con plazo, como los reels que mejor funcionan en el nicho."],
+ risk:["El PDF de 0 a 5K hay que crearlo antes."],
+ fix:["Nada en el guion. Prepara el PDF y la automatización de la palabra 5K."]},
+{id:"8",w:2,fecha:"Mié 28-oct",fmt:"Reel",h:"H6",t:"Más de 40 y quieres empezar a correr",v:"adj",
+ tp:"Si tienes +40 y quieres empezar a correr, haz esto primero.",voz:"Si tienes más de 40 años y quieres empezar a correr, antes del primer kilómetro haz estas 3 cosas.",
+ beats:[["3-12 s","1. Fuerza 2 días por semana. A partir de los 40 perdemos masa muscular cada año; el músculo protege tus articulaciones."],["12-20 s","2. Empieza caminando y corriendo (CACO). Tu corazón se adapta rápido; tus tendones, no."],["20-28 s","3. Deja 48 h entre carreras al principio. La recuperación es parte del entrenamiento."],["28-34 s","Y lo mejor: correr es de lo mejor que puedes hacer por tus huesos. TP: Envíaselo a quien lo necesite 💌"]],
+ cap:"Empezar a correr después de los 40: 3 cosas que debes hacer antes del primer kilómetro, para no lesionarte y disfrutarlo.\n\n[lista]\n\nSígueme @healthyanii si quieres empezar a correr con cabeza, a cualquier edad 🫶🏻",
+ cta:"Sígueme + Envíaselo.",
+ good:["Habla al 64 % de tu audiencia (35-54 años).","\"Si tienes/quieres…\": 1,44 veces en tus reels y 2,59 en el nicho. Carlos usa \"+40 años\" en un reel de 2,8 veces."],
+ risk:["34 s."],
+ fix:["Recorta cada punto a una frase (por ejemplo \"Fuerza 2 días: el músculo protege tus rodillas\"). Queda en unos 26 s.","Escribe la lista en el caption."]},
+{id:"9",w:2,fecha:"Vie 30-oct",fmt:"Reel",h:"Control",t:"Qué como 48 h antes del maratón (NYC)",v:"ok",
+ tp:"Lo que como 48 h antes de mi maratón #10 (en Nueva York)",voz:"Faltan 48 horas para mi maratón número 10 y esto es exactamente lo que voy a comer.",
+ beats:[["Escena 1","Más carbohidratos: arroz, pasta, pan; de 8 a 10 g por kilo al día."],["Escena 2","Menos fibra y grasa para no tener problemas de estómago."],["Escena 3","Nada nuevo: solo lo que ya probé en mis tiradas largas."],["Cierre","¿Quién más corre el domingo?"]],
+ cap:"Carga de carbohidratos antes de un maratón: lo que como las 48 h previas a mi maratón #10 en Nueva York 🗽\n\n[3 puntos]\n\n¿Quién más corre el domingo? 👇",
+ cta:"Pregunta en comentarios.",
+ good:["Personal + útil, como los reels de embarazo de Clara (5,2 y 10,3 veces).","\"Qué comer antes de correr\" fue tu tercer mayor éxito (33,5 veces)."],
+ risk:["Lo personal nunca ha sido viral en tu cuenta (1,2 veces de mediana)."],
+ fix:["Graba escenas de 6-8 s para no pasar de 30 s.","Enseña la comida en plano: Carlos hizo 2,5 veces con una lista rápida de alimentos."]},
+{id:"10",w:2,fecha:"Sáb 31-oct",fmt:"Reel",h:"H4",t:"Opinión: no necesitas un Major",v:"adj",
+ tp:"No necesitas correr un Major para ser corredora de verdad",voz:"Mañana corro mi quinto World Major y te voy a decir algo que quizá no esperas.",
+ beats:[["1","Los Majors son increíbles, pero no te hacen más corredora."],["2","Ser corredora es salir un martes con frío cuando nadie te ve."],["3","Tu 5K de barrio vale lo mismo."],["4","¿Estás de acuerdo?"]],
+ cap:"Mañana corro el maratón de Nueva York, mi 5ª World Major, y aun así lo pienso: no necesitas un Major para ser corredora de verdad.\n\n👇 ¿Estás de acuerdo?\n📲 Envíaselo a quien piensa que su carrera \"no cuenta\".",
+ cta:"Debate + envío.",
+ good:["Opinión, tu tema más fuerte (2,6 veces). Muy corto."],
+ risk:["El gancho hablado (\"algo que quizá no esperas\") no dice nada en los primeros 3 s.","La fórmula \"no necesitas…\" fue de las peores del nicho (0,25 veces, 1 caso).","Es motivacional: el tipo de reel que se hunde en el nicho."],
+ fix:["Empieza hablando con la frase del texto: \"No necesitas correr un Major para ser corredora de verdad\".","Añade una idea concreta: \"Mi mejor año no fue el de Boston, fue el que corrí 3 días por semana sin lesionarme\"."]},
+{id:"11",w:3,fecha:"Lun 2-nov",fmt:"Reel",h:"Control",t:"Mi maratón #10 en Nueva York",v:"adj",
+ tp:"Mi maratón #10 en Nueva York (con el resultado en pantalla)",voz:"(2 primeros segundos: llegada a meta, sin hablar)",
+ beats:[["1","Llegada a meta."],["2","Hace 10 años no aguantaba 5 minutos corriendo."],["3","3 momentos de la carrera."],["4","Si yo pude, tú también."]],
+ cap:"La historia (como el de Boston) + \"Si quieres que tu primer 21K o 42K se sienta así, comenta META y te cuento cómo trabajamos en RUNMIND.\"",
+ cta:"Comenta META.",
+ good:["Hito personal: el tipo de reel que mejor funcionó a Clara (10,3 veces).","\"Hace 10 años no aguantaba 5 minutos\" es un antes y después medible."],
+ risk:["El de Boston llegó a 2.954 personas con 98 comentarios.","\"Si yo pude, tú también\" es la motivación genérica que se hunde."],
+ fix:["Lleva \"Hace 10 años no aguantaba 5 minutos corriendo. Hoy, mi maratón #10\" al texto en pantalla del primer fotograma.","Cambia el cierre por un dato: \"Lo que cambió: fuerza 2 días por semana y correr lento\".","Promesa de META medible: \"…tu primer 21K en 16 semanas sin lesionarte\"."]},
+{id:"12",w:3,fecha:"Mar 3-nov",fmt:"Reel",h:"H1",t:"Talón y Aquiles",v:"ok",
+ tp:"Si te duele AQUÍ al correr, haz estos 3 ejercicios (flecha al Aquiles)",voz:"Si te duele el tendón de Aquiles por la mañana o al empezar a correr, haz estos 3 ejercicios.",
+ beats:[["1","Elevación de talones lenta con la rodilla estirada, 3×15 (3 s arriba, 3 s abajo)."],["2","La misma con la rodilla flexionada (sóleo), 3×15."],["3","Isométrico de puntillas, 5×45 s."],["Cierre","El tendón necesita carga, no reposo total. Si duele más de 4 sobre 10, baja la carga y consulta a un fisio."]],
+ cap:"Dolor en el tendón de Aquiles al correr: 3 ejercicios de carga progresiva para fortalecerlo.\n\n[lista]\n\nSígueme @healthyanii para más ejercicios para correr sin lesiones ‼️",
+ cta:"Sígueme + Guárdalo.",
+ good:["Dolor localizado + 3 ejercicios, la fórmula de la periostitis.","\"Necesita carga, no reposo\" es la idea contraintuitiva que mejor funciona a los fisios del nicho."],
+ risk:["Lesiones rinde 0,75 veces de mediana."],
+ fix:["Cronométralo al grabar: 3 ejercicios de unos 6 s cada uno y el cierre en pantalla."]},
+{id:"13",w:3,fecha:"Mié 4-nov",fmt:"Carrusel",h:"H3 control",t:"7 errores en mis 10 maratones",v:"ok",
+ tp:"7 errores que cometí en mis 10 maratones (para que tú no los cometas)",voz:"",
+ beats:[["Slides 2-8","Un error por slide con su solución: salir demasiado rápido, estrenar zapatillas, no practicar los geles, hacer todas las tiradas rápidas, saltarme la fuerza, dormir mal la semana previa, no tener plan para el km 30."],["Slide 9","¿Cuál has cometido tú? 👇"]],
+ cap:"7 errores que cometí corriendo 10 maratones y cómo evitarlos en tu próxima carrera.\n\n📌 Guárdalo para tu próximo maratón.\n📲 Envíaselo a tu compañera de entrenos.",
+ cta:"Guardar + envío. Sin palabra clave (control).",
+ good:["Mismo formato que \"7 trucos de running\" (25,8 veces).","Lista + error: 2,4 y 2,6 veces en tus reels."],
+ risk:[],
+ fix:["Ninguno. Sale justo después de Nueva York: aprovecha el momento."]},
+{id:"14",w:3,fecha:"Vie 6-nov",fmt:"Reel",h:"H5",t:"Republicar: 2 gestos para correr más eficiente",v:"ok",
+ tp:"Corre más ligera con solo 2 cambios",voz:"(mismo vídeo del 12-ago)",
+ beats:[["Vídeo","El original (48 s) con texto en pantalla nuevo."]],
+ cap:"2 cambios de técnica para correr más eficiente y cansarte menos: braceo y postura.\n\nSígueme @healthyanii para aprender técnica de carrera ‼️",
+ cta:"Sígueme.",
+ good:["El original rindió 7,5 veces (55.777). Han pasado 12 semanas."],
+ risk:["48 s: largo para la regla nueva."],
+ fix:["Si puedes, recórtalo a 30 s dejando solo los 2 gestos."]},
+{id:"15",w:3,fecha:"Jue 5-nov → Sáb 7-nov",fmt:"Trial Reel",h:"H2 A/B",t:"Respiración: \"Comenta\" primero o valor primero",v:"ok",
+ tp:"A: Comenta AIRE y te mando mi guía para aguantar 30 minutos sin quedarte sin aire · B: Si te quedas sin aire a los 5 minutos, no es tu capacidad: es tu ritmo",voz:"Mismo contenido en las dos versiones.",
+ beats:[["1","Baja el ritmo: tienes que poder hablar."],["2","Respira por nariz y boca a la vez."],["3","Sincroniza: 3 pasos inhalas, 2 exhalas."],["B, final","Comenta AIRE y te mando la guía."],["Sáb 7","Compara vistas a las 24 h y comparte con tus seguidores la que gane."]],
+ cap:"Cómo respirar al correr para no quedarte sin aire: 3 claves fáciles.\n\n💬 Comenta AIRE y te mando la guía.",
+ cta:"Comenta AIRE.",
+ good:["Es el único test limpio del plan: mismo vídeo, solo cambia el orden.","\"Correr más tiempo sin quedarte sin aire\" ya rindió 7,7 veces y \"Cómo respirar al correr\", 3,3."],
+ risk:["Las dos versiones deben durar lo mismo, si no el test mide la duración."],
+ fix:["Graba ambas por debajo de 30 s.","Apunta las vistas de 15A y 15B en calendario.csv el sábado."]},
+{id:"16",w:4,fecha:"Lun 9-nov",fmt:"Reel",h:"H1",t:"Dolor lumbar al correr",v:"ok",
+ tp:"Si te duele la espalda baja al correr, casi siempre es tu core",voz:"Si terminas de correr con la zona lumbar cargada, casi siempre es tu core.",
+ beats:[["1","Dead bug, 3×10."],["2","Bird dog, 3×10 por lado."],["3","Plancha lateral, 3×30 s."],["Cierre","2 o 3 veces por semana, después de correr."]],
+ cap:"Dolor lumbar al correr: 3 ejercicios de core para proteger tu espalda baja.\n\n[lista]\n\nSígueme @healthyanii ‼️",
+ cta:"Sígueme + Guárdalo.",
+ good:["Causa en el gancho (\"es tu core\"), como tus reels de causa → consecuencia (5,4 veces).","Tu reel de core (3 ejercicios) llegó a 18.200."],
+ risk:["Lesiones rinde 0,75 veces de mediana."],
+ fix:["Escribe la lista en el caption y añade \"para runners\" en la primera frase."]},
+{id:"17",w:4,fecha:"Mar 10-nov",fmt:"Carrusel",h:"H3",t:"Rutina de fuerza de 20 min",v:"ok",
+ tp:"La rutina de fuerza de 20 minutos que hago 2 veces por semana",voz:"",
+ beats:[["Slides 2-7","Un ejercicio por slide con foto y series: sentadilla búlgara, peso muerto rumano, puente de glúteo, elevación de talones, plancha, saltos al cajón."],["Slide 8","¿Cuándo hacerla? Días de rodaje suave, después de correr, o días sin correr."],["Slide 9","Comenta FUERZA y te envío la rutina completa con vídeos ⚡️"]],
+ cap:"Rutina de fuerza para corredoras: 20 minutos, 2 veces por semana, para correr más rápido y sin lesiones.\n\n💬 Comenta FUERZA y te la mando con vídeos.\n📌 Guárdala.",
+ cta:"Comentar FUERZA (1.694 comentarios en julio).",
+ good:["Gancho de \"receta\" (plan, rutina): 7,7 veces en tus reels.","Fuerza es tu tema más guardado (3 % del alcance).","Palabra clave ya validada."],
+ risk:["Carlos critica la sentadilla búlgara y el peso muerto para corredores (2,4 veces en su cuenta)."],
+ fix:["Añade en la slide de la búlgara: \"lenta y controlada, sin inercia\". Responde a esa crítica sin nombrarla."]},
+{id:"18",w:4,fecha:"Mié 11-nov",fmt:"Reel",h:"H6",t:"Menopausia y running",v:"adj",
+ tp:"Menopausia y running: 3 cosas que cambian (y qué hacer)",voz:"Si tienes entre 40 y 55 y notas que correr se siente distinto, no es tu imaginación.",
+ beats:[["1","Pierdes músculo más rápido. Respuesta: fuerza 2 o 3 veces por semana con cargas que te cuesten."],["2","Recuperas más lento. Respuesta: más días suaves y dormir bien."],["3","Necesitas más proteína. Respuesta: un poco en cada comida."],["Cierre","Habla siempre con tu médico o ginecóloga. Pero no dejes de correr: es de lo mejor para tus huesos y tu corazón."]],
+ cap:"Correr en la perimenopausia y la menopausia: 3 cambios que vas a notar y cómo adaptar tu entrenamiento según la ciencia.\n\n💬 Comenta 40 y te envío mi guía para entrenar después de los 40.\n📲 Envíaselo a una amiga que corre.",
+ cta:"Comentar 40.",
+ good:["Hueco claro: el 64 % de tu audiencia y nadie del nicho lo trata.","Lista con número: 2,4 veces en tus reels."],
+ risk:["Es el guion más largo: probablemente 40 s o más.","El gancho de texto es una etiqueta, no un problema."],
+ fix:["Abre con un dato verificado sobre mujeres de más de 40, como hizo Clara (8,1 veces). Comprueba la fuente antes.","Una frase por punto y el aviso médico en pantalla, no en voz. Objetivo: 30 s.","Promesa del 40 medible: \"…mi guía para correr después de los 40 sin perder músculo\"."]},
+{id:"19",w:4,fecha:"Vie 13-nov",fmt:"Reel",h:"H5",t:"Republicar: periostitis tibial",v:"ok",
+ tp:"Si te duele la espinilla al correr, no es normal",voz:"(mismo vídeo del 14-ago)",
+ beats:[["Vídeo","El original (33 s) con texto en pantalla nuevo."]],
+ cap:"Dolor en la espinilla al correr (periostitis tibial): 3 ejercicios para fortalecer la zona. Suele mejorar en 3 a 6 semanas si eres constante.\n\nSígueme @healthyanii para más ejercicios para correr sin lesiones ‼️",
+ cta:"Sígueme.",
+ good:["Tu mayor viral: 199.220 y 26,7 veces tu mediana.","Han pasado 13 semanas. Ya dura 33 s."],
+ risk:["La pliometría cansó a la tercera vez; esta es la segunda, así que debería funcionar."],
+ fix:["Ninguno."]},
+{id:"20",w:4,fecha:"Sáb 14-nov",fmt:"Reel",h:"H4",t:"Opinión: correr lento",v:"adj",
+ tp:"Correr lento NO es correr mal",voz:"Los corredores de élite hacen el 80 % de sus kilómetros lentos. ¿Por qué tú no?",
+ beats:[["1","La regla 80/20: el 80 % suave, el 20 % fuerte."],["2","Si corres siempre a tope, te estancas y te lesionas."],["3","Correr a 7:30 el km también es correr."],["4","¿Qué ritmo haces tú en tus rodajes? Te leo."]],
+ cap:"Correr lento también es correr, y es lo que más te hará mejorar: la regla 80/20 explicada fácil.\n\n👇 ¿A qué ritmo haces tus rodajes?\n📲 Envíaselo a quien se avergüenza de su ritmo.",
+ cta:"Debate + envío.",
+ good:["Opinión + error: tus dos fórmulas más fuertes.","En el nicho, correr lento es tema estrella: el reel fijado de Carlos sobre zona 2 tiene 428.661 vistas.","Abre con una estadística (80 %)."],
+ risk:[],
+ fix:["Grábalo con una zapatilla de rodaje suave de ASICS: \"esta zapatilla me obliga a ir lenta\". A Carlos le dio 4,9 veces y te sirve con la marca."]}
+];
+const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const V={ok:["m-good","Listo"],adj:["m-warn","Ajustar"]};
+const box=document.getElementById("scripts");
+S.forEach(s=>{
+  const c=document.createElement("article");c.className="card";c.dataset.w=s.w;c.dataset.v=s.v;c.id="guion-"+s.id;
+  const li=a=>a.length?`<ul class="alist">${a.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:`<p class="sub">Nada relevante.</p>`;
+  c.innerHTML=`<div class="head"><h3>${s.id} · ${esc(s.t)}</h3><div class="chips"><span class="chip">${s.fecha}</span><span class="chip">${s.fmt}</span><span class="chip">${s.h}</span><span class="mark ${V[s.v][0]}">${V[s.v][1]}</span></div></div>
+  <div class="body"><div>
+    <div class="k">Gancho en pantalla</div><div class="tp">${esc(s.tp)}</div>
+    ${s.voz?`<div class="k">Lo que dices</div><p>${esc(s.voz)}</p>`:""}
+    <div class="k">Guion</div><ul class="beats">${s.beats.map(([t,x])=>`<li><span class="t">${t}</span><span>${esc(x)}</span></li>`).join("")}</ul>
+    <div class="k">Caption</div><blockquote>${esc(s.cap)}</blockquote>
+    <div class="k">Llamada a la acción</div><p>${esc(s.cta)}</p>
+  </div><div>
+    <div class="k">A favor (datos)</div>${li(s.good)}
+    <div class="k">Riesgos</div>${li(s.risk)}
+    <div class="k">Cambios concretos</div>${li(s.fix)}
+  </div></div>`;
+  box.appendChild(c);
+});
+const btns=[...document.querySelectorAll(".filters button")];
+function apply(f){
+  btns.forEach(b=>b.setAttribute("aria-pressed",b.dataset.f===f?"true":"false"));
+  box.querySelectorAll(".card").forEach(c=>{c.hidden=!(f==="all"||(f==="adj"?c.dataset.v==="adj":c.dataset.w===f));});
+  try{localStorage.setItem("filtro",f)}catch(e){}
+}
+btns.forEach(b=>b.addEventListener("click",()=>apply(b.dataset.f)));
+try{const f=localStorage.getItem("filtro");if(f&&btns.some(b=>b.dataset.f===f))apply(f)}catch(e){}
+</script>

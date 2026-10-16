@@ -4,6 +4,8 @@ Carpeta dedicada al análisis y crecimiento de la cuenta de Instagram de Ana Mor
 
 **Dashboard:** https://claude.ai/artifact/6LfPXMoTNUS54RhWEuPXyn (privado; se genera con `generar_dashboard.py`)
 
+**Informe visual (todo en una página):** https://claude.ai/artifact/543ciGncpunMbtAGfDnyHb (privado; fuente en `informe_visual.html`)
+
 ## Estructura
 
 ```
