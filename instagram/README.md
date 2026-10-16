@@ -14,6 +14,7 @@ instagram/
 ├── generar_dashboard.py      # → dashboard.html
 ├── outliers.py               # Múltiplo sobre la mediana propia → informes/outliers.md
 ├── viral_ganchos.py          # Fórmulas de gancho en español × múltiplo (tuyas y del nicho) → informes/03_viralidad_ganchos.md
+├── nicho_captura.py          # data/nicho/reels_raw.tsv (Manifold) → data/nicho/captura.tsv
 ├── voz.md                    # voice.md para los skills ig-* (borrador, revisar [CONFIRMAR])
 ├── data/
 │   ├── publicaciones_12m.csv           # 191 publicaciones (16-oct-2025 → 15-oct-2026), fuente principal
@@ -21,7 +22,7 @@ instagram/
 │   ├── publicaciones_2026-01-18_04-17.csv
 │   ├── clasificacion_manual.csv        # Tema corregido a mano de las publicaciones importadas desde JSON
 │   ├── raw/                            # Exportaciones JSON de Windsor.ai tal cual
-│   ├── nicho/captura.tsv               # Reels de otras cuentas, a mano (ver nicho/LEEME.md)
+│   ├── nicho/                          # 7 cuentas del nicho vía Manifold: reels_raw, transcripciones, captura (ver nicho/LEEME.md)
 │   ├── diario_30d.csv, audiencia_*.csv, perfil.json
 ├── informes/
 │   ├── 01_diagnostico_2026-10.md       # Diagnóstico inicial (6 meses)
@@ -49,6 +50,7 @@ En `.claude/skills/ig-*` está instalado el paquete [instagram-agent-skill](http
    python instagram/importar_windsor.py
    python instagram/analisis.py
    python instagram/evaluar_experimento.py
+   python instagram/nicho_captura.py
    python instagram/viral_ganchos.py
    python instagram/generar_dashboard.py
    ```

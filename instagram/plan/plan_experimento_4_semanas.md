@@ -34,6 +34,51 @@ Clasifiqué la 1.ª frase de tus 185 captions en fórmulas de gancho y comparé 
 
 ---
 
+## Actualización 16-oct (3): qué funciona en el nicho ([informe 03, sección 3](../informes/03_viralidad_ganchos.md#3-el-nicho))
+
+Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de referencia), de 5.600 a 248.000 seguidores. Cada reel se compara con la mediana de su propia cuenta, así que una cuenta grande no gana solo por ser grande. Datos en `data/nicho/`.
+
+**La cuenta con la que medirte es [@carlosrojo_running](https://www.instagram.com/carlosrojo_running/)** (248.000 seguidores). Su bio es casi la tuya: "Ayudo a corredores ocupados +35 a mejorar ritmos evitando lesiones… +400 casos de éxito… Empieza aquí". Publica 2 o 3 reels al día, todos con "Comenta X y te envío…".
+
+### 1. Duración: el hallazgo más sólido, y se repite en tus datos
+
+| | ≤15 s | 16-35 s | 36-50 s | > 50 s |
+|---|---|---|---|---|
+| Nicho (múltiplo mediano, 103 reels) | **1,63x** | 1,11x | 0,88x | 0,84x |
+| Tus reels (67, may-oct) | (1 reel) | **2,1x** (22 reels, 6 outliers) | 0,90x (26) | 0,74x (18) |
+
+- En las dos cuentas más parecidas a la tuya el efecto es mayor: Carlos tiene 2,2x en reels de ≤15 s y 0,96x en los más largos; Clara tiene 2,5x y 0,8x.
+- **44 de tus 67 reels duran más de 35 s.** Tus guiones del plan terminan entre los 33 y los 36 s, justo en el límite.
+- **Regla nueva para todo el plan: ningún reel pasa de 30 s.** Lo ideal es entre 20 y 30. Si un guion no cabe, quita un punto o pásalo al caption. No se lo quites a la demostración. Los que más hay que recortar son el 18 (menopausia: 3 puntos más aviso médico) y el 9 (3 escenas).
+- Cuidado: tus virales grandes de pliometría (41 s) y del plan de 30 min (52 s) también son largos. La duración no lo explica todo, pero la tendencia es la misma en 6 cuentas y en la tuya.
+
+### 2. "Comenta X" primero: en el nicho no frena el alcance si va con una promesa concreta
+
+- Ojo: en el nicho esto es casi solo Carlos (28 de los 29 reels con "Comenta X" primero son suyos). En su cuenta, esos reels rinden igual que los demás del nicho (1,00x frente a 1,00x) y reciben **11 veces más comentarios** por cada 1.000 vistas (5,6 frente a 0,5).
+- Pero en la cuenta de Carlos, cuando el caption es *solo* "Comenta X y te envío el plan…", el reel rinde 0,84x. Cuando debajo hay un gancho concreto ("Si corres dando pasos cortos, estás frenándote en cada zancada", "Aguantas una hora corriendo, pero no eres capaz de sostener ni 10 minutos en zona 2"), rinde **1,91x**.
+- En tu cuenta "Comenta" primero rinde 0,65x. Eso cuadra con lo anterior: tus "Comenta" suelen prometer algo genérico ("un plan", "la guía"). Los suyos prometen algo medible ("correr a 4:30/km en menos de 60 días", "bajar de 1h30").
+- **El A/B 15 sigue igual.** Solo un cambio en la versión A: "Comenta AIRE y te mando mi guía para **aguantar 30 minutos sin quedarte sin aire**". Si no, el resultado mediría lo vago que es lo que prometes y no el orden del CTA.
+
+### 3. Los temas que más superan su mediana (≥ 3x) y su versión para ti
+
+| reel del nicho | múltiplo | qué lo hace funcionar | versión para ti |
+|---|---|---|---|
+| Clara: "semana 32 de embarazo" / "5 alimentos que priorizo en mi embarazo" | 10,3x / 5,2x | Un hito personal real que su audiencia vive o va a vivir, con información útil | Reels 9 y 11 (Nueva York, maratón #10). Ya están en el plan: no los conviertas en un vlog, mete un dato útil en cada uno |
+| Clara: "35 % de las mujeres deportistas sufre anemia…" | 8,1x | Una estadística sobre mujeres en la 1.ª frase, más una receta de 30 s | Reel 18 (menopausia): abre con un dato verificado sobre mujeres de más de 40, no con "Menopausia y running" |
+| Carlos: "¿A qué ritmo corres ahora y a qué ritmo te gustaría correr dentro de 60 días?" | 6,4x | Sin voz, 28 s, cinta a varios ritmos y una meta medible con plazo | Versión de principiante para un Trial Reel: "¿Cuántos minutos aguantas hoy corriendo? ¿Y en 8 semanas?" |
+| Carlos: "ASICS GEL-SLOWCUSH te obliga a correr lento (y eso es bueno)" | 4,9x | Una zapatilla con un ángulo contraintuitivo | Eres ASICS FrontRunner: une el reel 20 ("Correr lento NO es correr mal") a una zapatilla de rodaje suave. Mismo mensaje, más alcance y te sirve con la marca |
+| Paola: "Después de muchos meses hoy corrimos sin dolor" | 3,5x | Vuelta de una lesión, en primera persona | Encaja con el carrusel 2 ("Me costó 6 meses de lesión…"): si tienes vídeo de esa vuelta, es un reel |
+
+**Lo que se hunde en todas las cuentas (0,25x a 0,5x):** publis sin un ángulo propio, avisos y logística ("mañana enlace en stories"), motivación genérica y "Comenta X" sin una promesa concreta.
+
+### 4. Reels sin voz
+
+5 de los 13 reels que más superaron su mediana no tienen voz: solo texto en pantalla y música, y casi todos duran menos de 30 s. Si un día no te da tiempo a grabar, un reel de texto con una demostración es una opción válida, no un relleno. Para el A/B no hace falta cambiar nada.
+
+> Limitaciones: 7 cuentas y una ventana de unos 60 días (de marzo a septiembre en la de Paola, que publica poco). Carlos aporta 29 de los 103 reels. Solo transcribí la voz de los 13 reels con más múltiplo; en el resto el gancho es el caption. La duración puede ir ligada al tema (los reels cortos suelen ser más simples), así que es una tendencia que hay que probar, no una ley.
+
+---
+
 ## 0. Punto de partida (lo que hay que superar)
 
 | Métrica (últimos 90 días) | Valor actual | Meta del experimento |
@@ -380,7 +425,7 @@ Clasifiqué la 1.ª frase de tus 185 captions en fórmulas de gancho y comparé 
 #### 15 · Jue 5-nov (prueba) → Sáb 7-nov (al feed) · REEL · **H2: A/B con Trial Reels** · Respiración
 - Graba **2 versiones** con el **mismo contenido** y súbelas el **jueves 5-nov como Trial Reels** (solo las ven no seguidores).
 - **Versión A ("comenta" primero):**
-  - TP y V: **"Comenta AIRE y te mando mi guía para no quedarte sin aire al correr."**
+  - TP y V: **"Comenta AIRE y te mando mi guía para aguantar 30 minutos sin quedarte sin aire."** (promesa medible, como las del nicho que funcionan; ver actualización 3)
   - Después, el contenido.
 - **Versión B (valor primero):**
   - TP: **"Si te quedas sin aire a los 5 minutos, no es tu capacidad: es tu ritmo"**
