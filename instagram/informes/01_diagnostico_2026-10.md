@@ -2,6 +2,8 @@
 
 **Periodo analizado:** 91 publicaciones del 18 de abril al 15 de octubre de 2026, más métricas diarias del 16 de septiembre al 15 de octubre y la audiencia actual.
 **Fuente:** Instagram Graph API (vía Windsor.ai), extraída el 16-10-2026.
+> **Actualización:** el [informe 02](02_investigacion_12m_y_nicho.md) amplía el análisis a 12 meses y corrige el punto 3.7: sí hubo carruseles educativos que fueron virales ("Pisada", con 141k de alcance).
+
 **Tablas completas:** [`tablas.md`](tablas.md), que se regenera con `python instagram/analisis.py`.
 
 ---

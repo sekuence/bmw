@@ -14,20 +14,32 @@ DATA = BASE / "data"
 OUT = BASE / "informes" / "tablas.md"
 
 SEGUIDORES = 37007
-CORTE_TRIMESTRE = "2026-07-18"
+TRIMESTRES = [  # (inicio, etiqueta)
+    ("2025-10-16", "T1 oct-ene"),
+    ("2026-01-18", "T2 ene-abr"),
+    ("2026-04-18", "T3 abr-jul"),
+    ("2026-07-18", "T4 jul-oct"),
+]
+
+
+def trimestre(fecha: pd.Timestamp) -> str:
+    etiqueta = TRIMESTRES[0][1]
+    for inicio, nombre in TRIMESTRES:
+        if fecha >= pd.Timestamp(inicio):
+            etiqueta = nombre
+    return etiqueta
 
 
 def cargar_publicaciones() -> pd.DataFrame:
-    df = pd.read_csv(DATA / "publicaciones.csv", parse_dates=["fecha"])
+    df = pd.read_csv(DATA / "publicaciones_12m.csv", parse_dates=["fecha"])
     df["interacciones"] = df[["likes", "comentarios", "guardados", "compartidos"]].sum(axis=1)
     df["er_alcance"] = df["interacciones"] / df["alcance"]
     df["guardados_pct"] = df["guardados"] / df["alcance"]
     df["compartidos_pct"] = df["compartidos"] / df["alcance"]
     df["comentarios_pct"] = df["comentarios"] / df["alcance"]
     df["ver_medio_s"] = df["ver_medio_ms"] / 1000
-    df["periodo"] = df["fecha"].map(
-        lambda d: "Q2 (18 jul-15 oct)" if d >= pd.Timestamp(CORTE_TRIMESTRE) else "Q1 (18 abr-17 jul)"
-    )
+    df["periodo"] = df["fecha"].map(trimestre)
+    df["mes"] = df["fecha"].dt.strftime("%Y-%m")
     df["dia_semana"] = df["fecha"].dt.day_name()
     df["hora_es"] = (df["hora_utc"] + 2) % 24  # CEST
     df["viral"] = df["alcance"] >= 30000
@@ -67,10 +79,17 @@ def main() -> None:
     pa = pd.read_csv(DATA / "audiencia_paises.csv")
 
     sec = []
-    sec.append("# Tablas de análisis (generadas por analisis.py)\n")
+    sec.append("# Tablas de análisis (generadas por analisis.py)\n\nPublicaciones: 16-oct-2025 a 15-oct-2026 (data/publicaciones_12m.csv).\n")
 
     sec.append("## Por periodo\n")
     sec.append(md(resumen(p.groupby("periodo"))))
+
+    sec.append("\n\n## Por mes\n")
+    sec.append(md(resumen(p.groupby("mes"))))
+
+    sec.append("\n\n## Formato por trimestre (alcance mediano)\n")
+    sec.append(md(p.pivot_table(index="periodo", columns="tipo", values="alcance",
+                                aggfunc="median").round(0)))
 
     sec.append("\n\n## Por tema\n")
     sec.append(md(resumen(p.groupby("tema")).sort_values("alcance_mediana", ascending=False)))
@@ -90,10 +109,15 @@ def main() -> None:
     sec.append("\n\n## Reels por skip rate (abandono en los primeros 3 s)\n")
     sec.append(md(resumen(reels.groupby("retencion", observed=True))))
 
+    sec.append("\n\n## Formato x CTA de comentario (alcance mediano)\n")
+    p["con_palabra_clave"] = p["cta"].str.startswith("comenta")
+    sec.append(md(p.pivot_table(index="tipo", columns="con_palabra_clave", values="alcance",
+                                aggfunc=["median", "size"]).round(0)))
+
     cols = ["fecha", "tema", "cta", "alcance", "er_alcance", "guardados", "compartidos",
             "comentarios", "ver_medio_s", "skip_rate", "resumen"]
-    sec.append("\n\n## Top 12 por alcance\n")
-    sec.append(md(p.nlargest(12, "alcance")[cols].set_index("fecha").round(3)))
+    sec.append("\n\n## Top 15 por alcance\n")
+    sec.append(md(p.nlargest(15, "alcance")[cols].set_index("fecha").round(3)))
     sec.append("\n\n## Peores 10 por alcance\n")
     sec.append(md(p.nsmallest(10, "alcance")[cols].set_index("fecha").round(3)))
 
