@@ -13,6 +13,7 @@ instagram/
 ├── evaluar_experimento.py    # Cruza plan/calendario.csv con los datos → plan/resultados.md
 ├── generar_dashboard.py      # → dashboard.html
 ├── outliers.py               # Múltiplo sobre la mediana propia → informes/outliers.md
+├── viral_ganchos.py          # Fórmulas de gancho en español × múltiplo (tuyas y del nicho) → informes/03_viralidad_ganchos.md
 ├── voz.md                    # voice.md para los skills ig-* (borrador, revisar [CONFIRMAR])
 ├── data/
 │   ├── publicaciones_12m.csv           # 191 publicaciones (16-oct-2025 → 15-oct-2026), fuente principal
@@ -20,10 +21,12 @@ instagram/
 │   ├── publicaciones_2026-01-18_04-17.csv
 │   ├── clasificacion_manual.csv        # Tema corregido a mano de las publicaciones importadas desde JSON
 │   ├── raw/                            # Exportaciones JSON de Windsor.ai tal cual
+│   ├── nicho/captura.tsv               # Reels de otras cuentas, a mano (ver nicho/LEEME.md)
 │   ├── diario_30d.csv, audiencia_*.csv, perfil.json
 ├── informes/
 │   ├── 01_diagnostico_2026-10.md       # Diagnóstico inicial (6 meses)
 │   ├── 02_investigacion_12m_y_nicho.md # 12 meses + qué funciona en el nicho (con fuentes)
+│   ├── 03_viralidad_ganchos.md         # Qué fórmula de gancho rinde (generado)
 │   └── tablas.md
 └── plan/
     ├── plan_experimento_4_semanas.md   # Plan 19-oct → 15-nov: 20 publicaciones con guion, gancho y CTA
@@ -46,6 +49,7 @@ En `.claude/skills/ig-*` está instalado el paquete [instagram-agent-skill](http
    python instagram/importar_windsor.py
    python instagram/analisis.py
    python instagram/evaluar_experimento.py
+   python instagram/viral_ganchos.py
    python instagram/generar_dashboard.py
    ```
 

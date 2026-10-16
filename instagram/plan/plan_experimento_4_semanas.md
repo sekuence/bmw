@@ -19,6 +19,21 @@ Cada publicación se compara con la mediana de las 12 anteriores. Así se corrig
 
 ---
 
+## Actualización 16-oct (2): ganchos según la fórmula ([informe 03](../informes/03_viralidad_ganchos.md))
+
+Clasifiqué la 1.ª frase de tus 185 captions en fórmulas de gancho y comparé su múltiplo (alcance frente a tu mediana de ese momento). Esto es lo que se sostiene en los reels:
+
+- **Las preguntas rinden por debajo de lo normal:** 0,89x de mediana (11 reels). **Empezar pidiendo el comentario rinde todavía menos:** 0,65x (9 reels, 5 de ellos en el tercio más bajo). Esto refuerza H2.
+- **Las listas con un número pequeño y un resultado** ("Con estos 4 trucos no se te cansarán las piernas", "estos dos gestos…") rinden 2,4x. Hay 8 reels y ninguno cae en el tercio bajo.
+- **"Si eres runner / Si corres" + una afirmación rotunda** es la estructura de tus 3 mayores virales de fuerza (pliometría 53,6x y 40,8x, fuerza 15,5x). Cuando el caption es solo "Si quieres… sígueme", la mediana baja a 0,88x (9 reels, de 0,3x a 3,2x).
+- **Dolor:** hay muy pocos casos para concluir nada. Como pregunta: 0,4x y 0,6x. Como condición ("Si te duele…"): 26,7x (periostitis), 0,7x (fascitis) y 0,4x (rodilla con "comenta"). La periostitis no ganó solo por la forma de la frase.
+
+**Cambio en el plan:** el texto en pantalla de los reels 1, 6, 8, 12, 15B y 16 deja de ser una pregunta y pasa a "Si te pasa X, [causa o 3 ejercicios]", que es lo que ya decías en voz. Es un cambio barato que evita la forma que peor te funciona. No garantiza nada: lo comprobará H1.
+
+> Limitaciones: el gancho medido es la 1.ª frase del caption, no el texto en pantalla ni la primera frase hablada. Las muestras son de 3 a 20 reels por fórmula.
+
+---
+
 ## 0. Punto de partida (lo que hay que superar)
 
 | Métrica (últimos 90 días) | Valor actual | Meta del experimento |
@@ -87,7 +102,7 @@ Cada publicación se compara con la mediana de las 12 anteriores. Así se corrig
 
 #### 1 · Lun 19-oct · REEL · H1 · Rodilla del corredor
 - **Gancho:**
-  - TP: **"¿Te duele AQUÍ al correr?"** (con una flecha a la rótula).
+  - TP: **"Si te duele AQUÍ al correr, haz estos 3 ejercicios"** (con una flecha a la rótula).
   - V: "Si te duele alrededor de la rótula al correr o al bajar escaleras, haz estos 3 ejercicios."
   - Visual: plano cerrado de tu dedo señalando la rodilla en el segundo 0.
 - **Guion:**
@@ -198,7 +213,7 @@ Cada publicación se compara con la mediana de las 12 anteriores. Así se corrig
 
 #### 6 · Lun 26-oct · REEL · H1 · Cintilla iliotibial
 - **Gancho:**
-  - TP: **"¿Dolor en la parte de FUERA de la rodilla?"** (flecha a la cara lateral).
+  - TP: **"Si te duele FUERA de la rodilla, probablemente sea tu cintilla"** (flecha a la cara lateral).
   - V: "Si te duele la parte de fuera de la rodilla a partir del km 5, probablemente es tu cintilla iliotibial."
 - **Guion:**
   - 3–8 s: "Estirarla no sirve de mucho. Lo que funciona es fortalecer tu cadera."
@@ -238,7 +253,7 @@ Cada publicación se compara con la mediana de las 12 anteriores. Así se corrig
 
 #### 8 · Mié 28-oct · REEL · H6 · Más de 40 y quieres empezar a correr
 - **Gancho:**
-  - TP: **"¿Tienes +40 y quieres empezar a correr? Haz esto primero."**
+  - TP: **"Si tienes +40 y quieres empezar a correr, haz esto primero."**
   - V: "Si tienes más de 40 años y quieres empezar a correr, antes del primer kilómetro haz estas 3 cosas."
 - **Guion:**
   - 3–12 s: **1. Fuerza 2 días por semana.** "A partir de los 40 perdemos masa muscular cada año; el músculo es lo que protege tus articulaciones."
@@ -315,7 +330,7 @@ Cada publicación se compara con la mediana de las 12 anteriores. Así se corrig
 
 #### 12 · Mar 3-nov · REEL · H1 · Talón y Aquiles
 - **Gancho:**
-  - TP: **"¿Te duele AQUÍ al correr?"** (flecha al tendón de Aquiles).
+  - TP: **"Si te duele AQUÍ al correr, haz estos 3 ejercicios"** (flecha al tendón de Aquiles).
   - V: "Si te duele el tendón de Aquiles por la mañana o al empezar a correr, haz estos 3 ejercicios."
 - **Guion:**
   - **1. Elevación de talones lenta** con la rodilla estirada, 3×15 (3 s arriba, 3 s abajo).
@@ -368,7 +383,7 @@ Cada publicación se compara con la mediana de las 12 anteriores. Así se corrig
   - TP y V: **"Comenta AIRE y te mando mi guía para no quedarte sin aire al correr."**
   - Después, el contenido.
 - **Versión B (valor primero):**
-  - TP: **"¿Te quedas sin aire a los 5 minutos?"**
+  - TP: **"Si te quedas sin aire a los 5 minutos, no es tu capacidad: es tu ritmo"**
   - Contenido:
     1. "Baja el ritmo: tienes que poder hablar."
     2. "Respira por nariz y boca a la vez."
@@ -389,7 +404,7 @@ Cada publicación se compara con la mediana de las 12 anteriores. Así se corrig
 
 #### 16 · Lun 9-nov · REEL · H1 · Dolor lumbar al correr
 - **Gancho:**
-  - TP: **"¿Te duele la espalda baja cuando corres?"**
+  - TP: **"Si te duele la espalda baja al correr, casi siempre es tu core"**
   - V: "Si terminas de correr con la zona lumbar cargada, casi siempre es tu core."
 - **Guion:**
   - **1. Dead bug**, 3×10.
