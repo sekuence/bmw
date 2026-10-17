@@ -117,7 +117,7 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
 
    | Palabra clave | Recurso que entrega | ¿Existe ya? |
    |---|---|---|
-   | PISADA | Guía PDF: cómo saber tu tipo de pisada y elegir zapatilla | La tenías en oct-2025, revísala |
+   | PISADA | Guía PDF: zapatillas recomendadas para cada tipo de pisada (+ test de la huella) | La tenías en oct-2025: revísala y añade la lista de modelos |
    | CADENCIA | Vídeo o PDF: ejercicio de cadencia con metrónomo | **Crear** |
    | 5K | Plan PDF de 0 a 5K en 8 semanas, imprimible | **Crear** (sale del carrusel 7) |
    | AIRE | Mini guía de respiración al correr | **Crear** |
@@ -183,7 +183,7 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
   > El segundo: moja tu pie y pisa un cartón. Si se marca toda la planta, tu arco es bajo; si solo se ve el borde, es alto.
   > Con eso ya sabes qué buscar: si pronas, una zapatilla con estabilidad; si no, una con buena amortiguación.
   > Y lo que dice la ciencia: tu mejor filtro es la comodidad. Pruébate tres modelos y quédate con el que ni notes.
-  > Comenta PISADA y te mando la guía completa."
+  > Comenta PISADA y te mando mi guía con las zapatillas que recomiendo para cada tipo de pisada."
 - **Clips y texto en pantalla:**
   - 0–6 s: mirando tus zapatillas, suela gastada en primer plano. TP: **"Me costó 6 meses de lesión no saber esto"**.
   - 6–13 s: las 3 huellas (dibujo) o tu pie en cámara lenta. TP: "Neutra · Pronadora · Supinadora".
@@ -192,7 +192,7 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
   - 25–33 s: plano cenital del pie mojado sobre el cartón. TP: "Test 2: la huella".
   - 33–38 s: un modelo de ASICS por tipo (si la marca lo pide). TP: "Pronas → estabilidad · Neutra/supinas → amortiguación".
   - 38–45 s: probándote tres modelos. TP: "Tu mejor filtro: la comodidad".
-  - 45–50 s: corriendo. TP: "Comenta PISADA 👟".
+  - 45–50 s: corriendo. TP: "Comenta PISADA 👟 Zapatillas recomendadas para cada pisada".
   - Cambio de plano cada 2-3 s y sin pausas entre frases.
 - **Caption:**
   > Cómo saber tu tipo de pisada en casa con 2 tests y elegir zapatillas para correr sin lesionarte.
@@ -203,9 +203,9 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
   > 2️⃣ Pisa un cartón con el pie mojado y mira tu huella.
   > Y pruébate siempre 3 modelos: quédate con el que ni notas.
   >
-  > 💬 Comenta PISADA y te mando la guía completa para elegir tu zapatilla.
+  > 💬 Comenta PISADA y te mando mi guía con las zapatillas que recomiendo para cada tipo de pisada.
   > 📌 Guárdalo para tu próxima compra.
-- **CTA:** comentar PISADA, solo al final.
+- **CTA:** comentar PISADA, solo al final. La guía del DM debe incluir las zapatillas recomendadas por tipo de pisada (revisar la de oct-2025).
 - **Qué mide:** con el mismo tema que el reel del 3-ago (69 s, 76.042), si la versión de 30 s rinde más. H3 se sigue midiendo con los carruseles 7 y 17 y el control 13.
 
 ---
