@@ -119,6 +119,7 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
    |---|---|---|
    | PISADA | Guía PDF: zapatillas recomendadas para cada tipo de pisada (+ test de la huella) | La tenías en oct-2025: revísala y añade la lista de modelos |
    | CADENCIA | Vídeo o PDF: ejercicio de cadencia con metrónomo | **Crear** |
+   | 🙋🏻‍♀️ o 30 | Plan PDF de 4 semanas para correr 30 min sin parar, imprimible | **Crear** (sale del reel 3) |
    | 5K | Plan PDF de 0 a 5K en 8 semanas, imprimible | **Crear** (sale del carrusel 7) |
    | AIRE | Mini guía de respiración al correr | **Crear** |
    | FUERZA | Rutina de fuerza para corredoras (la del reel de julio) | Existe |
@@ -221,15 +222,16 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
   - Semana 3: "SEMANA 3 · 5' correr + 2' caminar · ×4 · 3 días".
   - Semana 4: "SEMANA 4 · Día 1: 20' · Día 2: 25' · Día 3: 30' sin parar 🎉".
   - Cierre: "No se trata de ir rápido: se trata de ser constante".
+  - Últimos segundos (mientras suena el "sígueme"): "Comenta 🙋🏻‍♀️ y te mando el plan en PDF para imprimir 📌".
 - **Revisar como coach:** el salto de bloques de 5' (semana 3) a 20' seguidos (semana 4) es grande; ya funcionó tal cual, pero si alguien no llega, remitir al plan de 0 a 5K (carrusel 7).
 - **Caption nuevo:**
   > Plan para pasar de no aguantar 5 minutos a correr 30 minutos sin parar, aunque nunca hayas hecho deporte.
   >
   > La clave no es aguantar: es alternar caminar y correr (CACO) e ir subiendo poco a poco.
   >
-  > Si estás comprometida déjame un 🙋🏻‍♀️ en comentarios y te mando una sorpresa por DM.
-  > Sígueme @healthyanii para más contenido sobre correr 🫶🏻
-- **CTA:** el mismo que funcionó (emoji en comentarios + "Sígueme"). Acuérdate de enviar el DM sorpresa a mano o con la automatización.
+  > 🙋🏻‍♀️ Déjame un 🙋🏻‍♀️ en comentarios y te mando el plan de 4 semanas en PDF para imprimir.
+  > 📌 Guárdalo y sígueme @healthyanii para más contenido sobre correr.
+- **CTA:** voz: "sígueme" (la del original). Pantalla y caption: comentar 🙋🏻‍♀️ a cambio del plan de 4 semanas en PDF (antes "una sorpresa": se concreta el regalo). Si la automatización no reconoce emojis, usar la palabra 30. Crear el PDF de una página.
 
 ---
 
