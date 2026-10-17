@@ -213,6 +213,15 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
 #### 3 · Mié 21-oct · REEL · H5 · Republicar "Plan para correr 30 min sin parar" (161.000 el 2-sep)
 - **Mismo vídeo** con **portada y texto de pantalla nuevos.**
   - TP nuevo: **"Si hoy no aguantas ni 5 minutos corriendo, guarda esto."**
+- **Voz (la original, transcrita el 17-oct):** "Si nunca has corrido y quieres correr 30 minutos sin parar, aquí te dejo un manual de 4 semanas. En la primera semana crearemos la base: 1 minuto corriendo con 2 minutos caminando, 8 veces, 3 días. Semana 2: 2 y 2, 6 veces, 3 días. Semana 3: 5 y 2, 4 veces, 3 días. Semana 4: 20, 25 y 30 minutos seguidos sin parar. No se trata de ir rápido, se trata de ser constante e ir construyendo la base. Y si quieres más contenido como este, sígueme."
+- **Texto en pantalla por momento** (ajustar a los 52 s del vídeo):
+  - 0–4 s: "Si hoy no aguantas ni 5 minutos corriendo, guarda esto 📌".
+  - Semana 1: "SEMANA 1 · 1' correr + 2' caminar · ×8 · 3 días".
+  - Semana 2: "SEMANA 2 · 2' correr + 2' caminar · ×6 · 3 días".
+  - Semana 3: "SEMANA 3 · 5' correr + 2' caminar · ×4 · 3 días".
+  - Semana 4: "SEMANA 4 · Día 1: 20' · Día 2: 25' · Día 3: 30' sin parar 🎉".
+  - Cierre: "No se trata de ir rápido: se trata de ser constante".
+- **Revisar como coach:** el salto de bloques de 5' (semana 3) a 20' seguidos (semana 4) es grande; ya funcionó tal cual, pero si alguien no llega, remitir al plan de 0 a 5K (carrusel 7).
 - **Caption nuevo:**
   > Plan para pasar de no aguantar 5 minutos a correr 30 minutos sin parar, aunque nunca hayas hecho deporte.
   >
