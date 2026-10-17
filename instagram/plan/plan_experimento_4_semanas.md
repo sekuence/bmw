@@ -173,17 +173,20 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
 ---
 
 #### 2 · Mar 20-oct · REEL · H2 (CTA al final) · Pisada (remake del carrusel de 141.000 y del reel de 76.000)
-- **Formato:** voz en off sobre clips, 30 s (unas 76 palabras). Antes era carrusel; pasa a reel por decisión de Ana (17-oct).
+- **Formato:** voz en off sobre clips, unos 45 s (unas 115 palabras). Antes era carrusel; pasa a reel con todo su contenido por decisión de Ana (17-oct). Excepción a la regla de 30 s: el reel de pisada de 69 s ya rindió 7,6 veces la mediana.
 - **Confirmar:** que los 6 meses de lesión son reales; si no, poner la cifra real.
-- **Voz en off (de corrido, unas 77 palabras):**
-  > "Me costó seis meses de lesión comprar las zapatillas que usaba todo el mundo. Existen tres tipos de pisada, y la forma más fácil de saber la tuya es mirar la suela de tus zapatillas viejas. Si está gastada por dentro, tu pisada es pronadora; por fuera, supinadora; y si el desgaste es parejo, es neutra. Con eso ya sabes qué buscar, pero pruébate varios modelos y quédate con el que ni notes. Comenta PISADA y te mando la guía para elegir el tuyo."
+- **Voz en off (de corrido):**
+  > "Me costó seis meses de lesión no saber esto. Elegí mis zapatillas porque todo el mundo las usaba, y no eran para mí. Existen tres tipos de pisada: neutra; pronadora, cuando el pie se va hacia dentro; y supinadora, cuando se va hacia fuera. Para saber la tuya, mira la suela de tus zapatillas viejas: gastada por dentro, pronas; por fuera, supinas; pareja, neutra. O moja el pie y pisa un cartón: si se marca toda la planta, tu arco es bajo; si solo el borde, es alto. Si pronas, busca estabilidad; si no, buena amortiguación. Y lo que dice la ciencia: tu mejor filtro es la comodidad. Pruébate tres modelos y quédate con el que ni notes. Comenta PISADA y te mando la guía completa."
 - **Clips y texto en pantalla:**
-  - 0–4 s: suela vieja muy gastada girando hacia cámara. TP: **"Me costó 6 meses de lesión no saber esto"**.
-  - 4–11 s: dando la vuelta a tus zapatillas viejas. TP: "3 tipos de pisada".
-  - 11–20 s: dedo recorriendo el desgaste (dentro, fuera, centro). TP: "Dentro = pronadora · Fuera = supinadora · Parejo = neutra", cada palabra al decirla.
-  - 20–26 s: probándote zapatillas. TP: "Pruébate varios modelos".
-  - 26–30 s: corriendo con las tuyas. TP: "Comenta PISADA 👟".
-- El test de la huella en el cartón va en la guía del DM, no en el reel.
+  - 0–3 s: mirando tus zapatillas, suela gastada en primer plano. TP: **"Me costó 6 meses de lesión no saber esto"**.
+  - 3–7 s: atándote unas zapatillas.
+  - 7–15 s: las 3 huellas (dibujo) o tu pie en cámara lenta. TP: "Neutra · Pronadora · Supinadora".
+  - 15–23 s: dedo recorriendo el desgaste de la suela. TP: "Test 1: la suela".
+  - 23–31 s: plano cenital del pie mojado sobre el cartón. TP: "Test 2: la huella".
+  - 31–35 s: un modelo de ASICS por tipo (si la marca lo pide). TP: "Pronas → estabilidad · Neutra/supinas → amortiguación".
+  - 35–41 s: probándote tres modelos. TP: "Tu mejor filtro: la comodidad".
+  - 41–45 s: corriendo. TP: "Comenta PISADA 👟".
+  - Cambio de plano cada 2-3 s y sin pausas entre frases.
 - **Caption:**
   > Cómo saber tu tipo de pisada en casa con 2 tests y elegir zapatillas para correr sin lesionarte.
   >
