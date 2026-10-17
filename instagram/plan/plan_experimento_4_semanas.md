@@ -173,7 +173,7 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
 ---
 
 #### 2 · Mar 20-oct · REEL · H2 (CTA al final) · Pisada (remake del carrusel de 141.000 y del reel de 76.000)
-- **Formato:** voz en off sobre clips, unos 50 s (unas 125 palabras), con cada parte anunciada. Antes era carrusel; pasa a reel con todo su contenido por decisión de Ana (17-oct). Excepción a la regla de 30 s: el reel de pisada de 69 s ya rindió 7,6 veces la mediana.
+- **Formato:** voz en off sobre clips, unos 52 s (unas 130 palabras), con cada parte anunciada. Antes era carrusel; pasa a reel con todo su contenido por decisión de Ana (17-oct). Excepción a la regla de 30 s: el reel de pisada de 69 s ya rindió 7,6 veces la mediana.
 - **Confirmar:** que los 6 meses de lesión son reales; si no, poner la cifra real.
 - **Voz en off (de corrido):**
   > "Me costó seis meses de lesión no saber esto. Elegí mis zapatillas porque todo el mundo las usaba, y no eran para mí.
@@ -181,8 +181,7 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
   > Para saber cuál es la tuya, existen dos tests.
   > El primero: mira la suela de tus zapatillas viejas. Si está gastada por dentro, pronas; por fuera, supinas; y si el desgaste es parejo, eres neutra.
   > El segundo: moja tu pie y pisa un cartón. Si se marca toda la planta, tu arco es bajo; si solo se ve el borde, es alto.
-  > Con eso ya sabes qué buscar: si pronas, una zapatilla con estabilidad; si no, una con buena amortiguación.
-  > Y lo que dice la ciencia: tu mejor filtro es la comodidad. Pruébate tres modelos y quédate con el que ni notes.
+  > Con eso ya sabes qué zapatillas probarte. Pero ojo: los estudios no han demostrado que elegir solo por tu pisada evite lesiones, y sí hay estudios que relacionan la comodidad con menos lesiones. Así que pruébate varios modelos y quédate con el que ni notes.
   > Comenta PISADA y te mando mi guía con las zapatillas que recomiendo para cada tipo de pisada."
 - **Clips y texto en pantalla:**
   - 0–6 s: mirando tus zapatillas, suela gastada en primer plano. TP: **"Me costó 6 meses de lesión no saber esto"**.
@@ -190,9 +189,9 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
   - 13–16 s: con las zapatillas viejas y un cartón en las manos. TP: "2 tests para saber tu pisada".
   - 16–25 s: dedo recorriendo el desgaste de la suela. TP: "Test 1: la suela".
   - 25–33 s: plano cenital del pie mojado sobre el cartón. TP: "Test 2: la huella".
-  - 33–38 s: un modelo de ASICS por tipo (si la marca lo pide). TP: "Pronas → estabilidad · Neutra/supinas → amortiguación".
-  - 38–45 s: probándote tres modelos. TP: "Tu mejor filtro: la comodidad".
-  - 45–50 s: corriendo. TP: "Comenta PISADA 👟 Zapatillas recomendadas para cada pisada".
+  - 33–38 s: un modelo de ASICS por tipo para probar (si la marca lo pide). TP: "Tu pisada te dice qué probarte".
+  - 38–47 s: probándote varios modelos. TP: "El filtro final: la comodidad".
+  - 47–52 s: corriendo. TP: "Comenta PISADA 👟 Zapatillas recomendadas para cada pisada".
   - Cambio de plano cada 2-3 s y sin pausas entre frases.
 - **Caption:**
   > Cómo saber tu tipo de pisada en casa con 2 tests y elegir zapatillas para correr sin lesionarte.
@@ -205,6 +204,7 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
   >
   > 💬 Comenta PISADA y te mando mi guía con las zapatillas que recomiendo para cada tipo de pisada.
   > 📌 Guárdalo para tu próxima compra.
+- **Base científica (verificada 17-oct):** Nielsen et al. 2014 (BJSM 48:440), 927 corredores novatos con zapatilla neutra: la pronación moderada no se asoció a más lesiones. Mündermann et al. 2001 (Med Sci Sports Exerc 33:1939), 206 militares: plantillas cómodas, menos lesiones. Nigg et al. 2015 (BJSM 49:1290) propone la comodidad como filtro: es una propuesta, no un consenso. Por eso no se dice "la ciencia dice que la comodidad es el mejor filtro" ni "si pronas, busca estabilidad".
 - **CTA:** comentar PISADA, solo al final. La guía del DM debe incluir las zapatillas recomendadas por tipo de pisada (revisar la de oct-2025).
 - **Qué mide:** con el mismo tema que el reel del 3-ago (69 s, 76.042), si la versión de 30 s rinde más. H3 se sigue midiendo con los carruseles 7 y 17 y el control 13.
 
