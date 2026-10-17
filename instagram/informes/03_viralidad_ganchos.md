@@ -101,7 +101,7 @@ Los de mayor múltiplo, para leerlos a mano (puede haber una fórmula que no est
 | id | formato | fórmula | en tus reels | en el nicho | gancho |
 |---|---|---|---|---|---|
 | 1 | REEL | ES1b · Dolor como condición (si te duele…) | 0.71x (n=3) | 1.55x (n=1) | Si te duele AQUÍ al correr, haz estos 3 ejercicios (flecha a la rótula) |
-| 2 | CARRUSEL | 1 · Confesión de coste | sin datos | sin datos | Me costó 6 meses de lesión no saber esto |
+| 2 | REEL | 1 · Confesión de coste | sin datos | sin datos | Me costó 6 meses de lesión no saber esto |
 | 3 | REEL | - · sin clasificar | 0.96x (n=63) | 1.06x (n=60) | Si hoy no aguantas ni 5 minutos corriendo, guarda esto |
 | 4 | REEL | 7 · Error / forma correcta | 2.57x (n=5) | sin datos | Este error te frena en CADA paso |
 | 5 | REEL | - · sin clasificar | 0.96x (n=63) | 1.06x (n=60) | Correr un maratón en tu primer año es mala idea |

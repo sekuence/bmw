@@ -172,23 +172,29 @@ Con Manifold he leído 103 reels de 7 cuentas (6 en español y 1 en inglés de r
 
 ---
 
-#### 2 · Mar 20-oct · CARRUSEL · H3 · Pisada (remake del de 141.000)
-- **Slide 1 (portada):** **"Me costó 6 meses de lesión no saber esto"** sobre una foto tuya mirando tus zapatillas.
-- **Slide 2:** "Elegí zapatillas porque 'todo el mundo las usaba'… y no eran para mí."
-- **Slide 3:** Los 3 tipos de pisada (neutra, pronadora, supinadora), con un dibujo simple de la huella.
-- **Slide 4:** Test casero 1: **mira el desgaste de la suela** de tus zapatillas viejas, con una foto.
-- **Slide 5:** Test casero 2: **la huella mojada** en un cartón.
-- **Slide 6 (aporte basado en la ciencia):** "La ciencia dice que **la comodidad es tu mejor filtro**. Pruébate 3 modelos y quédate con el que no notas."
-- **Slide 7:** "Qué buscar según tu pisada" (sin abusar de la marca; si ASICS lo pide, menciona aquí un modelo por tipo).
-- **Slide 8 (CTA):** **"Comenta PISADA y te envío la guía completa para saber tu pisada y qué zapatilla elegir 👟"**
+#### 2 · Mar 20-oct · REEL · H2 (CTA al final) · Pisada (remake del carrusel de 141.000 y del reel de 76.000)
+- **Formato:** voz en off sobre clips, 30 s (unas 76 palabras). Antes era carrusel; pasa a reel por decisión de Ana (17-oct).
+- **Confirmar:** que los 6 meses de lesión son reales; si no, poner la cifra real.
+- **Guion:**
+  - 0–3 s: V "Me costó seis meses de lesión no saber cómo piso." Visual: primer plano de la suela vieja y gastada. TP: **"Me costó 6 meses de lesión no saber esto"**.
+  - 3–7 s: V "Compré las que usaba todo el mundo. No eran para mí." Visual: atándote las zapatillas y un plano corriendo.
+  - 7–14 s: V "Test uno: mira la suela vieja. Gastada por dentro, pronas; por fuera, supinas; pareja, neutra." Visual: dedo recorriendo el desgaste. TP: "Test 1: la suela".
+  - 14–21 s: V "Test dos: pie mojado sobre un cartón. Huella entera, arco bajo; solo el borde, arco alto." Visual: plano cenital de la huella. TP: "Test 2: la huella".
+  - 21–26 s: V "Y el mejor filtro: pruébate tres modelos y quédate con el que ni notas." Visual: tres zapatillas en fila. TP: "El mejor filtro: la comodidad".
+  - 26–30 s: V "Comenta PISADA y te mando la guía para elegir tu zapatilla." TP: "Comenta PISADA 👟".
 - **Caption:**
-  > Cuando empecé a correr cometí un error que me costó 6 meses de lesión: elegir zapatillas sin saber cómo piso.
+  > Cómo saber tu tipo de pisada en casa con 2 tests y elegir zapatillas para correr sin lesionarte.
   >
-  > En este carrusel te enseño 2 tests caseros para saber tu tipo de pisada y qué mirar al comprar tus próximas zapatillas.
+  > A mí no saberlo me costó 6 meses de lesión: compré las zapatillas que usaba todo el mundo y no eran para mí.
   >
-  > 💬 Comenta PISADA y te mando la guía completa.
+  > 1️⃣ Mira el desgaste de la suela de tus zapatillas viejas.
+  > 2️⃣ Pisa un cartón con el pie mojado y mira tu huella.
+  > Y pruébate siempre 3 modelos: quédate con el que ni notas.
+  >
+  > 💬 Comenta PISADA y te mando la guía completa para elegir tu zapatilla.
   > 📌 Guárdalo para tu próxima compra.
-- **CTA:** comentar PISADA.
+- **CTA:** comentar PISADA, solo al final.
+- **Qué mide:** con el mismo tema que el reel del 3-ago (69 s, 76.042), si la versión de 30 s rinde más. H3 se sigue midiendo con los carruseles 7 y 17 y el control 13.
 
 ---
 

@@ -19,7 +19,7 @@ Publicaciones con datos: 0 de 21
 | id | fecha | formato | hipotesis | titulo | alcance | guardados | compartidos | comentarios | skip_rate | leads_dm |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | 2026-10-19 | REEL | H1 | Rodilla del corredor: 3 ejercicios |  |  |  |  |  |  |
-| 2 | 2026-10-20 | CARRUSEL | H3 | Pisada: me costó 6 meses de lesión |  |  |  |  |  |  |
+| 2 | 2026-10-20 | REEL | H2 | Pisada: me costó 6 meses de lesión (reel voz en off 30 s) |  |  |  |  |  |  |
 | 3 | 2026-10-21 | REEL | H5 | Republicar: 30 min sin parar |  |  |  |  |  |  |
 | 4 | 2026-10-23 | REEL | H2 | Zancada larga = freno (CTA al final) |  |  |  |  |  |  |
 | 5 | 2026-10-24 | REEL | H4 | Maratón en tu primer año es mala idea |  |  |  |  |  |  |
