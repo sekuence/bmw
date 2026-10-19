@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Manual CORRER · Healthy Ani</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&family=Open+Sans:wght@400;600;700&family=Caveat:wght@600&display=swap">
+<style>
+/* Marca Healthy Ani / RUNMIND: verde neón a lima, verde azulado, verde casi negro y crema. Readex Pro + Open Sans. */
+:root{
+  --neon:#41FE6B; --lima:#F6FE66; --teal:#147A67; --deep:#001605; --deep2:#00330C;
+  --cream:#FEF8EF; --ink:#1d2622; --muted:#5b6661; --line:#e6dfd2;
+  --grad:linear-gradient(90deg,var(--neon),var(--lima));
+  --head:"Readex Pro",Helvetica,Arial,sans-serif; --body:"Open Sans",Arial,sans-serif; --hand:"Caveat","Segoe Script",cursive;
+}
+@page{size:A4;margin:0}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{margin:0;background:#cfcfcf}
+body{font:13pt/1.6 var(--body);color:var(--ink)}
+.page{width:210mm;height:297mm;margin:0 auto 10mm;background:var(--cream);position:relative;overflow:hidden;break-after:page;padding:22mm 20mm 20mm}
+.page:last-child{break-after:auto}
+@media print{html,body{background:none}.page{margin:0}}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.08;letter-spacing:-.01em}
+h2{font-size:31pt;font-weight:600;color:var(--deep)}
+h3{font-size:16pt;font-weight:600;color:var(--teal)}
+p{margin:0}
+.stack{display:grid;gap:6.5mm}
+.eyebrow{font:600 8.5pt/1 var(--head);letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
+.hl{background:linear-gradient(transparent 58%,rgba(65,254,107,.55) 58%)}
+.foot{position:absolute;left:20mm;right:20mm;bottom:10mm;display:flex;justify-content:space-between;font:400 8pt var(--head);color:var(--muted)}
+.foot b{font-weight:600;color:var(--teal)}
+.bar{height:3px;width:34mm;background:var(--grad);border-radius:3px}
+
+/* portada */
+.cover{background:var(--deep);color:#fff;padding:0}
+.cover .photo{position:absolute;inset:0;background:url(cover.jpg) 62% 20%/cover no-repeat}
+.cover .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,22,5,.25) 0%,rgba(0,22,5,.15) 35%,rgba(0,22,5,.92) 66%,var(--deep) 100%)}
+.cover .top{position:absolute;top:16mm;left:18mm;right:18mm;display:flex;justify-content:space-between;align-items:center}
+.cover .top img{height:11mm}
+.cover .tag{font:600 8pt var(--head);letter-spacing:.2em;text-transform:uppercase;border:1px solid rgba(255,255,255,.5);border-radius:99px;padding:2.2mm 4mm}
+.cover .txt{position:absolute;left:18mm;right:18mm;bottom:24mm;display:grid;gap:6mm}
+.cover h1{font-size:50pt;font-weight:600;color:#fff}
+.cover h1 span{color:var(--neon)}
+.cover .sub{font:300 14pt/1.4 var(--head);max-width:150mm}
+.cover .by{font:400 9.5pt var(--head);color:rgba(255,255,255,.75);display:flex;gap:3mm;align-items:center}
+.cover .by::before{content:"";width:10mm;height:3px;border-radius:3px;background:var(--grad)}
+
+/* carta */
+.letter p{font-size:14.5pt;line-height:1.75}
+.sign{font:600 40pt/1 var(--hand);color:var(--teal);margin-top:2mm}
+
+/* caja ciencia */
+.science{background:var(--deep);color:#e9f3ec;border-radius:5mm;padding:8mm 9mm;display:grid;gap:3.5mm;font-size:12.5pt}
+.science .eyebrow{color:var(--neon)}
+.science b{color:#fff}
+.science small{font-size:8pt;color:#9fb5a7}
+.big{font:600 40pt/1 var(--head);color:var(--deep)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+.card{background:#fff;border:1px solid var(--line);border-radius:4mm;padding:5mm 6mm;display:grid;gap:2mm}
+
+/* pasos */
+.steps{display:grid;gap:4mm;counter-reset:s}
+.step{display:grid;grid-template-columns:12mm 1fr;gap:4mm;align-items:start}
+.step::before{counter-increment:s;content:counter(s);width:11mm;height:11mm;border-radius:50%;background:var(--grad);display:grid;place-items:center;font:700 14pt var(--head);color:var(--deep)}
+table{border-collapse:collapse;width:100%;font-size:12pt}
+th,td{padding:3.4mm 5mm;text-align:left;border-bottom:1px solid var(--line)}
+th{font:600 8pt var(--head);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+td.n{font:600 13pt var(--head);color:var(--deep)}
+td.t{font:700 13pt var(--head);color:var(--teal)}
+.tbl{background:#fff;border:1px solid var(--line);border-radius:4mm;overflow:hidden}
+.note{border-left:3px solid var(--teal);padding:1mm 0 1mm 4mm;font-size:12pt;color:var(--muted)}
+.note b{color:var(--ink)}
+
+/* semanas */
+.weeks{display:grid;grid-template-columns:repeat(6,1fr);gap:3mm;align-items:end;height:62mm;padding-top:6mm}
+.wk{display:grid;gap:2mm;justify-items:center;align-self:end}
+.wk .col{width:100%;border-radius:2.5mm 2.5mm 0 0;background:var(--teal)}
+.wk.soft .col{background:#b8d9cf}
+.wk .v{font:600 11pt var(--head);color:var(--deep)}
+.wk .l{font:400 8pt var(--head);color:var(--muted)}
+
+/* semáforo */
+.light{display:grid;grid-template-columns:16mm 1fr;gap:5mm;align-items:start;background:#fff;border:1px solid var(--line);border-radius:4mm;padding:7mm 7mm}
+.dot{width:14mm;height:14mm;border-radius:50%}
+.g{background:#2bbf5a}.y{background:#f2c230}.r{background:#e2483d}
+.light h3{color:var(--deep)}
+.light p{font-size:12.5pt}
+
+/* checklist */
+.check{display:grid;gap:5mm}
+.check div{display:grid;grid-template-columns:8mm 1fr;gap:3mm;align-items:center;font-size:13pt}
+.check div::before{content:"";width:6mm;height:6mm;border:1.6px solid var(--teal);border-radius:1.5mm;background:#fff}
+.blank{display:inline-block;min-width:22mm;border-bottom:1.4px solid var(--ink);height:5mm;vertical-align:bottom}
+.log td{height:13mm}
+
+/* final */
+.final{background:var(--deep);color:#e9f3ec;padding:0}
+.final .photo{height:118mm;background:url(final.jpg) center 30%/cover no-repeat;position:relative}
+.final .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,22,5,0) 50%,var(--deep) 100%)}
+.final .in{padding:2mm 20mm 0;display:grid;gap:6mm}
+.final h2{color:#fff;font-size:30pt}
+.final h2 span{color:var(--neon)}
+.final p{font-size:13pt;line-height:1.65;max-width:160mm}
+.btn{display:inline-flex;align-items:center;gap:4mm;background:var(--grad);color:var(--deep);font:700 14pt var(--head);text-decoration:none;padding:5mm 9mm;border-radius:99px;justify-self:start}
+.btn::after{content:"→";font-weight:400}
+.url{font:400 9.5pt var(--head);color:#9fb5a7}
+.url a{color:var(--neon)}
+.final .foot{color:#9fb5a7}
+.final .foot img{height:6mm}
+</style>
+</head>
+<body>
+
+<!-- 1 · Portada -->
+<section class="page cover">
+  <div class="photo"></div>
+  <div class="top"><img src="logo.png" alt="Healthy Ani"><span class="tag">Manual · Runmind</span></div>
+  <div class="txt">
+    <h1>Corre más<br><span>sin lesionarte</span></h1>
+    <p class="sub">La regla del 10&nbsp;% explicada fácil, para que dejes de lesionarte justo cuando empiezas a mejorar.</p>
+    <p class="by">Ana Moreno · Coach certificada UESCA</p>
+  </div>
+</section>
+
+<!-- 2 · Carta -->
+<section class="page">
+  <div class="stack letter">
+    <div class="eyebrow">Antes de empezar</div>
+    <h2>Hola, soy Ana</h2>
+    <div class="bar"></div>
+    <p>Si tienes esto en tus manos es porque comentaste CORRER. Y seguramente te ha pasado algo así: llevas semanas entrenando bien, te sientes fuerte y un día te emocionas. En lugar de los 10 kilómetros que te tocaban, corres 14. A los pocos días aparece el dolor en la rodilla o en la pantorrilla.</p>
+    <p>No es mala suerte. Y tampoco es que tu cuerpo no sirva para correr. Casi siempre es <span class="hl">un solo día</span> en el que le pediste a tu cuerpo algo para lo que todavía no estaba preparado.</p>
+    <p>Lo veo una y otra vez en las personas que entreno. Por eso armé este manual: corto, práctico y pensado para que lo tengas a mano antes de cada tirada larga.</p>
+    <p>Léelo con calma, guárdalo y empieza a aplicarlo esta misma semana.</p>
+    <p>Un abrazo,</p>
+    <div class="sign">Ana</div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Manual CORRER</span><span>2</span></div>
+</section>
+
+<!-- 3 · Por qué -->
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">El porqué</div>
+    <h2>Por qué te lesionas justo cuando empiezas a mejorar</h2>
+    <div class="bar"></div>
+    <p>Tu cuerpo no mejora todo a la misma velocidad. Ahí está la trampa.</p>
+    <div class="cols">
+      <div class="card"><h3>Lo que mejora rápido</h3><p>Tu corazón y tus pulmones. En pocas semanas notas que te cansas menos y que podrías correr más.</p></div>
+      <div class="card"><h3>Lo que va más lento</h3><p>Tus tendones, huesos y músculos. Necesitan más tiempo para acostumbrarse a la carga de cada zancada.</p></div>
+    </div>
+    <p>Por eso te sientes lista para correr más <span class="hl">antes de que tu cuerpo lo esté</span>. Tu cuerpo está preparado para lo que ya ha hecho, no para lo que tú tienes ganas de hacer.</p>
+    <div class="science">
+      <div class="eyebrow">Lo que dice la ciencia</div>
+      <p>En 2025 se publicó en el <b>British Journal of Sports Medicine</b> un estudio que siguió durante 18 meses a unas <b>5.200 personas que corren</b>, con los datos de sus relojes.</p>
+      <p>Encontraron más lesiones por sobrecarga cuando <b>una sola salida superaba en más de un 10&nbsp;% la distancia de la salida más larga de los 30 días anteriores</b>. Y algo que sorprende: en ese estudio, cuánto subía el volumen de una semana a otra no se relacionó con las lesiones. Lo que pesaba era ese día.</p>
+      <p>Es un estudio de observación: no demuestra que ese día cause la lesión, pero es la mejor pista que tenemos hoy.</p>
+      <small>Frandsen JSB y otros. How much running is too much? Br J Sports Med 2025;59:1203-1210. doi:10.1136/bjsports-2024-109380</small>
+    </div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Manual CORRER</span><span>3</span></div>
+</section>
+
+<!-- 4 · La regla -->
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">La regla</div>
+    <h2>Tu techo de hoy: la salida más larga del mes + 10&nbsp;%</h2>
+    <div class="bar"></div>
+    <div class="steps">
+      <div class="step"><p><b>Abre tu app o tu reloj</b> y busca la salida más larga que hiciste en los últimos 30 días.</p></div>
+      <div class="step"><p><b>Multiplícala por 1,1.</b> Ese número es tu techo para cualquier salida de esta semana.</p></div>
+      <div class="step"><p><b>Si ese día te sientes increíble, disfrútalo,</b> pero no pases del techo. Las ganas no son la señal para correr más.</p></div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Tu salida más larga (últimos 30 días)</th><th>Tu techo hoy</th></tr></thead>
+      <tbody>
+        <tr><td class="n">5 km</td><td class="t">5,5 km</td></tr>
+        <tr><td class="n">8 km</td><td class="t">8,8 km</td></tr>
+        <tr><td class="n">10 km</td><td class="t">11 km</td></tr>
+        <tr><td class="n">12 km</td><td class="t">13,2 km</td></tr>
+        <tr><td class="n">15 km</td><td class="t">16,5 km</td></tr>
+        <tr><td class="n">18 km</td><td class="t">19,8 km</td></tr>
+        <tr><td class="n">21 km</td><td class="t">23,1 km</td></tr>
+      </tbody></table></div>
+    <p class="note"><b>Vale para cualquier salida, no solo para el domingo.</b> Un rodaje de 12 km un martes cuando tu máximo del mes es 10 también es un salto.</p>
+    <p class="note"><b>¿Entrenas por minutos?</b> Yo aplico la misma lógica: si tu salida más larga fueron 40 minutos, hoy como máximo 44.</p>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Manual CORRER</span><span>4</span></div>
+</section>
+
+<!-- 5 · Progresión y errores -->
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">En la práctica</div>
+    <h2>Así crece tu tirada larga sin saltos</h2>
+    <div class="bar"></div>
+    <p>Un ejemplo de cómo lo hago con mis alumnas. Subimos poco a poco y cada cuarta semana bajamos un poco para que el cuerpo asimile.</p>
+    <div class="weeks">
+      <div class="wk"><span class="v">10 km</span><div class="col" style="height:30mm"></div><span class="l">Semana 1</span></div>
+      <div class="wk"><span class="v">11 km</span><div class="col" style="height:33mm"></div><span class="l">Semana 2</span></div>
+      <div class="wk"><span class="v">12 km</span><div class="col" style="height:36mm"></div><span class="l">Semana 3</span></div>
+      <div class="wk soft"><span class="v">10 km</span><div class="col" style="height:30mm"></div><span class="l">Semana suave</span></div>
+      <div class="wk"><span class="v">12 km</span><div class="col" style="height:36mm"></div><span class="l">Semana 5</span></div>
+      <div class="wk"><span class="v">13 km</span><div class="col" style="height:39mm"></div><span class="l">Semana 6</span></div>
+    </div>
+    <h3 style="margin-top:4mm">Los 3 errores que veo cada semana</h3>
+    <div class="steps">
+      <div class="step"><p><b>Correr de más porque te sientes bien.</b> Es el clásico: el día que mejor te sientes es el día que más fácil te pasas.</p></div>
+      <div class="step"><p><b>Recuperar los kilómetros que te saltaste.</b> Si el martes no pudiste correr, no los sumes al domingo. Ese día se pierde y no pasa nada.</p></div>
+      <div class="step"><p><b>Volver de un parón como si nada.</b> Si llevas 2 o 3 semanas sin correr, tu salida más larga del último mes ya no es la de antes. Empieza desde lo que hiciste de verdad estos 30 días.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Manual CORRER</span><span>5</span></div>
+</section>
+
+<!-- 6 · Semáforo -->
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">Escucha a tu cuerpo</div>
+    <h2>Mi semáforo del dolor</h2>
+    <div class="bar"></div>
+    <p>Correr a veces incomoda, y eso es normal. Lo importante es saber cuándo una molestia es aviso y cuándo es freno. Puntúa tu dolor del 0 (nada) al 10 (el peor que imaginas).</p>
+    <div class="light"><div class="dot g"></div><div class="stack" style="gap:1.5mm"><h3>Verde · sigue, pero atenta</h3><p>Molestia leve, de 0 a 2, que desaparece al calentar y no cambia tu forma de correr.</p></div></div>
+    <div class="light"><div class="dot y"></div><div class="stack" style="gap:1.5mm"><h3>Amarillo · baja la carga</h3><p>Dolor de 3 o 4, o una molestia que vuelve al día siguiente. Acorta la distancia, quita la intensidad y obsérvala 2 o 3 días.</p></div></div>
+    <div class="light"><div class="dot r"></div><div class="stack" style="gap:1.5mm"><h3>Rojo · para y consulta</h3><p>Dolor de 5 o más, te hace cojear o cambiar la zancada, duele en un punto concreto del hueso o empeora mientras corres. No sigas: busca a un fisioterapeuta o a tu médico.</p></div></div>
+    <p class="note">Este semáforo es la guía que uso con mis alumnas. No sustituye la valoración de un profesional de la salud.</p>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Manual CORRER</span><span>6</span></div>
+</section>
+
+<!-- 7 · Checklist -->
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">Para tu próxima tirada</div>
+    <h2>Antes de salir, repasa esto</h2>
+    <div class="bar"></div>
+    <div class="check">
+      <div><span>Mi salida más larga de los últimos 30 días fue de <span class="blank"></span> km</span></div>
+      <div><span>Mi techo de hoy (× 1,1) es <span class="blank"></span> km</span></div>
+      <div><span>No estoy sumando kilómetros que me salté</span></div>
+      <div><span>Esta semana no tuve ningún dolor en rojo</span></div>
+      <div><span>Dormí y comí bien antes de salir</span></div>
+    </div>
+    <h3 style="margin-top:4mm">Apunta tus próximas 4 semanas</h3>
+    <div class="tbl"><table class="log">
+      <thead><tr><th>Semana</th><th>Salida más larga (30 días)</th><th>Techo</th><th>Lo que corrí</th><th>Semáforo</th></tr></thead>
+      <tbody><tr><td>1</td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td></td><td></td><td></td><td></td></tr><tr><td>3</td><td></td><td></td><td></td><td></td></tr><tr><td>4</td><td></td><td></td><td></td><td></td></tr></tbody>
+    </table></div>
+    <p class="note"><b>Tip:</b> guarda una foto de esta página en tu celular y míralo antes de cada tirada larga.</p>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Manual CORRER</span><span>7</span></div>
+</section>
+
+<!-- 8 · Cierre -->
+<section class="page final">
+  <div class="photo"></div>
+  <div class="in">
+    <div class="eyebrow" style="color:var(--neon)">El siguiente paso</div>
+    <h2>La regla te protege.<br><span>Un plan te hace mejorar.</span></h2>
+    <p>El 10&nbsp;% es una regla general. Pero tu cuerpo, tus lesiones pasadas, el tiempo que tienes y tu objetivo no son generales. En RUNMIND armo tu plan semana a semana, con fuerza, técnica y seguimiento, para que progreses sin pasarte.</p>
+    <p>Si quieres que lo veamos juntas, agenda una videollamada de claridad: hablamos de dónde estás, qué te está frenando y si RUNMIND es para ti.</p>
+    <a class="btn" href="https://healthyani.com/runmind/#AgendarLlamada">Agendar mi videollamada</a>
+    <p class="url">o entra en <a href="https://healthyani.com/runmind/#AgendarLlamada">healthyani.com/runmind</a></p>
+  </div>
+  <div class="foot"><img src="logo.png" alt="Healthy Ani"><span>Ana Moreno · Coach certificada UESCA · @healthyanii</span></div>
+</section>
+
+</body>
+</html>
