@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Guía COACH · Healthy Ani</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&family=Open+Sans:wght@400;600;700&family=Caveat:wght@600&display=swap">
+<style>
+/* Marca Healthy Ani / RUNMIND: verde neón a lima, verde azulado, verde casi negro y crema. Readex Pro + Open Sans. */
+:root{
+  --neon:#41FE6B; --lima:#F6FE66; --teal:#147A67; --deep:#001605; --deep2:#00330C;
+  --cream:#FEF8EF; --ink:#1d2622; --muted:#5b6661; --line:#e6dfd2;
+  --grad:linear-gradient(90deg,var(--neon),var(--lima));
+  --head:"Readex Pro",Helvetica,Arial,sans-serif; --body:"Open Sans",Arial,sans-serif; --hand:"Caveat","Segoe Script",cursive;
+}
+@page{size:A4;margin:0}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{margin:0;background:#cfcfcf}
+body{font:13pt/1.6 var(--body);color:var(--ink)}
+.page{width:210mm;height:297mm;margin:0 auto 10mm;background:var(--cream);position:relative;overflow:hidden;break-after:page;padding:22mm 20mm 20mm}
+.page:last-child{break-after:auto}
+@media print{html,body{background:none}.page{margin:0}}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.08;letter-spacing:-.01em}
+h2{font-size:31pt;font-weight:600;color:var(--deep)}
+h3{font-size:16pt;font-weight:600;color:var(--teal)}
+p{margin:0}
+.stack{display:grid;gap:6.5mm}
+.eyebrow{font:600 8.5pt/1 var(--head);letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
+.hl{background:linear-gradient(transparent 58%,rgba(65,254,107,.55) 58%)}
+.foot{position:absolute;left:20mm;right:20mm;bottom:10mm;display:flex;justify-content:space-between;font:400 8pt var(--head);color:var(--muted)}
+.foot b{font-weight:600;color:var(--teal)}
+.bar{height:3px;width:34mm;background:var(--grad);border-radius:3px}
+
+/* portada */
+.cover{background:var(--deep);color:#fff;padding:0}
+.cover .photo{position:absolute;inset:0;background:url(cover.jpg) 62% 20%/cover no-repeat}
+.cover .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,22,5,.25) 0%,rgba(0,22,5,.15) 35%,rgba(0,22,5,.92) 66%,var(--deep) 100%)}
+.cover .top{position:absolute;top:16mm;left:18mm;right:18mm;display:flex;justify-content:space-between;align-items:center}
+.cover .top img{height:11mm}
+.cover .tag{font:600 8pt var(--head);letter-spacing:.2em;text-transform:uppercase;border:1px solid rgba(255,255,255,.5);border-radius:99px;padding:2.2mm 4mm}
+.cover .txt{position:absolute;left:18mm;right:18mm;bottom:24mm;display:grid;gap:6mm}
+.cover h1{font-size:50pt;font-weight:600;color:#fff}
+.cover h1 span{color:var(--neon)}
+.cover .sub{font:300 14pt/1.4 var(--head);max-width:150mm}
+.cover .by{font:400 9.5pt var(--head);color:rgba(255,255,255,.75);display:flex;gap:3mm;align-items:center}
+.cover .by::before{content:"";width:10mm;height:3px;border-radius:3px;background:var(--grad)}
+
+/* carta */
+.letter p{font-size:14.5pt;line-height:1.75}
+.sign{font:600 40pt/1 var(--hand);color:var(--teal);margin-top:2mm}
+
+/* caja ciencia */
+.science{background:var(--deep);color:#e9f3ec;border-radius:5mm;padding:8mm 9mm;display:grid;gap:3.5mm;font-size:12.5pt}
+.science .eyebrow{color:var(--neon)}
+.science b{color:#fff}
+.science small{font-size:8pt;color:#9fb5a7}
+.big{font:600 40pt/1 var(--head);color:var(--deep)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+.card{background:#fff;border:1px solid var(--line);border-radius:4mm;padding:5mm 6mm;display:grid;gap:2mm}
+
+/* pasos */
+.steps{display:grid;gap:4mm;counter-reset:s}
+.step{display:grid;grid-template-columns:12mm 1fr;gap:4mm;align-items:start}
+.step::before{counter-increment:s;content:counter(s);width:11mm;height:11mm;border-radius:50%;background:var(--grad);display:grid;place-items:center;font:700 14pt var(--head);color:var(--deep)}
+table{border-collapse:collapse;width:100%;font-size:12pt}
+th,td{padding:3.4mm 5mm;text-align:left;border-bottom:1px solid var(--line)}
+th{font:600 8pt var(--head);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+td.n{font:600 13pt var(--head);color:var(--deep)}
+td.t{font:700 13pt var(--head);color:var(--teal)}
+.tbl{background:#fff;border:1px solid var(--line);border-radius:4mm;overflow:hidden}
+.note{border-left:3px solid var(--teal);padding:1mm 0 1mm 4mm;font-size:12pt;color:var(--muted)}
+.note b{color:var(--ink)}
+
+/* semanas */
+.weeks{display:grid;grid-template-columns:repeat(6,1fr);gap:3mm;align-items:end;height:62mm;padding-top:6mm}
+.wk{display:grid;gap:2mm;justify-items:center;align-self:end}
+.wk .col{width:100%;border-radius:2.5mm 2.5mm 0 0;background:var(--teal)}
+.wk.soft .col{background:#b8d9cf}
+.wk .v{font:600 11pt var(--head);color:var(--deep)}
+.wk .l{font:400 8pt var(--head);color:var(--muted)}
+
+/* semáforo */
+.light{display:grid;grid-template-columns:16mm 1fr;gap:5mm;align-items:start;background:#fff;border:1px solid var(--line);border-radius:4mm;padding:7mm 7mm}
+.dot{width:14mm;height:14mm;border-radius:50%}
+.g{background:#2bbf5a}.y{background:#f2c230}.r{background:#e2483d}
+.light h3{color:var(--deep)}
+.light p{font-size:12.5pt}
+
+/* checklist */
+.check{display:grid;gap:5mm}
+.check div{display:grid;grid-template-columns:8mm 1fr;gap:3mm;align-items:center;font-size:13pt}
+.check div::before{content:"";width:6mm;height:6mm;border:1.6px solid var(--teal);border-radius:1.5mm;background:#fff}
+.blank{display:inline-block;min-width:22mm;border-bottom:1.4px solid var(--ink);height:5mm;vertical-align:bottom}
+.log td{height:13mm}
+
+/* final */
+.final{background:var(--deep);color:#e9f3ec;padding:0}
+.final .photo{height:118mm;background:url(final.jpg) center 30%/cover no-repeat;position:relative}
+.final .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,22,5,0) 50%,var(--deep) 100%)}
+.final .in{padding:2mm 20mm 0;display:grid;gap:6mm}
+.final h2{color:#fff;font-size:30pt}
+.final h2 span{color:var(--neon)}
+.final p{font-size:13pt;line-height:1.65;max-width:160mm}
+.btn{display:inline-flex;align-items:center;gap:4mm;background:var(--grad);color:var(--deep);font:700 14pt var(--head);text-decoration:none;padding:5mm 9mm;border-radius:99px;justify-self:start}
+.btn::after{content:"→";font-weight:400}
+.url{font:400 9.5pt var(--head);color:#9fb5a7}
+.url a{color:var(--neon)}
+.final .foot{color:#9fb5a7}
+.final .foot img{height:6mm}
+</style>
+<style>
+.q{background:#fff;border:1px solid var(--line);border-radius:4mm;padding:6mm 7mm;display:grid;gap:2.5mm}
+.q .n{font:700 10pt var(--head);letter-spacing:.18em;color:var(--teal);text-transform:uppercase}
+.q h3{color:var(--deep);font-size:17pt}
+.q .ok{font-size:12pt}
+.q .alert{font-size:11.5pt;background:#fff3f1;border-left:3px solid #e2483d;padding:2.5mm 4mm;border-radius:0 2mm 2mm 0}
+.q .alert b{color:#b0302a}
+.danger{background:var(--deep);color:#e9f3ec;border-radius:5mm;padding:8mm 9mm;display:grid;gap:4mm}
+.danger h3{color:var(--neon)}
+.danger ul{margin:0;padding-left:5mm;display:grid;gap:2.5mm;font-size:13pt}
+.danger b{color:#fff}
+</style>
+</head>
+<body>
+
+<section class="page cover">
+  <div class="photo" style="background-position:55% 40%"></div>
+  <div class="top"><img src="logo.png" alt="Healthy Ani"><span class="tag">Guía · Runmind</span></div>
+  <div class="txt">
+    <h1>5 preguntas<br><span>para tu coach</span></h1>
+    <p class="sub">Lo que tienes que preguntarle a tu entrenador antes de preparar una maratón. Yo no lo hice, y casi lo pago caro.</p>
+    <p class="by">Ana Moreno · Coach certificada UESCA</p>
+  </div>
+</section>
+
+<section class="page">
+  <div class="stack letter">
+    <div class="eyebrow">Mi historia</div>
+    <h2>Por qué te mando esto</h2>
+    <div class="bar"></div>
+    <p>Hace un tiempo estuve a punto de sufrir una rabdomiólisis después de correr una maratón. Mis músculos se estaban rompiendo y mis riñones estaban en riesgo.</p>
+    <p>No fue culpa de la maratón. Fue por confiar en alguien que decía ser coach y no tenía la formación. Me mandó dos tiradas de 38 kilómetros antes de la carrera, y mi cuerpo llegó tan desgastado que, al cruzar la meta, colapsó.</p>
+    <p>Hoy todo el mundo quiere correr una maratón, y está genial. Pero <span class="hl">no cualquiera sabe prepararte para una</span>. Estas 5 preguntas te ayudan a saber si estás en buenas manos antes de empezar.</p>
+    <p>Un abrazo,</p>
+    <div class="sign">Ana</div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Guía COACH</span><span>2</span></div>
+</section>
+
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">Las preguntas · 1 a 3</div>
+    <h2>Antes de empezar, pregúntale…</h2>
+    <div class="bar"></div>
+    <div class="q"><span class="n">Pregunta 1</span><h3>¿Qué formación tienes?</h3>
+      <p class="ok">Busca una certificación de entrenador de running reconocida (por ejemplo UESCA o RRCA) o estudios en ciencias del deporte. Que haya corrido muchas maratones es un plus, pero no es formación.</p>
+      <p class="alert"><b>Señal de alerta:</b> "llevo años corriendo" como única respuesta.</p></div>
+    <div class="q"><span class="n">Pregunta 2</span><h3>¿Cómo vas a adaptar el plan a mí?</h3>
+      <p class="ok">Un buen coach te pregunta antes de escribir nada: tus lesiones, cuántos días puedes entrenar, qué has corrido los últimos meses y cómo duermes.</p>
+      <p class="alert"><b>Señal de alerta:</b> te manda un PDF igual para todo el mundo sin hacerte ninguna pregunta.</p></div>
+    <div class="q"><span class="n">Pregunta 3</span><h3>¿Cuál será mi tirada más larga y por qué?</h3>
+      <p class="ok">En la mayoría de planes para corredores populares la tirada más larga ronda los 30-32 km o unas 3 horas. Y cada salida debería crecer poco a poco: como máximo un 10&nbsp;% más que la más larga del último mes.</p>
+      <p class="alert"><b>Señal de alerta:</b> varias tiradas de 38-40 km sin experiencia previa y sin explicarte el motivo. Así empezó lo mío.</p></div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Guía COACH</span><span>3</span></div>
+</section>
+
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">Las preguntas · 4 y 5</div>
+    <h2>Y no te olvides de esto</h2>
+    <div class="bar"></div>
+    <div class="q"><span class="n">Pregunta 4</span><h3>¿Qué hacemos si estoy cansada, enferma o me duele algo?</h3>
+      <p class="ok">El plan tiene que cambiar contigo. Un buen coach baja la carga, mueve sesiones o te manda a un profesional de la salud cuando hace falta.</p>
+      <p class="alert"><b>Señal de alerta:</b> "no pasa nada, sigue con el plan" ante un dolor que no se va.</p></div>
+    <div class="q"><span class="n">Pregunta 5</span><h3>¿Cómo serán las últimas semanas y la recuperación?</h3>
+      <p class="ok">Antes de la maratón el volumen tiene que bajar durante unas dos semanas para que llegues descansada. Y después de la carrera hace falta un plan de recuperación, no volver a entrenar como si nada.</p>
+      <p class="alert"><b>Señal de alerta:</b> carga alta hasta la última semana o ningún plan para después.</p></div>
+    <div class="check" style="margin-top:2mm">
+      <h3>¿Tu coach pasa la prueba?</h3>
+      <div><span>Tiene formación reconocida</span></div>
+      <div><span>Me hizo preguntas antes de darme el plan</span></div>
+      <div><span>Me explicó por qué la tirada más larga es la que es</span></div>
+      <div><span>Ajusta el plan cuando lo necesito</span></div>
+      <div><span>Tiene un plan para las últimas semanas y para después</span></div>
+    </div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Guía COACH</span><span>4</span></div>
+</section>
+
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">Muy importante</div>
+    <h2>Señales que no debes ignorar después de una carrera larga</h2>
+    <div class="bar"></div>
+    <p>La rabdomiólisis aparece cuando el músculo se rompe tanto que libera sustancias que pueden dañar los riñones. Es poco frecuente, pero sus señales son claras:</p>
+    <div class="danger">
+      <h3>Ve a urgencias si notas:</h3>
+      <ul>
+        <li><b>Orina muy oscura</b>, color té o refresco de cola.</li>
+        <li><b>Dolor muscular muy intenso</b>, mucho mayor de lo normal después de correr, que no mejora.</li>
+        <li><b>Debilidad</b> o músculos hinchados y muy sensibles al tacto.</li>
+        <li><b>Orinas muy poco</b> o casi nada.</li>
+      </ul>
+    </div>
+    <p class="note"><b>No esperes a ver si se pasa.</b> Cuanto antes te atiendan, mejor. Esta guía no sustituye la valoración de un médico.</p>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Guía COACH</span><span>5</span></div>
+</section>
+
+<section class="page final">
+  <div class="photo" style="background-image:url(final.jpg);background-position:62% 20%"></div>
+  <div class="in">
+    <div class="eyebrow" style="color:var(--neon)">El siguiente paso</div>
+    <h2>Tu maratón merece<br><span>un plan de verdad.</span></h2>
+    <p>En RUNMIND preparo tu plan semana a semana según tu nivel, tus lesiones y tu tiempo, con fuerza, técnica y seguimiento cercano. Para que llegues a la meta entera, no solo a la meta.</p>
+    <p>Si estás pensando en tu próxima maratón, agenda una videollamada de claridad: vemos dónde estás, qué necesitas y si RUNMIND es para ti.</p>
+    <a class="btn" href="https://healthyani.com/runmind/#AgendarLlamada">Agendar mi videollamada</a>
+    <p class="url">o entra en <a href="https://healthyani.com/runmind/#AgendarLlamada">healthyani.com/runmind</a></p>
+  </div>
+  <div class="foot"><img src="logo.png" alt="Healthy Ani"><span>Ana Moreno · Coach certificada UESCA · @healthyanii</span></div>
+</section>
+
+</body>
+</html>
