@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Guía PISADA · Healthy Ani</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&family=Open+Sans:wght@400;600;700&family=Caveat:wght@600&display=swap">
+<style>
+/* Marca Healthy Ani / RUNMIND: verde neón a lima, verde azulado, verde casi negro y crema. Readex Pro + Open Sans. */
+:root{
+  --neon:#41FE6B; --lima:#F6FE66; --teal:#147A67; --deep:#001605; --deep2:#00330C;
+  --cream:#FEF8EF; --ink:#1d2622; --muted:#5b6661; --line:#e6dfd2;
+  --grad:linear-gradient(90deg,var(--neon),var(--lima));
+  --head:"Readex Pro",Helvetica,Arial,sans-serif; --body:"Open Sans",Arial,sans-serif; --hand:"Caveat","Segoe Script",cursive;
+}
+@page{size:A4;margin:0}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{margin:0;background:#cfcfcf}
+body{font:13pt/1.6 var(--body);color:var(--ink)}
+.page{width:210mm;height:297mm;margin:0 auto 10mm;background:var(--cream);position:relative;overflow:hidden;break-after:page;padding:22mm 20mm 20mm}
+.page:last-child{break-after:auto}
+@media print{html,body{background:none}.page{margin:0}}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.08;letter-spacing:-.01em}
+h2{font-size:31pt;font-weight:600;color:var(--deep)}
+h3{font-size:16pt;font-weight:600;color:var(--teal)}
+p{margin:0}
+.stack{display:grid;gap:6.5mm}
+.eyebrow{font:600 8.5pt/1 var(--head);letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
+.hl{background:linear-gradient(transparent 58%,rgba(65,254,107,.55) 58%)}
+.foot{position:absolute;left:20mm;right:20mm;bottom:10mm;display:flex;justify-content:space-between;font:400 8pt var(--head);color:var(--muted)}
+.foot b{font-weight:600;color:var(--teal)}
+.bar{height:3px;width:34mm;background:var(--grad);border-radius:3px}
+
+/* portada */
+.cover{background:var(--deep);color:#fff;padding:0}
+.cover .photo{position:absolute;inset:0;background:url(cover.jpg) 62% 20%/cover no-repeat}
+.cover .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,22,5,.25) 0%,rgba(0,22,5,.15) 35%,rgba(0,22,5,.92) 66%,var(--deep) 100%)}
+.cover .top{position:absolute;top:16mm;left:18mm;right:18mm;display:flex;justify-content:space-between;align-items:center}
+.cover .top img{height:11mm}
+.cover .tag{font:600 8pt var(--head);letter-spacing:.2em;text-transform:uppercase;border:1px solid rgba(255,255,255,.5);border-radius:99px;padding:2.2mm 4mm}
+.cover .txt{position:absolute;left:18mm;right:18mm;bottom:24mm;display:grid;gap:6mm}
+.cover h1{font-size:50pt;font-weight:600;color:#fff}
+.cover h1 span{color:var(--neon)}
+.cover .sub{font:300 14pt/1.4 var(--head);max-width:150mm}
+.cover .by{font:400 9.5pt var(--head);color:rgba(255,255,255,.75);display:flex;gap:3mm;align-items:center}
+.cover .by::before{content:"";width:10mm;height:3px;border-radius:3px;background:var(--grad)}
+
+/* carta */
+.letter p{font-size:14.5pt;line-height:1.75}
+.sign{font:600 40pt/1 var(--hand);color:var(--teal);margin-top:2mm}
+
+/* caja ciencia */
+.science{background:var(--deep);color:#e9f3ec;border-radius:5mm;padding:8mm 9mm;display:grid;gap:3.5mm;font-size:12.5pt}
+.science .eyebrow{color:var(--neon)}
+.science b{color:#fff}
+.science small{font-size:8pt;color:#9fb5a7}
+.big{font:600 40pt/1 var(--head);color:var(--deep)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+.card{background:#fff;border:1px solid var(--line);border-radius:4mm;padding:5mm 6mm;display:grid;gap:2mm}
+
+/* pasos */
+.steps{display:grid;gap:4mm;counter-reset:s}
+.step{display:grid;grid-template-columns:12mm 1fr;gap:4mm;align-items:start}
+.step::before{counter-increment:s;content:counter(s);width:11mm;height:11mm;border-radius:50%;background:var(--grad);display:grid;place-items:center;font:700 14pt var(--head);color:var(--deep)}
+table{border-collapse:collapse;width:100%;font-size:12pt}
+th,td{padding:3.4mm 5mm;text-align:left;border-bottom:1px solid var(--line)}
+th{font:600 8pt var(--head);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+td.n{font:600 13pt var(--head);color:var(--deep)}
+td.t{font:700 13pt var(--head);color:var(--teal)}
+.tbl{background:#fff;border:1px solid var(--line);border-radius:4mm;overflow:hidden}
+.note{border-left:3px solid var(--teal);padding:1mm 0 1mm 4mm;font-size:12pt;color:var(--muted)}
+.note b{color:var(--ink)}
+
+/* semanas */
+.weeks{display:grid;grid-template-columns:repeat(6,1fr);gap:3mm;align-items:end;height:62mm;padding-top:6mm}
+.wk{display:grid;gap:2mm;justify-items:center;align-self:end}
+.wk .col{width:100%;border-radius:2.5mm 2.5mm 0 0;background:var(--teal)}
+.wk.soft .col{background:#b8d9cf}
+.wk .v{font:600 11pt var(--head);color:var(--deep)}
+.wk .l{font:400 8pt var(--head);color:var(--muted)}
+
+/* semáforo */
+.light{display:grid;grid-template-columns:16mm 1fr;gap:5mm;align-items:start;background:#fff;border:1px solid var(--line);border-radius:4mm;padding:7mm 7mm}
+.dot{width:14mm;height:14mm;border-radius:50%}
+.g{background:#2bbf5a}.y{background:#f2c230}.r{background:#e2483d}
+.light h3{color:var(--deep)}
+.light p{font-size:12.5pt}
+
+/* checklist */
+.check{display:grid;gap:5mm}
+.check div{display:grid;grid-template-columns:8mm 1fr;gap:3mm;align-items:center;font-size:13pt}
+.check div::before{content:"";width:6mm;height:6mm;border:1.6px solid var(--teal);border-radius:1.5mm;background:#fff}
+.blank{display:inline-block;min-width:22mm;border-bottom:1.4px solid var(--ink);height:5mm;vertical-align:bottom}
+.log td{height:13mm}
+
+/* final */
+.final{background:var(--deep);color:#e9f3ec;padding:0}
+.final .photo{height:118mm;background:url(final.jpg) center 30%/cover no-repeat;position:relative}
+.final .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,22,5,0) 50%,var(--deep) 100%)}
+.final .in{padding:2mm 20mm 0;display:grid;gap:6mm}
+.final h2{color:#fff;font-size:30pt}
+.final h2 span{color:var(--neon)}
+.final p{font-size:13pt;line-height:1.65;max-width:160mm}
+.btn{display:inline-flex;align-items:center;gap:4mm;background:var(--grad);color:var(--deep);font:700 14pt var(--head);text-decoration:none;padding:5mm 9mm;border-radius:99px;justify-self:start}
+.btn::after{content:"→";font-weight:400}
+.url{font:400 9.5pt var(--head);color:#9fb5a7}
+.url a{color:var(--neon)}
+.final .foot{color:#9fb5a7}
+.final .foot img{height:6mm}
+</style>
+<style>
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm}
+.type{background:#fff;border:1px solid var(--line);border-radius:4mm;padding:6mm 5mm;display:grid;gap:3mm;justify-items:center;text-align:center}
+.type h3{color:var(--deep)}
+.type p{font-size:11.5pt}
+.type svg{width:30mm;height:38mm}
+.tests{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm}
+.tests .type svg{width:18mm;height:26mm}
+.tests .type{padding:4mm 4mm;gap:1.5mm}
+.tests .type p{font-size:10.5pt}
+.shoe{display:grid;grid-template-columns:42mm 1fr;gap:5mm;background:#fff;border:1px solid var(--line);border-radius:4mm;padding:6mm 7mm;align-items:start}
+.shoe .who{font:600 15pt var(--head);color:var(--teal)}
+.shoe .who small{display:block;font:400 9.5pt var(--body);color:var(--muted);margin-top:1mm}
+.shoe .models{font:600 15pt/1.35 var(--head);color:var(--deep)}
+.shoe p{font-size:11.5pt;color:var(--muted);margin-top:1.5mm}
+.tips{display:grid;grid-template-columns:1fr 1fr;gap:3.5mm 6mm}
+.tips div{background:#fff;border:1px solid var(--line);border-radius:3mm;padding:4mm 5mm;font-size:11.5pt}
+.tips b{display:block;font:600 12.5pt var(--head);color:var(--deep);margin-bottom:1mm}
+</style>
+</head>
+<body>
+
+<section class="page cover">
+  <div class="photo" style="background-position:60% 25%"></div>
+  <div class="top"><img src="logo.png" alt="Healthy Ani"><span class="tag">Guía · Runmind</span></div>
+  <div class="txt">
+    <h1>Tu pisada,<br><span>tu zapatilla</span></h1>
+    <p class="sub">Cómo saber cómo pisas en casa y qué zapatillas probarte, para no cometer el error que a mí me costó una lesión.</p>
+    <p class="by">Ana Moreno · Ciencias del Deporte · Coach certificada UESCA</p>
+  </div>
+</section>
+
+<section class="page">
+  <div class="stack letter">
+    <div class="eyebrow">Antes de empezar</div>
+    <h2>Hola, soy Ana</h2>
+    <div class="bar"></div>
+    <p>Si tienes esta guía es porque comentaste PISADA. Como te conté en el reel, no saber cómo pisaba me costó 6 meses de lesión. Compré las zapatillas que usaba todo el mundo, y no eran para mí.</p>
+    <p>No quiero que te pase lo mismo. Aquí tienes los dos tests que puedes hacer hoy en casa, qué zapatillas probarte según lo que te salga y cómo elegir bien en la tienda.</p>
+    <p>Y una cosa importante desde ya: tu pisada te dice <span class="hl">por dónde empezar a probar</span>. La que te llevas a casa la decide tu comodidad.</p>
+    <p>Un abrazo,</p>
+    <div class="sign">Ana</div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Guía PISADA</span><span>2</span></div>
+</section>
+
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">Lo básico</div>
+    <h2>Los 3 tipos de pisada</h2>
+    <div class="bar"></div>
+    <p>La pisada es cómo apoya y rueda tu pie desde que toca el suelo hasta que despega. Hay tres tipos:</p>
+    <div class="types">
+      <div class="type"><svg viewBox="0 0 100 130"><defs><marker id="ah" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#147A67"/></marker></defs>
+<path d="M50 8 C72 8 80 30 78 55 C76 80 70 95 68 110 C66 124 34 124 32 110 C30 95 24 80 22 55 C20 30 28 8 50 8 Z" fill="#e8f5ee" stroke="#001605" stroke-width="2.5"/><path d="M50 95 L50 45" stroke="#147A67" stroke-width="5" marker-end="url(#ah)"/></svg><h3>Neutra</h3><p>El pie rueda de forma bastante recta y reparte la carga.</p></div>
+      <div class="type"><svg viewBox="0 0 100 130"><defs><marker id="ah" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#147A67"/></marker></defs>
+<path d="M50 8 C72 8 80 30 78 55 C76 80 70 95 68 110 C66 124 34 124 32 110 C30 95 24 80 22 55 C20 30 28 8 50 8 Z" fill="#e8f5ee" stroke="#001605" stroke-width="2.5"/><path d="M50 70 L28 70" stroke="#147A67" stroke-width="5" marker-end="url(#ah)"/></svg><h3>Pronadora</h3><p>El pie se va hacia dentro más de lo habitual al apoyar.</p></div>
+      <div class="type"><svg viewBox="0 0 100 130"><defs><marker id="ah" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#147A67"/></marker></defs>
+<path d="M50 8 C72 8 80 30 78 55 C76 80 70 95 68 110 C66 124 34 124 32 110 C30 95 24 80 22 55 C20 30 28 8 50 8 Z" fill="#e8f5ee" stroke="#001605" stroke-width="2.5"/><path d="M50 70 L72 70" stroke="#147A67" stroke-width="5" marker-end="url(#ah)"/></svg><h3>Supinadora</h3><p>El pie se apoya más hacia fuera, por el borde exterior.</p></div>
+    </div>
+    <p class="note"><b>Pronar un poco es normal:</b> es la forma que tiene tu pie de amortiguar. No es un defecto que haya que corregir a toda costa.</p>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Guía PISADA</span><span>3</span></div>
+</section>
+
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">Hazlo hoy en casa</div>
+    <h2>Test 1: la suela de tus zapatillas viejas</h2>
+    <div class="bar"></div>
+    <p>Busca unas zapatillas con las que hayas corrido bastante y dales la vuelta. Fíjate dónde está más gastada la suela:</p>
+    <div class="tests">
+      <div class="type"><svg viewBox="0 0 100 150"><path d="M50 8 C72 8 80 30 78 60 C76 90 70 110 68 128 C66 144 34 144 32 128 C30 110 24 90 22 60 C20 30 28 8 50 8 Z" fill="#fff" stroke="#001605" stroke-width="2.5"/>
+<ellipse cx="36" cy="42" rx="14" ry="18" fill="#41FE6B" opacity=".8"/><ellipse cx="36" cy="118" rx="12" ry="14" fill="#41FE6B" opacity=".8"/></svg><h3>Por dentro</h3><p>Tendencia pronadora</p></div>
+      <div class="type"><svg viewBox="0 0 100 150"><path d="M50 8 C72 8 80 30 78 60 C76 90 70 110 68 128 C66 144 34 144 32 128 C30 110 24 90 22 60 C20 30 28 8 50 8 Z" fill="#fff" stroke="#001605" stroke-width="2.5"/>
+<ellipse cx="50" cy="42" rx="14" ry="18" fill="#41FE6B" opacity=".8"/><ellipse cx="50" cy="118" rx="12" ry="14" fill="#41FE6B" opacity=".8"/></svg><h3>Pareja</h3><p>Pisada neutra</p></div>
+      <div class="type"><svg viewBox="0 0 100 150"><path d="M50 8 C72 8 80 30 78 60 C76 90 70 110 68 128 C66 144 34 144 32 128 C30 110 24 90 22 60 C20 30 28 8 50 8 Z" fill="#fff" stroke="#001605" stroke-width="2.5"/>
+<ellipse cx="64" cy="42" rx="14" ry="18" fill="#41FE6B" opacity=".8"/><ellipse cx="64" cy="118" rx="12" ry="14" fill="#41FE6B" opacity=".8"/></svg><h3>Por fuera</h3><p>Tendencia supinadora</p></div>
+    </div>
+    <h2 style="font-size:24pt">Test 2: la huella mojada</h2>
+    <p>Moja la planta del pie y pisa un cartón o una bolsa de papel. Mira la huella:</p>
+    <div class="tests">
+      <div class="type"><svg viewBox="0 0 100 150"><ellipse cx="50" cy="40" rx="24" ry="30" fill="#147A67"/><path d="M28 62 Q24 92 30 118 L72 118 Q75 90 72 62 Z" fill="#147A67"/><ellipse cx="52" cy="128" rx="18" ry="15" fill="#147A67"/></svg><h3>Se marca toda</h3><p>Arco bajo</p></div>
+      <div class="type"><svg viewBox="0 0 100 150"><ellipse cx="50" cy="40" rx="24" ry="30" fill="#147A67"/><path d="M50 62 Q52 92 52 118 L72 118 Q75 90 72 62 Z" fill="#147A67"/><ellipse cx="52" cy="128" rx="18" ry="15" fill="#147A67"/></svg><h3>Media luna</h3><p>Arco normal</p></div>
+      <div class="type"><svg viewBox="0 0 100 150"><ellipse cx="50" cy="40" rx="24" ry="30" fill="#147A67"/><path d="M64 62 Q66 92 66 118 L72 118 Q75 90 72 62 Z" fill="#147A67"/><ellipse cx="52" cy="128" rx="18" ry="15" fill="#147A67"/></svg><h3>Solo el borde</h3><p>Arco alto</p></div>
+    </div>
+    <p class="note">Son tests orientativos para saber por dónde empezar. Si quieres un análisis más preciso, un estudio de la pisada en una tienda especializada o con un profesional te dará más detalle.</p>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Guía PISADA</span><span>4</span></div>
+</section>
+
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">Mis recomendaciones</div>
+    <h2>Qué zapatillas probarte según tu pisada</h2>
+    <div class="bar"></div>
+    <div class="shoe"><div class="who">Pronadora<small>Suela gastada por dentro, arco bajo</small></div><div><div class="models">ASICS GT-2000 · ASICS GEL-Kayano</div><p>Zapatillas de estabilidad: ayudan a controlar que el pie se vaya hacia dentro.</p></div></div>
+    <div class="shoe"><div class="who">Neutra<small>Desgaste parejo, arco normal</small></div><div><div class="models">ASICS Novablast · ASICS GEL-Cumulus</div><p>Zapatillas neutras y versátiles. La Novablast es la que más recomiendo para empezar a correr.</p></div></div>
+    <div class="shoe"><div class="who">Supinadora<small>Suela gastada por fuera, arco alto</small></div><div><div class="models">ASICS GEL-Nimbus · ASICS Novablast</div><p>Zapatillas neutras con mucha amortiguación: compensan que el pie absorba menos impacto.</p></div></div>
+    <div class="science" style="margin-top:2mm">
+      <div class="eyebrow">Lo que dice la ciencia</div>
+      <p>Un estudio con 927 corredores novatos que corrieron un año con la misma zapatilla neutra no encontró más lesiones en quienes pronaban de forma moderada. Y en otro, con 206 militares, las plantillas que les resultaban cómodas se asociaron con menos lesiones.</p>
+      <p><b>Por eso: usa tu pisada para saber qué probarte, y la comodidad para decidir.</b> Pruébate al menos tres modelos y quédate con el que ni notes.</p>
+      <small>Nielsen y otros, Br J Sports Med 2014;48:440 · Mündermann y otros, Med Sci Sports Exerc 2001;33:1939</small>
+    </div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Guía PISADA</span><span>5</span></div>
+</section>
+
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">En la tienda</div>
+    <h2>Cómo probártelas bien</h2>
+    <div class="bar"></div>
+    <div class="tips">
+      <div><b>Ve por la tarde</b>El pie se hincha un poco a lo largo del día y al correr. Pruébatelas cuando está más grande.</div>
+      <div><b>Lleva tus calcetines de correr</b>Con otros calcetines la talla cambia más de lo que crees.</div>
+      <div><b>Deja un dedo de espacio</b>Más o menos un dedo entre tu dedo más largo y la punta. Al bajar cuestas lo vas a agradecer.</div>
+      <div><b>Trota, no solo camines</b>Da unas vueltas trotando en la tienda o en una cinta. Caminar no es correr.</div>
+      <div><b>Compara al menos tres</b>Aunque la primera te guste. Así sabes de verdad cuál es la más cómoda.</div>
+      <div><b>Fíjate en lo que no notas</b>Ni roces, ni presión en el arco, ni el talón que se sale. Si la notas, no es.</div>
+    </div>
+    <div class="check" style="margin-top:3mm">
+      <h3>Y una vez que las tengas</h3>
+      <div><span>Estrénalas en rodajes cortos antes de una tirada larga</span></div>
+      <div><span>Nunca estrenes zapatillas el día de una carrera</span></div>
+      <div><span>Apunta cuándo las compraste: como orientación, se cambian entre los 600 y 800 km</span></div>
+    </div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Guía PISADA</span><span>6</span></div>
+</section>
+
+<section class="page final">
+  <div class="photo" style="background-image:url(final.jpg);background-position:62% 20%"></div>
+  <div class="in">
+    <div class="eyebrow" style="color:var(--neon)">El siguiente paso</div>
+    <h2>Las zapatillas ayudan.<br><span>El plan es lo que te cuida.</span></h2>
+    <p>Elegir bien tus zapatillas es el primer paso. Pero lo que de verdad evita lesiones es cómo entrenas: cuánto, cómo subes la carga y cuánta fuerza haces. En RUNMIND armo tu plan semana a semana, con técnica, fuerza y seguimiento cercano.</p>
+    <p>Si quieres que lo veamos juntas, agenda una videollamada de claridad: hablamos de dónde estás, qué te está frenando y si RUNMIND es para ti.</p>
+    <a class="btn" href="https://healthyani.com/runmind/#AgendarLlamada">Agendar mi videollamada</a>
+    <p class="url">o entra en <a href="https://healthyani.com/runmind/#AgendarLlamada">healthyani.com/runmind</a></p>
+  </div>
+  <div class="foot"><img src="logo.png" alt="Healthy Ani"><span>Ana Moreno · Ciencias del Deporte · Coach UESCA · @healthyanii</span></div>
+</section>
+
+</body>
+</html>
