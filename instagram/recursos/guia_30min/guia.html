@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Plan 30 minutos · Healthy Ani</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&family=Open+Sans:wght@400;600;700&family=Caveat:wght@600&display=swap">
+<style>
+/* Marca Healthy Ani / RUNMIND: verde neón a lima, verde azulado, verde casi negro y crema. Readex Pro + Open Sans. */
+:root{
+  --neon:#41FE6B; --lima:#F6FE66; --teal:#147A67; --deep:#001605; --deep2:#00330C;
+  --cream:#FEF8EF; --ink:#1d2622; --muted:#5b6661; --line:#e6dfd2;
+  --grad:linear-gradient(90deg,var(--neon),var(--lima));
+  --head:"Readex Pro",Helvetica,Arial,sans-serif; --body:"Open Sans",Arial,sans-serif; --hand:"Caveat","Segoe Script",cursive;
+}
+@page{size:A4;margin:0}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{margin:0;background:#cfcfcf}
+body{font:13pt/1.6 var(--body);color:var(--ink)}
+.page{width:210mm;height:297mm;margin:0 auto 10mm;background:var(--cream);position:relative;overflow:hidden;break-after:page;padding:22mm 20mm 20mm}
+.page:last-child{break-after:auto}
+@media print{html,body{background:none}.page{margin:0}}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.08;letter-spacing:-.01em}
+h2{font-size:31pt;font-weight:600;color:var(--deep)}
+h3{font-size:16pt;font-weight:600;color:var(--teal)}
+p{margin:0}
+.stack{display:grid;gap:6.5mm}
+.eyebrow{font:600 8.5pt/1 var(--head);letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
+.hl{background:linear-gradient(transparent 58%,rgba(65,254,107,.55) 58%)}
+.foot{position:absolute;left:20mm;right:20mm;bottom:10mm;display:flex;justify-content:space-between;font:400 8pt var(--head);color:var(--muted)}
+.foot b{font-weight:600;color:var(--teal)}
+.bar{height:3px;width:34mm;background:var(--grad);border-radius:3px}
+
+/* portada */
+.cover{background:var(--deep);color:#fff;padding:0}
+.cover .photo{position:absolute;inset:0;background:url(cover.jpg) 62% 20%/cover no-repeat}
+.cover .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,22,5,.25) 0%,rgba(0,22,5,.15) 35%,rgba(0,22,5,.92) 66%,var(--deep) 100%)}
+.cover .top{position:absolute;top:16mm;left:18mm;right:18mm;display:flex;justify-content:space-between;align-items:center}
+.cover .top img{height:11mm}
+.cover .tag{font:600 8pt var(--head);letter-spacing:.2em;text-transform:uppercase;border:1px solid rgba(255,255,255,.5);border-radius:99px;padding:2.2mm 4mm}
+.cover .txt{position:absolute;left:18mm;right:18mm;bottom:24mm;display:grid;gap:6mm}
+.cover h1{font-size:50pt;font-weight:600;color:#fff}
+.cover h1 span{color:var(--neon)}
+.cover .sub{font:300 14pt/1.4 var(--head);max-width:150mm}
+.cover .by{font:400 9.5pt var(--head);color:rgba(255,255,255,.75);display:flex;gap:3mm;align-items:center}
+.cover .by::before{content:"";width:10mm;height:3px;border-radius:3px;background:var(--grad)}
+
+/* carta */
+.letter p{font-size:14.5pt;line-height:1.75}
+.sign{font:600 40pt/1 var(--hand);color:var(--teal);margin-top:2mm}
+
+/* caja ciencia */
+.science{background:var(--deep);color:#e9f3ec;border-radius:5mm;padding:8mm 9mm;display:grid;gap:3.5mm;font-size:12.5pt}
+.science .eyebrow{color:var(--neon)}
+.science b{color:#fff}
+.science small{font-size:8pt;color:#9fb5a7}
+.big{font:600 40pt/1 var(--head);color:var(--deep)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+.card{background:#fff;border:1px solid var(--line);border-radius:4mm;padding:5mm 6mm;display:grid;gap:2mm}
+
+/* pasos */
+.steps{display:grid;gap:4mm;counter-reset:s}
+.step{display:grid;grid-template-columns:12mm 1fr;gap:4mm;align-items:start}
+.step::before{counter-increment:s;content:counter(s);width:11mm;height:11mm;border-radius:50%;background:var(--grad);display:grid;place-items:center;font:700 14pt var(--head);color:var(--deep)}
+table{border-collapse:collapse;width:100%;font-size:12pt}
+th,td{padding:3.4mm 5mm;text-align:left;border-bottom:1px solid var(--line)}
+th{font:600 8pt var(--head);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+td.n{font:600 13pt var(--head);color:var(--deep)}
+td.t{font:700 13pt var(--head);color:var(--teal)}
+.tbl{background:#fff;border:1px solid var(--line);border-radius:4mm;overflow:hidden}
+.note{border-left:3px solid var(--teal);padding:1mm 0 1mm 4mm;font-size:12pt;color:var(--muted)}
+.note b{color:var(--ink)}
+
+/* semanas */
+.weeks{display:grid;grid-template-columns:repeat(6,1fr);gap:3mm;align-items:end;height:62mm;padding-top:6mm}
+.wk{display:grid;gap:2mm;justify-items:center;align-self:end}
+.wk .col{width:100%;border-radius:2.5mm 2.5mm 0 0;background:var(--teal)}
+.wk.soft .col{background:#b8d9cf}
+.wk .v{font:600 11pt var(--head);color:var(--deep)}
+.wk .l{font:400 8pt var(--head);color:var(--muted)}
+
+/* semáforo */
+.light{display:grid;grid-template-columns:16mm 1fr;gap:5mm;align-items:start;background:#fff;border:1px solid var(--line);border-radius:4mm;padding:7mm 7mm}
+.dot{width:14mm;height:14mm;border-radius:50%}
+.g{background:#2bbf5a}.y{background:#f2c230}.r{background:#e2483d}
+.light h3{color:var(--deep)}
+.light p{font-size:12.5pt}
+
+/* checklist */
+.check{display:grid;gap:5mm}
+.check div{display:grid;grid-template-columns:8mm 1fr;gap:3mm;align-items:center;font-size:13pt}
+.check div::before{content:"";width:6mm;height:6mm;border:1.6px solid var(--teal);border-radius:1.5mm;background:#fff}
+.blank{display:inline-block;min-width:22mm;border-bottom:1.4px solid var(--ink);height:5mm;vertical-align:bottom}
+.log td{height:13mm}
+
+/* final */
+.final{background:var(--deep);color:#e9f3ec;padding:0}
+.final .photo{height:118mm;background:url(final.jpg) center 30%/cover no-repeat;position:relative}
+.final .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,22,5,0) 50%,var(--deep) 100%)}
+.final .in{padding:2mm 20mm 0;display:grid;gap:6mm}
+.final h2{color:#fff;font-size:30pt}
+.final h2 span{color:var(--neon)}
+.final p{font-size:13pt;line-height:1.65;max-width:160mm}
+.btn{display:inline-flex;align-items:center;gap:4mm;background:var(--grad);color:var(--deep);font:700 14pt var(--head);text-decoration:none;padding:5mm 9mm;border-radius:99px;justify-self:start}
+.btn::after{content:"→";font-weight:400}
+.url{font:400 9.5pt var(--head);color:#9fb5a7}
+.url a{color:var(--neon)}
+.final .foot{color:#9fb5a7}
+.final .foot img{height:6mm}
+</style>
+<style>
+.week{background:#fff;border:1px solid var(--line);border-radius:4mm;overflow:hidden}
+.week .wh{display:flex;justify-content:space-between;align-items:baseline;gap:4mm;background:var(--deep);color:#fff;padding:6mm 8mm}
+.week .wh b{font:600 17pt var(--head);color:var(--neon)}
+.week .wh span{font:400 10.5pt var(--head);color:#cfe3d6}
+.week .wb{padding:8mm 8mm;display:grid;gap:5mm}
+.week .main{font:600 19pt/1.35 var(--head);color:var(--deep)}
+.days{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm}
+.days div{display:grid;grid-template-columns:7mm 1fr;gap:3mm;align-items:center;font-size:12.5pt;border:1px dashed var(--line);border-radius:2.5mm;padding:5mm 4mm}
+.days div::before{content:"";width:6.5mm;height:6.5mm;border:1.6px solid var(--teal);border-radius:1.2mm}
+.week .tip{font-size:12pt;color:var(--muted)}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+.rules div{background:#fff;border:1px solid var(--line);border-radius:3.5mm;padding:5mm 5.5mm;font-size:11.5pt}
+.rules b{display:block;font:600 13pt var(--head);color:var(--deep);margin-bottom:1.5mm}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:5mm}
+.compare .c{border-radius:4mm;padding:6mm;display:grid;gap:2.5mm;font-size:11.5pt}
+.compare .c1{background:#fff;border:1px solid var(--line)}
+.compare .c2{background:var(--deep);color:#e9f3ec}
+.compare h3{font-size:14pt}
+.compare .c2 h3{color:var(--neon)}
+.compare ul{margin:0;padding-left:5mm;display:grid;gap:1.8mm}
+.cover h1{font-size:40pt!important}
+</style>
+</head>
+<body>
+
+<section class="page cover">
+  <div class="photo"></div>
+  <div class="top"><img src="logo.png" alt="Healthy Ani"><span class="tag">Plan · Runmind</span></div>
+  <div class="txt">
+    <h1>De no aguantar 5 minutos<br><span>a correr 30 sin parar</span></h1>
+    <p class="sub">Mi plan de 4 semanas para empezar a correr desde cero, paso a paso y sin morir en el intento.</p>
+    <p class="by">Ana Moreno · Ciencias del Deporte · Coach certificada UESCA</p>
+  </div>
+</section>
+
+<section class="page">
+  <div class="stack letter">
+    <div class="eyebrow">Antes de empezar</div>
+    <h2>Hola, soy Ana</h2>
+    <div class="bar"></div>
+    <p>Si tienes este plan es porque hoy te cuesta aguantar corriendo, y quiero que sepas algo: no es que no sirvas para correr. Es que nadie te enseñó a empezar.</p>
+    <p>La clave no es aguantar a la fuerza. Es <span class="hl">alternar caminar y correr</span> e ir subiendo poco a poco, para que tu cuerpo se adapte sin que lo pases mal.</p>
+    <p>En estas páginas tienes el plan completo de 4 semanas, las reglas para hacerlo bien y los consejos que doy a todas las personas que empiezan conmigo.</p>
+    <p>Imprímelo, pégalo en la nevera y ve marcando cada día que completes. Cada casilla es un paso.</p>
+    <p>Un abrazo,</p>
+    <div class="sign">Ana</div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Plan 30 minutos</span><span>2</span></div>
+</section>
+
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">Las reglas</div>
+    <h2>Cómo hacer el plan bien</h2>
+    <div class="bar"></div>
+    <div class="rules">
+      <div><b>3 días por semana</b>Nunca dos días seguidos. El día de descanso es cuando tu cuerpo se adapta.</div>
+      <div><b>Ritmo de conversación</b>Tienes que poder hablar mientras corres. Si no puedes, vas demasiado rápido.</div>
+      <div><b>Calienta 5 minutos</b>Camina a paso ligero antes de empezar cada sesión.</div>
+      <div><b>Enfría 5 minutos</b>Termina caminando suave para que tu respiración vuelva a la normalidad.</div>
+      <div><b>Caminar no es fallar</b>Los minutos caminando son parte del plan, no un descanso que te tengas que ganar.</div>
+      <div><b>Si cuesta, repite</b>Si una semana se te hace muy dura, repítela. No pasa nada: llegarás igual.</div>
+    </div>
+    <p class="note"><b>Antes de empezar:</b> si tienes alguna enfermedad, molestias en el pecho o hace mucho que no haces ejercicio, consulta con tu médico.</p>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Plan 30 minutos</span><span>3</span></div>
+</section>
+
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">El plan · semanas 1 y 2</div>
+    <h2>Creamos la base</h2>
+    <div class="bar"></div>
+    <div class="week"><div class="wh"><b>Semana 1</b><span>La base</span></div><div class="wb"><div class="main">1 minuto corriendo + 2 minutos caminando</div><p>Repítelo 8 veces. Son 24 minutos más calentamiento y enfriamiento.</p><div class="days"><div><span>Día 1</span></div><div><span>Día 2</span></div><div><span>Día 3</span></div></div><p class="tip">Lo importante esta semana no es el ritmo: es salir los 3 días.</p></div></div>
+    <div class="week"><div class="wh"><b>Semana 2</b><span>Subimos un poco</span></div><div class="wb"><div class="main">2 minutos corriendo + 2 minutos caminando</div><p>Repítelo 6 veces. Son 24 minutos más calentamiento y enfriamiento.</p><div class="days"><div><span>Día 1</span></div><div><span>Día 2</span></div><div><span>Día 3</span></div></div><p class="tip">Si notas que te falta el aire en los 2 minutos, baja el ritmo. Más lento siempre vale.</p></div></div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Plan 30 minutos</span><span>4</span></div>
+</section>
+
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">El plan · semanas 3 y 4</div>
+    <h2>Llegamos a los 30</h2>
+    <div class="bar"></div>
+    <div class="week"><div class="wh"><b>Semana 3</b><span>Bloques largos</span></div><div class="wb"><div class="main">5 minutos corriendo + 2 minutos caminando</div><p>Repítelo 4 veces. Son 28 minutos más calentamiento y enfriamiento.</p><div class="days"><div><span>Día 1</span></div><div><span>Día 2</span></div><div><span>Día 3</span></div></div><p class="tip">Aquí empiezas a notar que tu cuerpo ya responde distinto. Disfrútalo.</p></div></div>
+    <div class="week"><div class="wh"><b>Semana 4</b><span>Sin parar</span></div><div class="wb"><div class="main">Día 1: 20 min · Día 2: 25 min · Día 3: 30 min sin parar 🎉</div><p>Corriendo seguido, siempre a ritmo de conversación.</p><div class="days"><div><span>Día 1 · 20 min</span></div><div><span>Día 2 · 25 min</span></div><div><span>Día 3 · 30 min</span></div></div><p class="tip">¿El salto se te hace grande? Haz el día 1 como 10 minutos corriendo, 1 caminando y 10 corriendo, y sigue desde ahí.</p></div></div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Plan 30 minutos</span><span>5</span></div>
+</section>
+
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">Mis consejos</div>
+    <h2>Lo que marca la diferencia</h2>
+    <div class="bar"></div>
+    <div class="steps">
+      <div class="step"><p><b>Respira por la nariz y por la boca a la vez.</b> No intentes respirar solo por la nariz: te vas a ahogar.</p></div>
+      <div class="step"><p><b>Pasos cortos.</b> Cuanto más corta y ligera la zancada, menos te cansas y menos impacto recibes.</p></div>
+      <div class="step"><p><b>Unas buenas zapatillas para correr.</b> No hace falta la más cara, pero sí una cómoda y hecha para correr.</p></div>
+      <div class="step"><p><b>Suma 2 días de fuerza.</b> 15 o 20 minutos de sentadillas, puentes de glúteo y elevaciones de talón protegen tus rodillas.</p></div>
+      <div class="step"><p><b>Duerme y come bien.</b> Si llegas sin energía a la sesión, cualquier minuto se hace eterno.</p></div>
+      <div class="step"><p><b>Escucha a tu cuerpo.</b> Cansancio sí; dolor que te hace cojear o que empeora mientras corres, no. Para y consulta.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Plan 30 minutos</span><span>6</span></div>
+</section>
+
+<section class="page">
+  <div class="stack">
+    <div class="eyebrow">Y después de los 30 minutos</div>
+    <h2>Un plan general te ayuda a empezar. Un plan tuyo te lleva lejos.</h2>
+    <div class="bar"></div>
+    <p>Este plan funciona para dar el primer paso. Pero cada cuerpo responde distinto: tu edad, tu peso, tus lesiones pasadas, cómo duermes o cuántos días puedes entrenar cambian lo que necesitas.</p>
+    <div class="compare">
+      <div class="c c1"><h3>Plan general</h3><ul><li>El mismo para todo el mundo</li><li>No sabe si te duele algo</li><li>No se ajusta si una semana fallas</li><li>Se acaba en los 30 minutos</li></ul></div>
+      <div class="c c2"><h3>Plan personalizado</h3><ul><li>Hecho para tu cuerpo y tu vida</li><li>Se ajusta cada semana</li><li>Fuerza y técnica incluidas</li><li>Te lleva a tu 5K, 10K o más</li></ul></div>
+    </div>
+    <p>Eso es lo que hago en RUNMIND: armo tu plan semana a semana y te acompaño para que sigas mejorando sin lesionarte.</p>
+  </div>
+  <div class="foot"><span><b>Healthy Ani</b> · Plan 30 minutos</span><span>7</span></div>
+</section>
+
+<section class="page final">
+  <div class="photo" style="background-image:url(final.jpg);background-position:55% 40%"></div>
+  <div class="in">
+    <div class="eyebrow" style="color:var(--neon)">El siguiente paso</div>
+    <h2>Llegaste a los 30 minutos.<br><span>Ahora vamos por más.</span></h2>
+    <p>Si quieres seguir avanzando con un plan hecho para ti, agenda una videollamada de claridad: hablamos de dónde estás, a dónde quieres llegar y si RUNMIND es para ti.</p>
+    <a class="btn" href="https://healthyani.com/runmind/#AgendarLlamada">Agendar mi videollamada</a>
+    <p class="url">o entra en <a href="https://healthyani.com/runmind/#AgendarLlamada">healthyani.com/runmind</a></p>
+  </div>
+  <div class="foot"><img src="logo.png" alt="Healthy Ani"><span>Ana Moreno · Ciencias del Deporte · Coach UESCA · @healthyanii</span></div>
+</section>
+
+</body>
+</html>
