@@ -1,21 +1,28 @@
 # Reel: en Wall Street ya no se presume el Rolex (NYC, oct-nov 2026)
 
-Referencia: https://www.instagram.com/p/DfGPAm2ke5i/ (carrusel con restricción de edad; no se pudo leer por la herramienta).
+## Referencia: @aldasports15, carrusel 9 slides (https://www.instagram.com/p/DfGPAm2ke5i/)
+A las 16 h: 1.048 envíos, 97 reposts, 14 comentarios (likes ocultos). Lo que dispara es COMPARTIR.
+1 Gancho: "En Wall Street ya no presumen el Rolex. Presumen su tiempo de maratón."
+2 Prueba: Bloomberg (31 oct 2025), directivo de Citi que gasta decenas de miles en correr más rápido.
+3 Por qué pesa: "4,5 % bajó de 3 h en 2025" (cifra NO verificada, no usar).
+4 Por qué es estatus: el dinero compra el reloj, no las madrugadas.
+5 No es solo estatus: CEOs maratonistas, empresas valían más (Limbach y Sonnenburg, verificado; 3-5 %, correlación).
+6 Razón de fondo: una sesión aeróbica mejora memoria de trabajo y control ejecutivo (metaanálisis 2024).
+Caption: "Si tuvieras que escoger uno: un Rolex o una maratón por debajo de 3 horas..." → debate.
 
-Formato: 12-15 s, a cámara + texto. Grabar el lunes 2 nov con la medalla (versión A) o antes de la carrera con el dorsal (versión B).
-
-0-2   [Plano de Wall Street / toro / NYSE, tú caminando con gafas] TEXTO: "En Wall Street ya no se presume el Rolex"
-2-5   [Te remangas despacio: reloj de correr, no Rolex] VOZ: Antes el estatus era un Rolex.
-5-9   [Sacas la medalla de NYC / en la versión B el dorsal] VOZ: Ahora es esto. Tu tiempo en una maratón.
-9-12  [Primer plano al reloj con el tiempo, o al tiempo escrito en la medalla] TEXTO: "[TU TIEMPO] · Maratón de Nueva York"
-      VOZ: Porque el Rolex se compra. Una maratón se entrena.
-12-14 [A cámara, sonrisa] TEXTO: "¿Cuál es el tuyo? 👇"  VOZ: ¿Y tú, cuál es tu tiempo?
-
-Versión B (antes de la carrera): "Ahora es esto" con el dorsal; final: "El domingo te digo el mío. ¿Cuál es el tuyo?"
+## Guion (15-18 s, grabar en Wall Street)
+0-2   [Tú caminando por Wall Street / NYSE, con chaqueta] TEXTO: "En Wall Street ya no se presume el Rolex"
+2-5   [Te remangas: reloj de correr] VOZ: En Wall Street ya no se presume el Rolex.
+5-9   [Sacas la medalla (lunes) o el dorsal (antes)] VOZ: Se presume esto: tu tiempo en una maratón. Hasta Bloomberg lo contó.
+9-13  [Plano de la Bolsa / toro] TEXTO: "CEOs maratonistas → sus empresas valían más*"
+      VOZ: Y un estudio con CEOs encontró que las empresas de los que corrían maratones valían más.
+13-16 [Primer plano reloj/medalla con tu tiempo] VOZ: Porque el Rolex se compra. Una maratón se entrena.
+16-18 [A cámara] TEXTO: "¿Rolex o maratón? 👇"
+* en pantalla, pequeño: "Limbach y Sonnenburg, U. de Colonia · correlación"
 
 Caption:
 El Rolex se compra. Una maratón se entrena. ⌚🏅
-Mi 10ª maratón, Nueva York.
-Cuéntame tu tiempo (o el que sueñas) 👇
-
-Audio: algún audio de lujo / "old money" que esté en tendencia esa semana.
+En Wall Street ya lo entendieron: hasta Bloomberg contó cómo los altos directivos invierten en correr más rápido.
+Mi 10ª maratón: Nueva York 🗽
+Si tuvieras que escoger: ¿Rolex o maratón? 👇
+Mándaselo a quien todavía presume el reloj.
